@@ -41,7 +41,7 @@ public class AbsoluteEncoder {
         CANcoderConfiguration CANcoderConfig = new CANcoderConfiguration();
         MagnetSensorConfigs magnetSensorConfigs = new MagnetSensorConfigs();
 
-        magnetSensorConfigs.withAbsoluteSensorDiscontinuityPoint(0.5);
+        magnetSensorConfigs.withAbsoluteSensorDiscontinuityPoint(AbsoluteEncoderConstants.kAbsoluteSensorDiscontinuityPoint);
         magnetSensorConfigs.withSensorDirection(directionValue);
         magnetSensorConfigs.withMagnetOffset(config.getOffset()); // don't flip offset because joystick is flipped, I think
 

@@ -74,6 +74,8 @@ public final class Constants {
     public static final double kFrontRightOffset = 2.0678 / Constants.kTau;
     public static final double kBackLeftOffset = (-2.0801 + Math.PI) / Constants.kTau;
     public static final double kBackRightOffset = 2.8041 / Constants.kTau;
+
+    public static final double kAbsoluteSensorDiscontinuityPoint = 0.5;
   }
 
   public static class MotorConstants {
