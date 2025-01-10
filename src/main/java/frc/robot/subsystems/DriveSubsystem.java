@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import frc.robot.subsystems.AbsoluteEncoder.EncoderConfig;
 import frc.robot.Constants.AutoSwerveConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
+import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 
 public class DriveSubsystem extends SubsystemBase {
     private static final double width = Units.inchesToMeters(19.75);
