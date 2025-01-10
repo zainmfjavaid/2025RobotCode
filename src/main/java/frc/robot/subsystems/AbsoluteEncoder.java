@@ -16,7 +16,7 @@ public class AbsoluteEncoder {
         BACK_LEFT(25, AbsoluteEncoderConstants.kBackLeftOffset),
         BACK_RIGHT(26, AbsoluteEncoderConstants.kBackRightOffset);
 
-        private int deviceId; 
+        private int deviceId;
         private double offset; // in wheel rotations // positive is counterclockwise
 
         private EncoderConfig(int deviceId, double offset) {
