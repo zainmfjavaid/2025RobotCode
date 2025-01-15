@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.hardware.AbsoluteEncoder;
+import frc.robot.hardware.Motor;
 import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 
 public class SwerveModule {
@@ -20,8 +21,8 @@ public class SwerveModule {
     private final double turnAngleRadians;
 
     public SwerveModule(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig config) {
-        // does the type of battery or position affect this?
         driveMotor = new Motor(driveMotorDeviceId, false, false);
+        
         // option 1: true, true
         // option 2: false, false
         angleMotor = new Motor(angleMotorDeviceId, true, true);

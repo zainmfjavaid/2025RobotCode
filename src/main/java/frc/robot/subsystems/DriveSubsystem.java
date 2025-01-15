@@ -127,9 +127,9 @@ public class DriveSubsystem extends SubsystemBase {
     public void printEncoderValues() {
         System.out.println("ENCODER POSITIONS");
         frontLeftModule.printEncoderPositions("FL");
-        // frontRightModule.printEncoderPositions("FR");
-        // backLeftModule.printEncoderPositions("BL");
-        // backRightModule.printEncoderPositions("BR");
+        frontRightModule.printEncoderPositions("FR");
+        backLeftModule.printEncoderPositions("BL");
+        backRightModule.printEncoderPositions("BR");
     }
     public void printDriveEncoderValues() {
         frontLeftModule.printDriveEncoderValue("FL");
