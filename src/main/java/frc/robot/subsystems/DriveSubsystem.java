@@ -27,7 +27,7 @@ public class DriveSubsystem extends SubsystemBase {
     private static final Translation2d backLeftLocation = new Translation2d(-width/2, length/2);
     private static final Translation2d backRightLocation = new Translation2d(-width/2, -length/2);
 
-    private static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
+    public final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
 
     private final SwerveModule frontLeftModule = new SwerveModule(1, 2, frontLeftLocation, EncoderConfig.FRONT_LEFT);
     private final SwerveModule frontRightModule = new SwerveModule(3, 4, frontRightLocation, EncoderConfig.FRONT_RIGHT);
@@ -48,7 +48,7 @@ public class DriveSubsystem extends SubsystemBase {
         backRightModule.setDriveMotorSpeed(rightSpeed);
     }
 
-    public static SwerveModuleState[] getModuleStatesFromChassisSpeeds(ChassisSpeeds speeds) {
+    public SwerveModuleState[] getModuleStatesFromChassisSpeeds(ChassisSpeeds speeds) {
         return kinematics.toSwerveModuleStates(speeds);
     }
 
@@ -108,10 +108,9 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void spin() {
         frontLeftModule.setAngleMotorSpeed(0.05);
-        // frontLeftModule.printPositionSlope();
-        // frontRightModule.setAngleMotorSpeed(0.1);
-        // backLeftModule.setAngleMotorSpeed(0.1);
-        // backRightModule.setAngleMotorSpeed(0.1);
+        frontRightModule.setAngleMotorSpeed(0.05);
+        backLeftModule.setAngleMotorSpeed(0.05);
+        backRightModule.setAngleMotorSpeed(0.05);
     }
 
     public Rotation2d getGyroAngle() {
@@ -172,9 +171,5 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void updateOdometer() {
         odometer.update(getGyroAngle(), getSwerveModulePositions());
-    }
-
-    public SwerveDriveKinematics getKinematics() {
-        return kinematics;
     }
 }

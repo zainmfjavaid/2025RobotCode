@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -63,26 +64,21 @@ public class RobotContainer {
         TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
             AutoSwerveConstants.kMaxDriveSpeedMetersPerSecond, 
             AutoSwerveConstants.kMaxAccelerationMetersPerSecondSquared);
-        trajectoryConfig.setKinematics(driveSubsystem.getKinematics());
+        trajectoryConfig.setKinematics(driveSubsystem.kinematics);
 
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
             new Pose2d(0, 0, new Rotation2d(0)),
             List.of(
-                // new Translation2d(1, 0),
-                // new Translation2d(0.5, 0.5),
-                // new Translation2d(0, -0.5)
+                new Translation2d(1, 0),
+                new Translation2d(0.5, 0.5),
+                new Translation2d(0, -0.5)
             ),
             new Pose2d(0.4, 0.4, Rotation2d.fromDegrees(0)),
             trajectoryConfig
         );
 
         return new SequentialCommandGroup(
-            // Drive
             new AutoDriveCommand(driveSubsystem, trajectory)
-            // Intake
-            // new IntakeDeployCommand(intakeSubsystem, true),
-            // new IntakeRollerCommand(intakeSubsystem, 0.3, 0.5),
-            // new IntakeDeployCommand(intakeSubsystem, false)
         );
     }
 }
