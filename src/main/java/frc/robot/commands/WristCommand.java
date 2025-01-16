@@ -5,12 +5,23 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.subsystems.WristSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class WristCommand extends Command {
 
+  private final WristSubsystem wristSubsystem;
+  private final double armDesiredPosition;
+  private final double wristDesiredPosition;
+
   /** Creates a new WristCommand. */
-  public WristCommand() {
+  public WristCommand(WristSubsystem wristSubsystem, double armAngle, double wristAngle) {
+      this.wristSubsystem = wristSubsystem;
+      armDesiredPosition = armAngle;
+      wristDesiredPosition = wristAngle;
+      addRequirements(wristSubsystem);
+
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -20,7 +31,12 @@ public class WristCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    wristSubsystem.setArmMotorPosition(armDesiredPosition);
+    wristSubsystem.setServoWristMotorSpeed(wristDesiredPosition);
+  }
+      
+
 
   // Called once the command ends or is interrupted.
   @Override

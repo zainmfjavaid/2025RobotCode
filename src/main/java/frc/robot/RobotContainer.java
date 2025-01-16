@@ -10,13 +10,15 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.AutoDriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.WristSubsystem;
 import frc.robot.Controller.Button;
 import frc.robot.Constants.AutoSwerveConstants;
+import frc.robot.commands.WristCommand;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -35,9 +37,11 @@ public class RobotContainer {
     private final Controller controller = new Controller(OperatorConstants.kDriverControllerPort);
 
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+    private final WristSubsystem wristSubsystem = new WristSubsystem();
     // private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
     private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
+    private final WristCommand wristCommand = new WristCommand(wristSubsystem, 0, 0);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
