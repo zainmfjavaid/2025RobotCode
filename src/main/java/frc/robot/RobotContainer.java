@@ -40,8 +40,12 @@ public class RobotContainer {
     private final WristSubsystem wristSubsystem = new WristSubsystem();
     // private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
-    private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
-    private final WristCommand wristCommand = new WristCommand(wristSubsystem, 0, 0);
+    // private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
+
+    private final WristCommand bottomWristCommand = new WristCommand(wristSubsystem, -45, 90);
+    private final WristCommand middleWristCommand = new WristCommand(wristSubsystem, 45, 90);
+    private final WristCommand topWristCommand = new WristCommand(wristSubsystem, 90, 90);
+
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -50,14 +54,15 @@ public class RobotContainer {
     }
 
     private void configureBindings() { 
-        // Test
-        controller.getButton(Button.X).onTrue(new InstantCommand(() -> driveSubsystem.printEncoderValues()));
-        controller.getButton(Button.A).onTrue(new InstantCommand(() -> driveSubsystem.printGyroValue()));
-        // controller.getButton(Button.B).onTrue(new InstantCommand(() -> System.out.println(intakeSubsystem.getIntakeDeployRelativePosition())));
-        controller.getButton(Button.Y).onTrue(new InstantCommand(() -> driveCommand.printJoystickAxes()));
-        controller.getButton(Button.B).onTrue(new InstantCommand(() -> driveSubsystem.printOdometerPose()));
-
         controller.getButton(Button.Start).onTrue(new InstantCommand(() -> driveSubsystem.reset()));
+
+
+        controller.getButton(Button.A).onTrue(bottomWristCommand);
+
+        controller.getButton(Button.B).onTrue(middleWristCommand);
+
+        controller.getButton(Button.X).onTrue(topWristCommand);
+    
 
         // new JoystickButton(joystick, Button.B2.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(-1)));
         // new JoystickButton(joystick, Button.B3.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(1)));
