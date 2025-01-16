@@ -12,7 +12,8 @@ import frc.robot.commands.AutoDriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.Controller.Button;
 import frc.robot.Constants.AutoSwerveConstants;
-
+import frc.robot.commands.CorralIntakeCommand;
+import frc.robot.subsystems.CoralIntake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -38,13 +39,15 @@ public class RobotContainer {
     // private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
     private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
-
+    CoralIntake coralSubsystem = new CoralIntake();
+    CorralIntakeCommand coralIntake = new CorralIntakeCommand(coralSubsystem, .5);
+    CorralIntakeCommand coralIntakeStop = new CorralIntakeCommand(coralSubsystem, 0);
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, controller));
         configureBindings();
     }
-
+    
     private void configureBindings() { 
         // Test
         controller.getButton(Button.X).onTrue(new InstantCommand(() -> driveSubsystem.printEncoderValues()));
@@ -57,6 +60,10 @@ public class RobotContainer {
 
         // new JoystickButton(joystick, Button.B2.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(-1)));
         // new JoystickButton(joystick, Button.B3.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(1)));
+
+        controller.getButton(Button.RB).onTrue(coralIntake);    
+        controller.getButton(Button.RB).onFalse(coralIntake);
+        controller.getButton(Button.RT).onTrue(coralIntakeStop);
     }
 
     public Command getAutonomousCommand() {
