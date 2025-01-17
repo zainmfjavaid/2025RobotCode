@@ -15,25 +15,39 @@ public class WristCommand extends Command {
   private final double armDesiredPosition;
   private final double wristDesiredPosition;
 
+  public enum IntakeState {
+    GroundIntake(0), 
+    SourceIntake(45), 
+    CoralScore(45), 
+    Stow(90);
+
+    public final double degrees;
+
+    private IntakeState(double degrees) {
+      this.degrees = degrees;
+    }
+  } 
+
   /** Creates a new WristCommand. */
-  public WristCommand(WristSubsystem wristSubsystem, double armAngle, double wristAngle) {
-      this.wristSubsystem = wristSubsystem;
-      armDesiredPosition = armAngle;
-      wristDesiredPosition = wristAngle;
-      addRequirements(wristSubsystem);
+  public WristCommand(WristSubsystem wristSubsystem, double armAngle, IntakeState intakeState) {
+    this.wristSubsystem = wristSubsystem;
+    armDesiredPosition = armAngle;
+    wristDesiredPosition = intakeState.degrees;
+    addRequirements(wristSubsystem);
 
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     wristSubsystem.setArmMotorPosition(armDesiredPosition);
-    wristSubsystem.setServoWristMotorSpeed(wristDesiredPosition);
+    wristSubsystem.setWristMotorPostition(wristDesiredPosition);
   }
       
 
