@@ -1,8 +1,10 @@
-package frc.robot.subsystems;
+package frc.robot.hardware;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+import frc.robot.subsystems.DriveUtils;
 
 public class Motor {
     private final SparkMax motor;

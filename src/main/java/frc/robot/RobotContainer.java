@@ -41,7 +41,7 @@ public class RobotContainer {
     private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
     CoralIntake coralSubsystem = new CoralIntake();
     CorralIntakeCommand coralIntake = new CorralIntakeCommand(coralSubsystem, .5);
-    CorralIntakeCommand coralIntakeStop = new CorralIntakeCommand(coralSubsystem, 0);
+    CorralIntakeCommand coralOuttake = new CorralIntakeCommand(coralSubsystem, -.5);
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, controller));
@@ -62,8 +62,7 @@ public class RobotContainer {
         // new JoystickButton(joystick, Button.B3.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(1)));
 
         controller.getButton(Button.RB).onTrue(coralIntake);    
-        controller.getButton(Button.RB).onFalse(coralIntake);
-        controller.getButton(Button.RT).onTrue(coralIntakeStop);
+        controller.getButton(Button.RT).onTrue(coralOuttake);
     }
 
     public Command getAutonomousCommand() {
