@@ -14,7 +14,7 @@ import frc.robot.subsystems.WristSubsystem;
 import frc.robot.Controller.Button;
 import frc.robot.Constants.AutoSwerveConstants;
 import frc.robot.commands.WristCommand;
-import frc.robot.commands.WristCommand.IntakeState;
+import frc.robot.subsystems.WristSubsystem.IntakeState;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;

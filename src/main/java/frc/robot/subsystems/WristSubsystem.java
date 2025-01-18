@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import frc.robot.Constants.MotorConstants;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.PIDController;
 
@@ -15,12 +17,27 @@ import com.revrobotics.RelativeEncoder;
 
 public class WristSubsystem extends SubsystemBase {
 
-  private final SparkMax armMotor = new SparkMax(1, MotorType.kBrushless);
+  public enum IntakeState {
+    GroundIntake(0, 0), 
+    SourceIntake(45, 0), 
+    CoralScore(45, 90), 
+    Stow(90, 90);
+
+    public final double armAngle;
+    public final double wristAngle;
+
+    private IntakeState(double armAngle, double wristAngle) {
+      this.armAngle = armAngle;
+      this.wristAngle = wristAngle;
+    }
+  } 
+
+  private final SparkMax armMotor = new SparkMax(MotorConstants.kArmMotorId, MotorType.kBrushless);
   private final RelativeEncoder armEncoder = armMotor.getEncoder();
   
-  private final Servo servoWristMotor = new Servo(1);
+  private final Servo servoWristMotor = new Servo(MotorConstants.kWristServoChannel);
 
-  private final PIDController armPID = new PIDController(0, 0, 0);
+  private final PIDController armPID = new PIDController(.1, .1,0);
   
   /** Creates a new WristSubsystem. */  
   public WristSubsystem() {}
