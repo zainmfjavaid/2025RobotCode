@@ -10,8 +10,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import frc.robot.Constants.MotorConstants;
 public class CoralIntakeSubsystem extends SubsystemBase {
   /** Creates a new CoralIntake. */
-  private final SparkMax coralIntakeMoter = new SparkMax(MotorConstants.cIntakeMoterID, MotorType.kBrushless);
-  
+  private final SparkMax coralIntakeMoter = new SparkMax(MotorConstants.kIntakeMoterID, MotorType.kBrushless);
+
   public CoralIntakeSubsystem() {}
 
   @Override

@@ -9,18 +9,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class CoralOuttakeCommand extends Command {
   /** Creates a new CoralOuttakeCommand. */
-  private final CoralIntakeSubsystem coralOuttake;
+  private final CoralIntakeSubsystem coralIntakeSubsystem;
 
   public CoralOuttakeCommand(CoralIntakeSubsystem subsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
-    coralOuttake = subsystem;    
+    coralIntakeSubsystem = subsystem;    
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    coralOuttake.setSpeed(-.5);
+    coralIntakeSubsystem.setSpeed(-.5);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -30,7 +30,7 @@ public class CoralOuttakeCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    coralOuttake.stopIntake();
+    coralIntakeSubsystem.stopIntake();
   }
 
   // Returns true when the command should end.
