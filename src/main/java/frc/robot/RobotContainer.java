@@ -36,7 +36,6 @@ public class RobotContainer {
     private final Controller controller = new Controller(OperatorConstants.kDriverControllerPort);
 
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-    // private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
     private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
 
