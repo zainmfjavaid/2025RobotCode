@@ -12,8 +12,8 @@ import frc.robot.commands.AutoDriveCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.Controller.Button;
 import frc.robot.Constants.AutoSwerveConstants;
-import frc.robot.commands.CorralIntakeCommand;
-import frc.robot.subsystems.CoralIntake;
+import frc.robot.commands.CoralIntakeCommand;
+import frc.robot.subsystems.CoralIntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -39,9 +39,9 @@ public class RobotContainer {
     // private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
     private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
-    CoralIntake coralSubsystem = new CoralIntake();
-    CorralIntakeCommand coralIntake = new CorralIntakeCommand(coralSubsystem, .5);
-    CorralIntakeCommand coralOuttake = new CorralIntakeCommand(coralSubsystem, -.5);
+    private final CoralIntakeSubsystem coralSubsystem = new CoralIntakeSubsystem();
+    private final CoralIntakeCommand coralIntake = new CoralIntakeCommand(coralSubsystem, .5);
+    private final CoralIntakeCommand coralOuttake = new CoralIntakeCommand(coralSubsystem, -.5);
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, controller));

@@ -8,25 +8,25 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-public class CoralIntake extends SubsystemBase {
+public class CoralIntakeSubsystem extends SubsystemBase {
   /** Creates a new CoralIntake. */
-  SparkMax coralIntakeMoter = new SparkMax(0, MotorType.kBrushless);
-  boolean inOut = true;
+  private final SparkMax coralIntakeMoter = new SparkMax(0, MotorType.kBrushless);
+  private boolean intakeOrOuttake = true;
 
-  public CoralIntake() {}
+  public CoralIntakeSubsystem() {}
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
   public void setSpeed(double speed){
-    if(inOut){
+    if(intakeOrOuttake){
       coralIntakeMoter.set(speed);
-      inOut = false;
+      intakeOrOuttake = false;
     }
     else{
       coralIntakeMoter.set(0);
-      inOut = true;  
+      intakeOrOuttake = true;  
     }
   }  
 }

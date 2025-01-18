@@ -3,19 +3,19 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
-import frc.robot.subsystems.CoralIntake;
+import frc.robot.subsystems.CoralIntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class CorralIntakeCommand extends Command {
+public class CoralIntakeCommand extends Command {
   /** Creates a new CorralIntakeCommand. */
-  CoralIntake coralIntake;
-  double speed;
-  public CorralIntakeCommand(CoralIntake subsystem, double Speed) {
+  private final CoralIntakeSubsystem coralIntake;
+  private final double speed;
+  public CoralIntakeCommand(CoralIntakeSubsystem subsystem, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
     coralIntake = subsystem;    
-    speed = Speed;
+    this.speed = speed;
   }
 
   // Called when the command is initially scheduled.
