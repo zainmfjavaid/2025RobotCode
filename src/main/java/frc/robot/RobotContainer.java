@@ -14,6 +14,7 @@ import frc.robot.subsystems.WristSubsystem;
 import frc.robot.Controller.Button;
 import frc.robot.Constants.AutoSwerveConstants;
 import frc.robot.commands.WristCommand;
+import frc.robot.commands.WristCommand.IntakeState;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -41,9 +42,10 @@ public class RobotContainer {
 
     // private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
 
-    private final WristCommand bottomWristCommand = new WristCommand(wristSubsystem, -45, 90);
-    private final WristCommand middleWristCommand = new WristCommand(wristSubsystem, 45, 90);
-    private final WristCommand topWristCommand = new WristCommand(wristSubsystem, 90, 90);
+    private final WristCommand groundIntakeCommand = new WristCommand(wristSubsystem, IntakeState.GroundIntake);
+    private final WristCommand sourceIntakeCommand = new WristCommand(wristSubsystem, IntakeState.SourceIntake);
+    private final WristCommand coralScoreCommand = new WristCommand(wristSubsystem, IntakeState.CoralScore);
+    private final WristCommand stowCommand = new WristCommand(wristSubsystem, IntakeState.Stow);
 
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -56,11 +58,13 @@ public class RobotContainer {
         controller.getButton(Button.Start).onTrue(new InstantCommand(() -> driveSubsystem.reset()));
 
 
-        controller.getButton(Button.A).onTrue(bottomWristCommand);
+        controller.getButton(Button.A).onTrue(groundIntakeCommand);
 
-        controller.getButton(Button.B).onTrue(middleWristCommand);
+        controller.getButton(Button.B).onTrue(sourceIntakeCommand);
 
-        controller.getButton(Button.X).onTrue(topWristCommand);
+        controller.getButton(Button.X).onTrue(coralScoreCommand);
+
+        controller.getButton(Button.Y).onTrue(stowCommand);
     
 
         // new JoystickButton(joystick, Button.B2.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(-1)));

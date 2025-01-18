@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.WristSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -13,26 +12,29 @@ public class WristCommand extends Command {
 
   private final WristSubsystem wristSubsystem;
   private final double armDesiredPosition;
-  private final double wristDesiredPosition;
+  private final double servoDesiredPosition;
 
   public enum IntakeState {
-    GroundIntake(0), 
-    SourceIntake(45), 
-    CoralScore(45), 
-    Stow(90);
+    GroundIntake(0, 0), 
+    SourceIntake(45,0), 
+    CoralScore(45,90), 
+    Stow(90,90);
 
-    public final double degrees;
+    public final double armAngle;
+    public final double servoAngle;
 
-    private IntakeState(double degrees) {
-      this.degrees = degrees;
+    private IntakeState(double armAngle, double servoAngle) {
+      this.armAngle = armAngle;
+      this.servoAngle = servoAngle;
     }
+
   } 
 
   /** Creates a new WristCommand. */
-  public WristCommand(WristSubsystem wristSubsystem, double armAngle, IntakeState intakeState) {
+  public WristCommand(WristSubsystem wristSubsystem, IntakeState intakeState) {
     this.wristSubsystem = wristSubsystem;
-    armDesiredPosition = armAngle;
-    wristDesiredPosition = intakeState.degrees;
+    armDesiredPosition = intakeState.armAngle;
+    servoDesiredPosition = intakeState.servoAngle;
     addRequirements(wristSubsystem);
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -47,7 +49,7 @@ public class WristCommand extends Command {
   @Override
   public void execute() {
     wristSubsystem.setArmMotorPosition(armDesiredPosition);
-    wristSubsystem.setWristMotorPostition(wristDesiredPosition);
+    wristSubsystem.setWristMotorPostition(servoDesiredPosition);
   }
       
 
