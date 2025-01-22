@@ -10,9 +10,12 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Controller.Button;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.WristSubsystem;
+import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.AutoDriveCommand;
 import frc.robot.commands.WristCommand;
+import frc.robot.commands.CoralIntakeCommand;
+import frc.robot.commands.CoralOuttakeCommand;
 import frc.robot.Constants.AutoSwerveConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 
