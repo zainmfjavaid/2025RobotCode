@@ -20,12 +20,13 @@ public class AlgaeCommand extends Command {
   @Override
   public void initialize() {
     algaeSubsystem.deployAlgae();
+    algaeSubsystem.runRollersIntake();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    algaeSubsystem.runRollersIntake();
+    
   }
 
   // Called once the command ends or is interrupted.

@@ -21,9 +21,9 @@ public class AlgaeSubsystem extends SubsystemBase {
     
   /** Creates a new AlgaeIntakeSubsystem. */
   public AlgaeSubsystem() {
-   algaeRollerMotor = new SparkMax(0, MotorType.kBrushless);
-   algaeServo = new Servo(1);
-     }
+    algaeRollerMotor = new SparkMax(Constants.MotorConstants.AlgaeSparkMAXDeviceId, MotorType.kBrushless);
+    algaeServo = new Servo(Constants.MotorConstants.AlgaeServoDeviceId);
+  }
    
   
   public void setRollerSpeed(double speed) {

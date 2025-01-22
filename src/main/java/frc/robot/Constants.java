@@ -79,9 +79,8 @@ public final class Constants {
   }
 
   public static class MotorConstants {
-    public static final int kIntakeDeployMotorDeviceId = 16;
-    public static final int kIntakeRollerMotorDeviceId = 9;
-    public static final int kIntakeIndexMotorDeviceId = 15; 
+    public static final int AlgaeSparkMAXDeviceId = 1;
+    public static final int AlgaeServoDeviceId = 1;
   }
 
   public static class IntakeConstants {
@@ -92,8 +91,8 @@ public final class Constants {
 
   //Algae Constants
   public static enum IntakePosition {
-    Retract(0),
-    Deploy(0);
+    Retract(1),
+    Deploy(15);
 
     private int intakePosition;
     
