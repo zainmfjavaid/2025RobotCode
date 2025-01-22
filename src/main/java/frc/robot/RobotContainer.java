@@ -36,9 +36,13 @@ public class RobotContainer {
     // The robot's subsystems and commands are defined here...
     private final Controller controller = new Controller(OperatorConstants.kDriverControllerPort);
 
+    private final CoralIntakeSubsystem coralSubsystem = new CoralIntakeSubsystem();
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
     private final WristSubsystem wristSubsystem = new WristSubsystem();
 
+    private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
+    private final CoralIntakeCommand coralIntake = new CoralIntakeCommand(coralSubsystem);
+    private final CoralOuttakeCommand coralOuttake = new CoralOuttakeCommand(coralSubsystem);
     private final WristCommand groundIntakeCommand = new WristCommand(wristSubsystem, IntakeState.GroundIntake);
     private final WristCommand sourceIntakeCommand = new WristCommand(wristSubsystem, IntakeState.SourceIntake);
     private final WristCommand coralScoreCommand = new WristCommand(wristSubsystem, IntakeState.CoralScore);
@@ -46,10 +50,10 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, controller));
+        driveSubsystem.setDefaultCommand(driveCommand);
         configureBindings();
     }
-
+    
     private void configureBindings() { 
         controller.getButton(Button.Start).onTrue(new InstantCommand(() -> driveSubsystem.reset()));
 
@@ -57,6 +61,9 @@ public class RobotContainer {
         controller.getButton(Button.B).onTrue(sourceIntakeCommand);
         controller.getButton(Button.X).onTrue(coralScoreCommand);
         controller.getButton(Button.Y).onTrue(stowCommand);
+
+        controller.getButton(Button.RB).onTrue(coralIntake);    
+        controller.getButton(Button.RT).onTrue(coralOuttake);
     }
 
     public Command getAutonomousCommand() {
