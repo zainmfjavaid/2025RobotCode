@@ -79,13 +79,24 @@ public final class Constants {
   }
 
   public static class MotorConstants {
-    public static final int kArmMotorId = 15;
+    public static final int kArmServoChannel = 15;
     public static final int kWristServoChannel = 16;
   }
 
   public static class IntakeConstants {
-    public static final double kDeployPosition = 12;
-    public static final double kRetractPosition = 0;
-    public static final double kP = 0.04;
+    public enum IntakeState {
+      GroundIntake(0, 0), 
+      SourceIntake(45, 0), 
+      CoralScore(45, 90), 
+      Stow(90, 90);
+  
+      public final double armAngle;
+      public final double wristAngle;
+  
+      private IntakeState(double armAngle, double wristAngle) {
+        this.armAngle = armAngle;
+        this.wristAngle = wristAngle;
+      }
+    } 
   }
 }

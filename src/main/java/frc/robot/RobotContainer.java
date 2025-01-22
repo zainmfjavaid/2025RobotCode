@@ -7,14 +7,14 @@ package frc.robot;
 import java.util.List;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.DriveCommand;
-import frc.robot.commands.AutoDriveCommand;
+import frc.robot.Controller.Button;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.WristSubsystem;
-import frc.robot.Controller.Button;
-import frc.robot.Constants.AutoSwerveConstants;
+import frc.robot.commands.DriveCommand;
+import frc.robot.commands.AutoDriveCommand;
 import frc.robot.commands.WristCommand;
-import frc.robot.subsystems.WristSubsystem.IntakeState;
+import frc.robot.Constants.AutoSwerveConstants;
+import frc.robot.Constants.IntakeConstants.IntakeState;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -38,15 +38,11 @@ public class RobotContainer {
 
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
     private final WristSubsystem wristSubsystem = new WristSubsystem();
-    // private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-
-    // private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
 
     private final WristCommand groundIntakeCommand = new WristCommand(wristSubsystem, IntakeState.GroundIntake);
     private final WristCommand sourceIntakeCommand = new WristCommand(wristSubsystem, IntakeState.SourceIntake);
     private final WristCommand coralScoreCommand = new WristCommand(wristSubsystem, IntakeState.CoralScore);
     private final WristCommand stowCommand = new WristCommand(wristSubsystem, IntakeState.Stow);
-
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -57,18 +53,10 @@ public class RobotContainer {
     private void configureBindings() { 
         controller.getButton(Button.Start).onTrue(new InstantCommand(() -> driveSubsystem.reset()));
 
-
         controller.getButton(Button.A).onTrue(groundIntakeCommand);
-
         controller.getButton(Button.B).onTrue(sourceIntakeCommand);
-
         controller.getButton(Button.X).onTrue(coralScoreCommand);
-
         controller.getButton(Button.Y).onTrue(stowCommand);
-    
-
-        // new JoystickButton(joystick, Button.B2.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(-1)));
-        // new JoystickButton(joystick, Button.B3.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(1)));
     }
 
     public Command getAutonomousCommand() {
