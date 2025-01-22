@@ -4,13 +4,16 @@
 
 package frc.robot.subsystems;
 
+import frc.robot.Constants.MotorConstants;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import frc.robot.Constants.MotorConstants;
+
 public class CoralIntakeSubsystem extends SubsystemBase {
   /** Creates a new CoralIntake. */
-  private final SparkMax coralIntakeMoter = new SparkMax(MotorConstants.kIntakeMoterID, MotorType.kBrushless);
+  private final SparkMax coralIntakeMoter = new SparkMax(MotorConstants.kIntakeMotorDeviceId, MotorType.kBrushless);
 
   public CoralIntakeSubsystem() {}
 
