@@ -8,6 +8,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakePosition;
@@ -52,6 +53,14 @@ public class AlgaeSubsystem extends SubsystemBase {
 
   public void retractAlgae() {
     setAlgaeDeployPosition(IntakePosition.Retract);
+  }
+
+  public StartEndCommand getIntakeCommand() {
+    return new StartEndCommand(() -> {deployAlgae(); runRollersIntake();} , () -> {retractAlgae(); stopRollers();}, this);
+  }
+
+  public StartEndCommand getOuttakeCommand() {
+    return new StartEndCommand(() -> {runRollersOuttake();}, () -> {stopRollers();}, this);
   }
   ///public
   ///@Override

@@ -8,7 +8,6 @@ import java.util.List;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AutoDriveCommand;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -41,7 +40,6 @@ public class RobotContainer {
     // private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
     private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
-    private final AlgaeIntakeCommand algaeIntakeCommand = new AlgaeIntakeCommand(algaeSubsystem);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
