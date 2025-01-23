@@ -13,7 +13,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 public class CoralIntakeSubsystem extends SubsystemBase {
   /** Creates a new CoralIntake. */
-  private final SparkMax coralIntakeMoter = new SparkMax(MotorConstants.kIntakeMotorDeviceId, MotorType.kBrushless);
+  private final SparkMax coralIntakeMotor = new SparkMax(MotorConstants.kIntakeMotorDeviceId, MotorType.kBrushless);
 
   public CoralIntakeSubsystem() {}
 
@@ -26,6 +26,6 @@ public class CoralIntakeSubsystem extends SubsystemBase {
   }  
 
   public void setSpeed(double speed){
-    coralIntakeMoter.set(speed);
+    coralIntakeMotor.set(speed);
   }  
 }
