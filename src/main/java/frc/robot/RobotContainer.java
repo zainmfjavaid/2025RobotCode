@@ -9,6 +9,7 @@ import java.util.List;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.AutoDriveCommand;
+import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.Controller.Button;
@@ -41,6 +42,7 @@ public class RobotContainer {
 
     private final CoralIntakeSubsystem coralSubsystem = new CoralIntakeSubsystem();
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+    private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
     private final WristSubsystem wristSubsystem = new WristSubsystem();
     
     private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
@@ -60,20 +62,18 @@ public class RobotContainer {
     private void configureBindings() { 
         controller.getButton(Button.Start).onTrue(new InstantCommand(() -> driveSubsystem.reset()));
 
-
+        // Algae System
+        controller.getButton(Button.RB).whileTrue(algaeSubsystem.getIntakeCommand());
+        controller.getButton(Button.LB).whileTrue(algaeSubsystem.getOuttakeCommand());
         controller.getButton(Button.A).onTrue(groundIntakeCommand);
-
         controller.getButton(Button.B).onTrue(sourceIntakeCommand);
-
         controller.getButton(Button.X).onTrue(coralScoreCommand);
-
         controller.getButton(Button.Y).onTrue(stowCommand);
-    
 
         // new JoystickButton(joystick, Button.B2.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(-1)));
         // new JoystickButton(joystick, Button.B3.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(1)));
 
-        controller.getButton(Button.RB).onTrue(coralIntake);    
+        controller.getButton(Button.LT).onTrue(coralIntake);    
         controller.getButton(Button.RT).onTrue(coralOuttake);
     }
 

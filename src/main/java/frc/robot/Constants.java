@@ -79,6 +79,8 @@ public final class Constants {
   }
 
   public static class MotorConstants {
+    public static final int kAlgaeRollerMotorID = 17;
+    public static final int kAlgaeServoDeviceID = 1;
     public static final int kArmMotorId = 15;
     public static final int kWristServoChannel = 16;
     public static final int kIntakeMoterID = 18;
@@ -89,4 +91,24 @@ public final class Constants {
     public static final double kRetractPosition = 0;
     public static final double kP = 0.04;
   }
+
+  //Algae Constants
+  public static enum IntakePosition {
+    Retract(0),
+    Deploy(60);
+
+    private int intakePosition;
+    
+    IntakePosition(int intakePosition) {
+      this.intakePosition = intakePosition;
+    }
+
+    public int getPosition() {
+      return intakePosition;
+    }
+
+  }
+
+  public static final double algaeIntakeRollerSpeed = 1;
+  public static final double algaeOuttakeRollerSpeed = -1;
 }
