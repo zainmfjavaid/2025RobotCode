@@ -81,6 +81,9 @@ public final class Constants {
   public static class MotorConstants {
     public static final int kAlgaeRollerMotorID = 17;
     public static final int kAlgaeServoDeviceID = 1;
+    public static final int kArmMotorId = 15;
+    public static final int kWristServoChannel = 16;
+    public static final int kIntakeMoterID = 18;
   }
 
   public static class IntakeConstants {
