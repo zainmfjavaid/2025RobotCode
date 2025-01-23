@@ -91,8 +91,8 @@ public final class Constants {
 
   //Algae Constants
   public static enum IntakePosition {
-    Retract(1),
-    Deploy(15);
+    Retract(0),
+    Deploy(60);
 
     private int intakePosition;
     
