@@ -8,7 +8,9 @@ import java.util.List;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AutoDriveCommand;
+import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.Controller.Button;
 import frc.robot.Constants.AutoSwerveConstants;
@@ -35,9 +37,11 @@ public class RobotContainer {
     private final Controller controller = new Controller(OperatorConstants.kDriverControllerPort);
 
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+    private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
     // private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
     private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
+    private final AlgaeIntakeCommand algaeIntakeCommand = new AlgaeIntakeCommand(algaeSubsystem);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -54,6 +58,14 @@ public class RobotContainer {
         controller.getButton(Button.B).onTrue(new InstantCommand(() -> driveSubsystem.printOdometerPose()));
 
         controller.getButton(Button.Start).onTrue(new InstantCommand(() -> driveSubsystem.reset()));
+
+        // Algae System
+        controller.getButton(Button.RB).whileTrue(algaeSubsystem.getIntakeCommand());
+        controller.getButton(Button.LB).whileTrue(algaeSubsystem.getOuttakeCommand());
+
+
+
+        
 
         // new JoystickButton(joystick, Button.B2.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(-1)));
         // new JoystickButton(joystick, Button.B3.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(1)));

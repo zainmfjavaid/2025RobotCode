@@ -79,7 +79,7 @@ public final class Constants {
   }
 
   public static class MotorConstants {
-    public static final int AlgaeSparkMAXDeviceId = 1;
+    public static final int AlgaeSparkMAXDeviceId = 17;
     public static final int AlgaeServoDeviceId = 1;
   }
 
