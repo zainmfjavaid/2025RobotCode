@@ -23,6 +23,15 @@ public final class Constants {
 
   public static class DriveConstants {
     public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(16);
+    public static enum DriveType {
+      ARCADE,
+      SWERVE, 
+      DRIVE, // spins the drive motors // used to determine direction of drive motors
+      SPIN, // spins the angle motors // used to determine direction of angle motors
+      TEST, // drive is disabled
+      ALIGN; // aligns all wheels to be straight forward
+    }
+    public static final DriveType driveType = DriveType.SWERVE;
   }
 
   public static class SwerveConstants {
@@ -57,6 +66,7 @@ public final class Constants {
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
   }
 
   public static class AbsoluteEncoderConstants {
