@@ -21,8 +21,22 @@ public final class Constants {
 
   public static final double kPeriodicDuration = 0.03; // 30 milliseconds // unused
 
+  public static class RobotConstants {
+    public static final double width = Units.inchesToMeters(19.75);
+    public static final double length = Units.inchesToMeters(19.75);
+  }
+
   public static class DriveConstants {
     public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(16);
+    public static enum DriveType {
+      ARCADE, 
+      SWERVE, 
+      DRIVE, // spins the drive motors // used to determine direction of drive motors
+      SPIN, // spins the angle motors // used to determine direction of angle motors
+      TEST,
+      ALIGN;
+    }
+    public static final DriveType driveType = DriveType.SWERVE;
   }
 
   public static class SwerveConstants {
@@ -82,6 +96,15 @@ public final class Constants {
     public static final int kIntakeDeployMotorDeviceId = 16;
     public static final int kIntakeRollerMotorDeviceId = 9;
     public static final int kIntakeIndexMotorDeviceId = 15; 
+
+    public static final int kFrontLeftDriveMotorDeviceId = 5;
+    public static final int kFrontLeftAngleMotorDeviceId = 6;
+    public static final int kFrontRightDriveMotorDeviceId = 7;
+    public static final int kFrontRightAngleMotorDeviceId = 8;
+    public static final int kBackLeftDriveMotorDeviceId = 9;
+    public static final int kBackLeftAngleMotorDeviceId = 10;
+    public static final int kBackRightDriveMotorDeviceId = 11;
+    public static final int kBackRightAngleMotorDeviceId = 12;
   }
 
   public static class IntakeConstants {

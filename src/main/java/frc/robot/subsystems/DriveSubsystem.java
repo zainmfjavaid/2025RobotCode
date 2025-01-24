@@ -8,37 +8,36 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.util.Units;
 
 import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.Constants.AutoSwerveConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
+import frc.robot.Constants.RobotConstants;
 import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 
 public class DriveSubsystem extends SubsystemBase {
-    private static final double width = Units.inchesToMeters(19.75);
-    private static final double length = Units.inchesToMeters(19.75);
-
-    private static final Translation2d frontLeftLocation = new Translation2d(width/2, length/2);
-    private static final Translation2d frontRightLocation = new Translation2d(width/2, -length/2);
-    private static final Translation2d backLeftLocation = new Translation2d(-width/2, length/2);
-    private static final Translation2d backRightLocation = new Translation2d(-width/2, -length/2);
+    private static final Translation2d frontLeftLocation = new Translation2d(RobotConstants.width/2, RobotConstants.length/2);
+    private static final Translation2d frontRightLocation = new Translation2d(RobotConstants.width/2, -RobotConstants.length/2);
+    private static final Translation2d backLeftLocation = new Translation2d(-RobotConstants.width/2, RobotConstants.length/2);
+    private static final Translation2d backRightLocation = new Translation2d(-RobotConstants.width/2, -RobotConstants.length/2);
 
     public final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
 
-    private final SwerveModule frontLeftModule = new SwerveModule(1, 2, frontLeftLocation, EncoderConfig.FRONT_LEFT);
-    private final SwerveModule frontRightModule = new SwerveModule(3, 4, frontRightLocation, EncoderConfig.FRONT_RIGHT);
-    private final SwerveModule backLeftModule = new SwerveModule(5, 6, backLeftLocation, EncoderConfig.BACK_LEFT);
-    private final SwerveModule backRightModule = new SwerveModule(7, 8, backRightLocation, EncoderConfig.BACK_RIGHT);
+    private final SwerveModule frontLeftModule = new SwerveModule(1, 2, EncoderConfig.FRONT_LEFT);
+    private final SwerveModule frontRightModule = new SwerveModule(3, 4, EncoderConfig.FRONT_RIGHT);
+    private final SwerveModule backLeftModule = new SwerveModule(5, 6, EncoderConfig.BACK_LEFT);
+    private final SwerveModule backRightModule = new SwerveModule(7, 8, EncoderConfig.BACK_RIGHT);
     
     private static final double kAtPositionThreshold = Units.inchesToMeters(12);
 
     private final AHRS gyro = new AHRS(SerialPort.Port.kUSB);
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(kinematics, new Rotation2d(0), getSwerveModulePositions());
 
+    // ARCADE DRIVE
     public void arcadeDrive(double forwardSpeed, double turnSpeed) {
         double leftSpeed = forwardSpeed + turnSpeed;
         double rightSpeed = forwardSpeed - turnSpeed;
@@ -48,6 +47,7 @@ public class DriveSubsystem extends SubsystemBase {
         backRightModule.setDriveMotorSpeed(rightSpeed);
     }
 
+    // SWERVE DRIVE
     public SwerveModuleState[] getModuleStatesFromChassisSpeeds(ChassisSpeeds speeds) {
         return kinematics.toSwerveModuleStates(speeds);
     }
@@ -88,15 +88,6 @@ public class DriveSubsystem extends SubsystemBase {
         double ySpeed = relativeYSpeed * AutoSwerveConstants.kMaxDriveSpeedMetersPerSecond;
         double rotationSpeed = relativeRotationSpeed * AutoSwerveConstants.kMaxRotationSpeedRadiansPerSecond;
         swerveDriveSpeeds(xSpeed, ySpeed, rotationSpeed);
-    }
-
-    public void swerveDriveAlternative(double ySpeed, double xSpeed, double turnSpeed) {
-        double driveAngleRadians = SwerveModule.getAngleRadiansFromComponents(ySpeed, xSpeed);
-        double driveSpeed = Math.hypot(xSpeed, ySpeed);
-        frontLeftModule.setState(driveSpeed, driveAngleRadians, turnSpeed);
-        frontRightModule.setState(driveSpeed, driveAngleRadians, turnSpeed);
-        backLeftModule.setState(driveSpeed, driveAngleRadians, turnSpeed);
-        backRightModule.setState(driveSpeed, driveAngleRadians, turnSpeed);
     }
 
     public void drive() {

@@ -74,4 +74,9 @@ public class DriveUtils {
         double desiredMotorAngleRadians = currentMotorAngleRadians + motorErrorRadians;
         return TeleopSwerveConstants.kRotationController.calculate(motorErrorRadians, desiredMotorAngleRadians);
     }
+
+    // Return the angle in radians formed by the x and y components
+    public static double getAngleRadiansFromComponents(double y, double x) {
+        return normalizeAngleRadiansSigned(Math.atan2(y, x));
+    }
 }

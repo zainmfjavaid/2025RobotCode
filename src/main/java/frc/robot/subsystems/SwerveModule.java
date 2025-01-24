@@ -9,34 +9,25 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.hardware.AbsoluteEncoder;
-import frc.robot.hardware.Motor;
+import frc.robot.hardware.SparkMaxMotor;
 import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 
 public class SwerveModule {
-    private final Motor driveMotor;
-    private final Motor angleMotor;
+    private final SparkMaxMotor driveMotor;
+    private final SparkMaxMotor angleMotor;
 
     private final AbsoluteEncoder wheelAngleAbsoluteEncoder; // rotations of the wheel, not the motor
 
-    private final double turnAngleRadians;
-
-    public SwerveModule(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig config) {
-        driveMotor = new Motor(driveMotorDeviceId, false, false);
+    public SwerveModule(int driveMotorDeviceId, int angleMotorDeviceId, EncoderConfig config) {
+        driveMotor = new SparkMaxMotor(driveMotorDeviceId, false, false);
         
         // option 1: true, true
         // option 2: false, false
-        angleMotor = new Motor(angleMotorDeviceId, true, true);
+        angleMotor = new SparkMaxMotor(angleMotorDeviceId, true, true);
 
         wheelAngleAbsoluteEncoder = new AbsoluteEncoder(config, SensorDirectionValue.CounterClockwise_Positive);
 
-        turnAngleRadians = getTurningAngleRadians(location); // only used for alternative swerve
-
         resetEncoders();
-    }
-
-    private static double getTurningAngleRadians(Translation2d location) {
-        double turningAngleRadians = (Math.PI / 2) - getAngleRadiansFromComponents(location.getY(), location.getX());
-        return DriveUtils.normalizeAngleRadiansSigned(turningAngleRadians);
     }
 
     public void setDriveMotorSpeed(double speed) {
@@ -67,46 +58,6 @@ public class SwerveModule {
         setAngleMotorSpeed(DriveUtils.getAngleMotorSpeed(wheelErrorRadians, currentWheelAngleRadians));
 
         setDriveMotorSpeed(driveMotorSpeed);
-    }
-
-    public void setState(double driveSpeed, double driveAngleRadians, double turnSpeed) {
-        double[] desiredState = getDesiredState(driveAngleRadians, turnAngleRadians, driveSpeed, turnSpeed);
-        double desiredAngleRadians = desiredState[0];
-        double desiredSpeed = desiredState[1];
-        setAngle(Rotation2d.fromRadians(desiredAngleRadians));
-        setDriveMotorSpeed(desiredSpeed);
-    }
-
-    private static double[] getDesiredState(double driveAngleRadians, double turnAngleRadians, double driveSpeed, double turnSpeed) {
-        // Get x and y components of speeds
-        double driveSpeedY = driveSpeed * Math.sin(driveAngleRadians);
-        double driveSpeedX = driveSpeed * Math.cos(driveAngleRadians);
-        double turnSpeedY = turnSpeed * Math.sin(turnAngleRadians);
-        double turnSpeedX = turnSpeed * Math.cos(turnAngleRadians);
-        // Get total speeds in x and y directions
-        double speedY = driveSpeedY + turnSpeedY;
-        double speedX = driveSpeedX + turnSpeedX;
-        // Determine and return angle and total speed
-        double desiredAngle = Math.atan2(speedY, speedX);
-        double speed = DriveUtils.normalizeSpeed(Math.hypot(speedX, speedY));
-        return new double[] {desiredAngle, speed};
-    }
-
-    /**
-     * Turn the motor to the desired wheel angle
-     * @param desiredAngle the desired wheel angle
-     */
-    public void setAngle(Rotation2d desiredAngle) {
-        double currentWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.angleMotorToWheel(angleMotor.getPositionRadians()));
-        double desiredWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(desiredAngle.getRadians());
-        double wheelErrorRadians = DriveUtils.optimizeErrorRadians(DriveUtils.normalizeAngleRadiansSigned(desiredWheelAngleRadians - currentWheelAngleRadians));
-        double speed = DriveUtils.getAngleMotorSpeed(wheelErrorRadians, currentWheelAngleRadians);
-        setAngleMotorSpeed(speed);
-    }
-
-    // Return the angle in radians formed by the x and y components
-    public static double getAngleRadiansFromComponents(double y, double x) {
-        return DriveUtils.normalizeAngleRadiansSigned(Math.atan2(y, x));
     }
 
     // Set the relative encoder values to default
