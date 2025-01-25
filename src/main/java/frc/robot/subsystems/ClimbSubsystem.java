@@ -10,10 +10,10 @@ import edu.wpi.first.math.controller.PIDController;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-
+import frc.robot.Constants.MotorConstants;
 public class ClimbSubsystem extends SubsystemBase {
   /** Creates a new ClimbSubsystem. */
-  private final SparkMax climbMotor = new SparkMax(1, MotorType.kBrushless);
+  private final SparkMax climbMotor = new SparkMax(MotorConstants.kClimbMotorDeviceId, MotorType.kBrushless);
   private final RelativeEncoder climbMotorEncoder = climbMotor.getEncoder();
 
   private final PIDController controller = new PIDController(0.1, 0, 0);

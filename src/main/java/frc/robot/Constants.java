@@ -82,6 +82,7 @@ public final class Constants {
     public static final int kArmServoChannel = 15;
     public static final int kWristServoChannel = 16;
     public static final int kIntakeMotorDeviceId = 18;
+    public static final int kClimbMotorDeviceId = 20;
   }
 
   public static class IntakeConstants {

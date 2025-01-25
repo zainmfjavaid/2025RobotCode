@@ -9,8 +9,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ClimbCommand extends Command {
   /** Creates a new ClimbCommand. */
-  private ClimbSubsystem climbSubsystem;
-  double position;
+  private final ClimbSubsystem climbSubsystem;
+  private final double position;
+
   public ClimbCommand(ClimbSubsystem subsystem, double position) {
     addRequirements(subsystem);
     climbSubsystem = subsystem;
