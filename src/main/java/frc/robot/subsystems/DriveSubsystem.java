@@ -29,7 +29,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     private static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
 
-    private final SwerveModule frontLeftModule = new SwerveModule(1, 2, frontLeftLocation, EncoderConfig.FRONT_LEFT);
+    private final SwerveModule frontLeftModule = new SwerveModule(9, 19, frontLeftLocation, EncoderConfig.FRONT_LEFT); // Change driveMotorID back to 1 & angleMotorID 2 later
     private final SwerveModule frontRightModule = new SwerveModule(3, 4, frontRightLocation, EncoderConfig.FRONT_RIGHT);
     private final SwerveModule backLeftModule = new SwerveModule(5, 6, backLeftLocation, EncoderConfig.BACK_LEFT);
     private final SwerveModule backRightModule = new SwerveModule(7, 8, backRightLocation, EncoderConfig.BACK_RIGHT);

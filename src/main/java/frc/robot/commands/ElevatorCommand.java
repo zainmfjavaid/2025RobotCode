@@ -4,15 +4,19 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem.ElevatorPosition;
+import frc.robot.Constants;
+import frc.robot.Constants.IntakeConstants.ElevatorConstants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ElevatorCommand extends Command {
   private ElevatorSubsystem elevatorSubsystem;
   private ElevatorPosition elevatorPosition;
-  
+
+  DigitalInput limitSwitch = new DigitalInput(ElevatorConstants.kLimitSwitchChannel);
   /** Creates a new ElevatorCommand. */
   public ElevatorCommand(ElevatorSubsystem elevatorSubsystem, ElevatorPosition elevatorPosition) {
     this.elevatorSubsystem = elevatorSubsystem;
@@ -26,7 +30,12 @@ public class ElevatorCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevatorSubsystem.setPosition(elevatorPosition.getPosition());
+    if(limitSwitch.get()) { // Returns true if circut open/triggered 
+      elevatorSubsystem.stop();
+    }
+    else {
+      elevatorSubsystem.setPosition(elevatorPosition.getPosition());
+    }
   }
 
   // Called once the command ends or is interrupted.

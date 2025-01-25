@@ -109,5 +109,10 @@ public final class Constants {
         this.wristAngle = wristAngle;
       }
     } 
+
+    // Placeholder Constants if needed, will delete later if not needed
+    public static class ElevatorConstants {
+        public static final int kLimitSwitchChannel = 1;
+    }
   }
 }
