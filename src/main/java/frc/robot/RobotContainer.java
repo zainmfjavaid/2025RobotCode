@@ -11,11 +11,13 @@ import frc.robot.Controller.Button;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.CoralIntakeSubsystem;
+import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.AutoDriveCommand;
 import frc.robot.commands.WristCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.CoralOuttakeCommand;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.Constants.AutoSwerveConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 
@@ -42,7 +44,10 @@ public class RobotContainer {
     private final CoralIntakeSubsystem coralSubsystem = new CoralIntakeSubsystem();
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
     private final WristSubsystem wristSubsystem = new WristSubsystem();
+    private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
+    private final ClimbCommand climbCommandUp = new ClimbCommand(climbSubsystem, 90);
+    private final ClimbCommand climbCommandDown = new ClimbCommand(climbSubsystem, 0);
     private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
     private final CoralIntakeCommand coralIntake = new CoralIntakeCommand(coralSubsystem);
     private final CoralOuttakeCommand coralOuttake = new CoralOuttakeCommand(coralSubsystem);
@@ -67,6 +72,8 @@ public class RobotContainer {
 
         controller.getButton(Button.RB).onTrue(coralIntake);    
         controller.getButton(Button.RT).onTrue(coralOuttake);
+        controller.getButton(Button.LB).onTrue(climbCommandUp);    
+        controller.getButton(Button.LT).onTrue(climbCommandDown);
     }
 
     public Command getAutonomousCommand() {
