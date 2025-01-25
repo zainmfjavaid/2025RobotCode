@@ -3,12 +3,15 @@ package frc.robot.subsystems;
 import frc.robot.hardware.KrakenMotor;
 import frc.robot.hardware.AbsoluteEncoder;
 import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
-
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
 
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 public class SwerveModuleKraken {
     public final KrakenMotor driveMotor;
@@ -51,11 +54,17 @@ public class SwerveModuleKraken {
         double wheelAngleSpeed = TeleopSwerveConstants.kRotationController.calculate(currentWheelAngleRadians, desiredWheelAngleRadians);
         angleMotor.set(DriveUtils.angleWheelToMotor(wheelAngleSpeed));
 
-        driveMotor.set(driveMotorSpeed);
+        driveMotor.set(driveMotorSpeed / DriveConstants.kMaxDriveSpeedMetersPerSecond);
     }
 
     public void resetEncoders() {
         driveMotor.setEncoderPosition(0);
         angleMotor.setEncoderPosition(DriveUtils.angleWheelToMotor(wheelAngleAbsoluteEncoder.getPositionRotations()));
+    }
+
+    public SwerveModulePosition getPosition() {
+        double distanceMeters = DriveUtils.driveMotorToWheel(driveMotor.getPositionRadians()) * SwerveConstants.kWheelRadiusMeters;
+        Rotation2d angle = Rotation2d.fromRadians(DriveUtils.angleMotorToWheel(angleMotor.getPositionRadians()));
+        return new SwerveModulePosition(distanceMeters, angle);
     }
 }

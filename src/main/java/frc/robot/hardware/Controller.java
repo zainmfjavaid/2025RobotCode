@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.hardware;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -45,19 +45,24 @@ public class Controller {
     public double getLeftStickX() {
         return -joystick.getRawAxis(0);
     }
-    
     // Up is positive
     public double getLeftStickY() {
         return -joystick.getRawAxis(1);
     }
-    
     // Left is positive
     public double getRightStickX() {
         return -joystick.getRawAxis(2);
-    }
-    
+    }  
     // Up is positive
     public double getRightStickY() {
         return -joystick.getRawAxis(3);
+    }
+
+    public void printJoystickAxes() {
+        System.out.println("JOYSTICK AXES");
+        System.out.println("LX: " + getLeftStickX());
+        System.out.println("LY: " + getLeftStickY());
+        System.out.println("RX: " + getRightStickX());
+        System.out.println("RY: " + getRightStickY());
     }
 }

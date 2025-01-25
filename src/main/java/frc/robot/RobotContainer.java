@@ -7,14 +7,16 @@ package frc.robot;
 import java.util.List;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.DriveCommand;
-import frc.robot.commands.AutoDriveCommand;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.Controller.Button;
 import frc.robot.Constants.AutoSwerveConstants;
 
+import frc.robot.hardware.Controller;
+
+import frc.robot.commands.TeleopDriveCommand;
+import frc.robot.commands.AutoDriveCommand;
+
+import frc.robot.subsystems.SwerveSubsystem;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -35,35 +37,31 @@ public class RobotContainer {
     // The robot's subsystems and commands are defined here...
     private final Controller controller = new Controller(OperatorConstants.kDriverControllerPort);
 
-    private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-
-    private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
+    // private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+    private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, controller));
+        swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, controller));
         configureBindings();
     }
 
     private void configureBindings() { 
         // Test
-        controller.getButton(Button.X).onTrue(new InstantCommand(() -> driveSubsystem.printEncoderValues()));
-        controller.getButton(Button.A).onTrue(new InstantCommand(() -> driveSubsystem.printGyroValue()));
-        // controller.getButton(Button.B).onTrue(new InstantCommand(() -> System.out.println(intakeSubsystem.getIntakeDeployRelativePosition())));
-        controller.getButton(Button.Y).onTrue(new InstantCommand(() -> driveCommand.printJoystickAxes()));
-        controller.getButton(Button.B).onTrue(new InstantCommand(() -> driveSubsystem.printOdometerPose()));
+        // controller.getButton(Button.X).onTrue(new InstantCommand(() -> driveSubsystem.printEncoderValues()));
+        // controller.getButton(Button.A).onTrue(new InstantCommand(() -> driveSubsystem.printGyroValue()));
+        // controller.getButton(Button.Y).onTrue(new InstantCommand(() -> controller.printJoystickAxes()));
+        // controller.getButton(Button.B).onTrue(new InstantCommand(() -> driveSubsystem.printOdometerPose()));
 
-        controller.getButton(Button.Start).onTrue(new InstantCommand(() -> driveSubsystem.reset()));
-
-        // new JoystickButton(joystick, Button.B2.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(-1)));
-        // new JoystickButton(joystick, Button.B3.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(1)));
+        // Drive
+        // controller.getButton(Button.Start).onTrue(new InstantCommand(() -> driveSubsystem.reset()));
     }
 
     public Command getAutonomousCommand() {
         TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
             AutoSwerveConstants.kMaxDriveSpeedMetersPerSecond, 
             AutoSwerveConstants.kMaxAccelerationMetersPerSecondSquared);
-        trajectoryConfig.setKinematics(driveSubsystem.kinematics);
+        trajectoryConfig.setKinematics(swerveSubsystem.getKinematics());
 
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
             new Pose2d(0, 0, new Rotation2d(0)),
@@ -77,7 +75,7 @@ public class RobotContainer {
         );
 
         return new SequentialCommandGroup(
-            new AutoDriveCommand(driveSubsystem, trajectory)
+            new AutoDriveCommand(swerveSubsystem, trajectory)
         );
     }
 }

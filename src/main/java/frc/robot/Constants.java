@@ -62,8 +62,8 @@ public final class Constants {
     public static final double kMaxAccelerationMetersPerSecondSquared = kMaxDriveSpeedMetersPerSecond / 6;
     public static final double kMaxRotationAccelerationRadiansPerSecondSquared = kMaxRotationSpeedRadiansPerSecond / 6;
 
-    public static final PIDController kXController = new PIDController(16, 0, 0.1);
-    public static final PIDController kYController = new PIDController(16, 0, 0.1);
+    public static final PIDController kXController = new PIDController(0.1, 0, 0.1);
+    public static final PIDController kYController = new PIDController(0.1, 0, 0.1);
     public static final PIDController kThetaController = new PIDController(0.5 / Math.PI, 0, 0);
 
     public static final Constraints kThetaConstraints = new Constraints(kMaxRotationSpeedRadiansPerSecond, kMaxRotationAccelerationRadiansPerSecondSquared);
