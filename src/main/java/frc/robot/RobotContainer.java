@@ -7,16 +7,23 @@ package frc.robot;
 import java.util.List;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Controller.Button;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.WristSubsystem;
+import frc.robot.subsystems.CoralIntakeSubsystem;
+import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.commands.DriveCommand;
 import frc.robot.commands.AutoDriveCommand;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.Controller.Button;
+import frc.robot.commands.WristCommand;
+import frc.robot.commands.CoralIntakeCommand;
+import frc.robot.commands.CoralOuttakeCommand;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.Constants.AutoSwerveConstants;
+import frc.robot.Constants.IntakeConstants.IntakeState;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -34,29 +41,39 @@ public class RobotContainer {
     // The robot's subsystems and commands are defined here...
     private final Controller controller = new Controller(OperatorConstants.kDriverControllerPort);
 
+    private final CoralIntakeSubsystem coralSubsystem = new CoralIntakeSubsystem();
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-    // private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+    private final WristSubsystem wristSubsystem = new WristSubsystem();
+    private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
+    private final ClimbCommand climbCommandUp = new ClimbCommand(climbSubsystem, 90);
+    private final ClimbCommand climbCommandDown = new ClimbCommand(climbSubsystem, 0);
     private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
+    private final CoralIntakeCommand coralIntake = new CoralIntakeCommand(coralSubsystem);
+    private final CoralOuttakeCommand coralOuttake = new CoralOuttakeCommand(coralSubsystem);
+    private final WristCommand groundIntakeCommand = new WristCommand(wristSubsystem, IntakeState.GroundIntake);
+    private final WristCommand sourceIntakeCommand = new WristCommand(wristSubsystem, IntakeState.SourceIntake);
+    private final WristCommand coralScoreCommand = new WristCommand(wristSubsystem, IntakeState.CoralScore);
+    private final WristCommand stowCommand = new WristCommand(wristSubsystem, IntakeState.Stow);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, controller));
+        driveSubsystem.setDefaultCommand(driveCommand);
         configureBindings();
     }
-
+    
     private void configureBindings() { 
-        // Test
-        controller.getButton(Button.X).onTrue(new InstantCommand(() -> driveSubsystem.printEncoderValues()));
-        controller.getButton(Button.A).onTrue(new InstantCommand(() -> driveSubsystem.printGyroValue()));
-        // controller.getButton(Button.B).onTrue(new InstantCommand(() -> System.out.println(intakeSubsystem.getIntakeDeployRelativePosition())));
-        controller.getButton(Button.Y).onTrue(new InstantCommand(() -> driveCommand.printJoystickAxes()));
-        controller.getButton(Button.B).onTrue(new InstantCommand(() -> driveSubsystem.printOdometerPose()));
-
         controller.getButton(Button.Start).onTrue(new InstantCommand(() -> driveSubsystem.reset()));
 
-        // new JoystickButton(joystick, Button.B2.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(-1)));
-        // new JoystickButton(joystick, Button.B3.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(1)));
+        controller.getButton(Button.A).onTrue(groundIntakeCommand);
+        controller.getButton(Button.B).onTrue(sourceIntakeCommand);
+        controller.getButton(Button.X).onTrue(coralScoreCommand);
+        controller.getButton(Button.Y).onTrue(stowCommand);
+
+        controller.getButton(Button.RB).onTrue(coralIntake);    
+        controller.getButton(Button.RT).onTrue(coralOuttake);
+        controller.getButton(Button.LB).onTrue(climbCommandUp);    
+        controller.getButton(Button.LT).onTrue(climbCommandDown);
     }
 
     public Command getAutonomousCommand() {
