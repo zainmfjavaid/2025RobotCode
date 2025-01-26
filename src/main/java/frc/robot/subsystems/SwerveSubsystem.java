@@ -3,18 +3,15 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Pose2d;
-
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
-
 import frc.robot.hardware.Controller;
 import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 

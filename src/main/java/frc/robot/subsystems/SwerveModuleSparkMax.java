@@ -11,13 +11,13 @@ import frc.robot.hardware.AbsoluteEncoder;
 import frc.robot.hardware.SparkMaxMotor;
 import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 
-public class SwerveModule {
+public class SwerveModuleSparkMax {
     private final SparkMaxMotor driveMotor;
     private final SparkMaxMotor angleMotor;
 
     private final AbsoluteEncoder wheelAngleAbsoluteEncoder; // rotations of the wheel, not the motor
 
-    public SwerveModule(int driveMotorDeviceId, int angleMotorDeviceId, EncoderConfig config) {
+    public SwerveModuleSparkMax(int driveMotorDeviceId, int angleMotorDeviceId, EncoderConfig config) {
         driveMotor = new SparkMaxMotor(driveMotorDeviceId, false, false);
         
         // option 1: true, true

@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.util.Units;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import frc.robot.Constants.AutoSwerveConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
+
+import com.kauailabs.navx.frc.AHRS;
 
 public class DriveSubsystem extends SubsystemBase {
     private static final Translation2d frontLeftLocation = new Translation2d(RobotConstants.width/2, RobotConstants.length/2);
@@ -27,10 +27,10 @@ public class DriveSubsystem extends SubsystemBase {
 
     public final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
 
-    private final SwerveModule frontLeftModule = new SwerveModule(1, 2, EncoderConfig.FRONT_LEFT);
-    private final SwerveModule frontRightModule = new SwerveModule(3, 4, EncoderConfig.FRONT_RIGHT);
-    private final SwerveModule backLeftModule = new SwerveModule(5, 6, EncoderConfig.BACK_LEFT);
-    private final SwerveModule backRightModule = new SwerveModule(7, 8, EncoderConfig.BACK_RIGHT);
+    private final SwerveModuleSparkMax frontLeftModule = new SwerveModuleSparkMax(1, 2, EncoderConfig.FRONT_LEFT);
+    private final SwerveModuleSparkMax frontRightModule = new SwerveModuleSparkMax(3, 4, EncoderConfig.FRONT_RIGHT);
+    private final SwerveModuleSparkMax backLeftModule = new SwerveModuleSparkMax(5, 6, EncoderConfig.BACK_LEFT);
+    private final SwerveModuleSparkMax backRightModule = new SwerveModuleSparkMax(7, 8, EncoderConfig.BACK_RIGHT);
     
     private static final double kAtPositionThreshold = Units.inchesToMeters(12);
 

@@ -34,15 +34,16 @@ public class SwerveModuleKraken {
     }
 
     public void setState(double robotLongitundalSpeed, double robotLateralSpeed, double robotRotationSpeed) {
+        // speeds
         double longitundalSpeed = robotLongitundalSpeed + robotRotationSpeed * Math.sin(turnAngleRadians);
         double lateralSpeed = robotLateralSpeed + robotRotationSpeed * Math.cos(turnAngleRadians);
         
         double driveMotorSpeed = Math.hypot(lateralSpeed, longitundalSpeed);
         
-        double unnormalizedDesiredWheelAngleRadians = DriveUtils.getAngleRadiansFromComponents(longitundalSpeed, lateralSpeed);
-
+        // angles
+        double desiredWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.getAngleRadiansFromComponents(longitundalSpeed, lateralSpeed));
         double currentWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.angleMotorToWheel(angleMotor.getPositionRadians()));
-        double desiredWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(unnormalizedDesiredWheelAngleRadians);
+        
         double wheelErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
         
         // if greater than 90 deg, add 180 deg and flip drive motor direction
