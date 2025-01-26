@@ -42,7 +42,7 @@ public class DriveCommand extends Command {
       case DRIVE:
         driveSubsystem.drive();
         break;
-      case SPIN:
+      case ROTATE:
         driveSubsystem.spin();
         break;
       case ALIGN:

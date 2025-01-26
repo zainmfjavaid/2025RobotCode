@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.hardware.Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -21,7 +22,23 @@ public class TeleopDriveCommand extends Command {
 
     @Override
     public void execute() {
-        swerveSubsystem.swerveDriveTeleop(controller);
+        switch (DriveConstants.driveType) {
+            case ARCADE:
+                break;
+            case SWERVE:
+                swerveSubsystem.swerveDriveTeleop(controller);
+                break;
+            case DRIVE:
+                swerveSubsystem.spinDriveMotors();
+                break;
+            case ROTATE:
+                swerveSubsystem.spinAngleMotors();
+                break;
+            case ALIGN:
+                break;
+            default:
+                break;
+        }
     } 
 
     @Override

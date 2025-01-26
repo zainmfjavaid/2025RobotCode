@@ -13,7 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
-public class SwerveModuleKraken {
+public class SwerveModule {
     public final KrakenMotor driveMotor;
     public final KrakenMotor angleMotor;
 
@@ -21,7 +21,7 @@ public class SwerveModuleKraken {
 
     public final AbsoluteEncoder wheelAngleAbsoluteEncoder;
 
-    public SwerveModuleKraken(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig config) {
+    public SwerveModule(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig config) {
         driveMotor = new KrakenMotor(driveMotorDeviceId, false, false);
         angleMotor = new KrakenMotor(angleMotorDeviceId, false, false);
 
@@ -53,9 +53,17 @@ public class SwerveModuleKraken {
         }
         
         double wheelAngleSpeed = TeleopSwerveConstants.kRotationController.calculate(currentWheelAngleRadians, desiredWheelAngleRadians);
-        angleMotor.set(DriveUtils.angleWheelToMotor(wheelAngleSpeed));
+        setAngleMotorSpeed(DriveUtils.angleWheelToMotor(wheelAngleSpeed));
 
-        driveMotor.set(driveMotorSpeed / DriveConstants.kMaxDriveSpeedMetersPerSecond);
+        setDriveMotorSpeed(driveMotorSpeed);
+    }
+
+    public void setDriveMotorSpeed(double speedMetersPerSecond) {
+        driveMotor.set(speedMetersPerSecond / DriveConstants.kMaxDriveSpeedMetersPerSecond);
+    }
+
+    public void setAngleMotorSpeed(double speedMetersPerSecond) {
+        angleMotor.set(speedMetersPerSecond / TeleopSwerveConstants.kMaxRotationSpeedRadiansPerSecond);
     }
 
     public void resetEncoders() {
@@ -67,5 +75,20 @@ public class SwerveModuleKraken {
         double distanceMeters = DriveUtils.driveMotorToWheel(driveMotor.getPositionRadians()) * SwerveConstants.kWheelRadiusMeters;
         Rotation2d angle = Rotation2d.fromRadians(DriveUtils.angleMotorToWheel(angleMotor.getPositionRadians()));
         return new SwerveModulePosition(distanceMeters, angle);
+    }
+
+    // print encoder
+
+    public void printEncoderPositions(String name) {
+        System.out.print(name + ": ");
+        double rRot = angleMotor.getPositionRotations();
+        double rRad = DriveUtils.angleMotorToWheel(rRot);
+        double aRot = wheelAngleAbsoluteEncoder.getPositionRotations();
+        double aRad = DriveUtils.angleWheelToMotor(aRot);
+        System.out.println("RRot " + rRot + ", RRad " + rRad + ", ARot " + aRot + ", ARad " + aRad);    
+    }
+
+    public void printDriveEncoderValue(String name) {
+        System.out.println(name + ": " + driveMotor.getPositionRotations());
     }
 }

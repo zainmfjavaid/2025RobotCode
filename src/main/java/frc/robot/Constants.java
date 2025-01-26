@@ -28,13 +28,15 @@ public final class Constants {
 
   public static class DriveConstants {
     public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(16);
+    public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 2;
+
     public static enum DriveType {
       ARCADE, 
       SWERVE, 
       DRIVE, // spins the drive motors // used to determine direction of drive motors
-      SPIN, // spins the angle motors // used to determine direction of angle motors
-      TEST,
-      ALIGN;
+      ROTATE, // spins the angle motors // used to determine direction of angle motors
+      ALIGN,
+      TEST;
     }
     public static final DriveType driveType = DriveType.SWERVE;
   }
@@ -55,7 +57,6 @@ public final class Constants {
   }
 
   public static class AutoSwerveConstants {
-    // these values are temporary
     public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(2);
     public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 6;
 
@@ -64,8 +65,8 @@ public final class Constants {
 
     public static final PIDController kXController = new PIDController(0.1, 0, 0.1);
     public static final PIDController kYController = new PIDController(0.1, 0, 0.1);
-    public static final PIDController kThetaController = new PIDController(0.5 / Math.PI, 0, 0);
 
+    public static final PIDController kThetaController = new PIDController(0.5 / Math.PI, 0, 0);
     public static final Constraints kThetaConstraints = new Constraints(kMaxRotationSpeedRadiansPerSecond, kMaxRotationAccelerationRadiansPerSecondSquared);
   }
 

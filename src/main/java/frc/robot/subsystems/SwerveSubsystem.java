@@ -23,10 +23,10 @@ public class SwerveSubsystem extends SubsystemBase {
     private static final Translation2d backLeftLocation = new Translation2d(-RobotConstants.width/2, RobotConstants.length/2);
     private static final Translation2d backRightLocation = new Translation2d(-RobotConstants.width/2, -RobotConstants.length/2);
             
-    private final SwerveModuleKraken frontLeftModule = new SwerveModuleKraken(MotorConstants.kFrontLeftDriveMotorDeviceId, MotorConstants.kFrontLeftAngleMotorDeviceId, frontLeftLocation, EncoderConfig.FRONT_LEFT);
-    private final SwerveModuleKraken frontRightModule = new SwerveModuleKraken(MotorConstants.kFrontRightDriveMotorDeviceId, MotorConstants.kFrontRightAngleMotorDeviceId, frontRightLocation, EncoderConfig.FRONT_RIGHT);
-    private final SwerveModuleKraken backLeftModule = new SwerveModuleKraken(MotorConstants.kBackLeftDriveMotorDeviceId, MotorConstants.kBackLeftAngleMotorDeviceId, backLeftLocation, EncoderConfig.BACK_LEFT);
-    private final SwerveModuleKraken backRightModule = new SwerveModuleKraken(MotorConstants.kBackRightDriveMotorDeviceId, MotorConstants.kBackRightAngleMotorDeviceId, backRightLocation, EncoderConfig.BACK_RIGHT); 
+    private final SwerveModule frontLeftModule = new SwerveModule(MotorConstants.kFrontLeftDriveMotorDeviceId, MotorConstants.kFrontLeftAngleMotorDeviceId, frontLeftLocation, EncoderConfig.FRONT_LEFT);
+    private final SwerveModule frontRightModule = new SwerveModule(MotorConstants.kFrontRightDriveMotorDeviceId, MotorConstants.kFrontRightAngleMotorDeviceId, frontRightLocation, EncoderConfig.FRONT_RIGHT);
+    private final SwerveModule backLeftModule = new SwerveModule(MotorConstants.kBackLeftDriveMotorDeviceId, MotorConstants.kBackLeftAngleMotorDeviceId, backLeftLocation, EncoderConfig.BACK_LEFT);
+    private final SwerveModule backRightModule = new SwerveModule(MotorConstants.kBackRightDriveMotorDeviceId, MotorConstants.kBackRightAngleMotorDeviceId, backRightLocation, EncoderConfig.BACK_RIGHT); 
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
 
@@ -73,5 +73,45 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void updateOdometer() {
         odometer.update(getGyroAngle(), getModulePositions());
+    }
+
+    // OTHER
+    public void spinDriveMotors() {
+        frontLeftModule.setDriveMotorSpeed(0.05);
+        frontRightModule.setDriveMotorSpeed(0.05);
+        backLeftModule.setDriveMotorSpeed(0.05);
+        backRightModule.setDriveMotorSpeed(0.05);
+    }
+
+    public void spinAngleMotors() {
+        frontLeftModule.setAngleMotorSpeed(0.05);
+        frontRightModule.setAngleMotorSpeed(0.05);
+        backLeftModule.setAngleMotorSpeed(0.05);
+        backRightModule.setAngleMotorSpeed(0.05);
+    }
+
+    // print
+    public void printEncoderValues() {
+        System.out.println("Angle Encoder Positions");
+        frontLeftModule.printEncoderPositions("FL");
+        frontRightModule.printEncoderPositions("FR");
+        backLeftModule.printEncoderPositions("BL");
+        backRightModule.printEncoderPositions("BR");
+    }
+
+    public void printDriveEncoderValues() {
+        System.out.println("Drive Encoder Positions");
+        frontLeftModule.printDriveEncoderValue("FL");
+        frontRightModule.printDriveEncoderValue("FR");
+        backLeftModule.printDriveEncoderValue("BL");
+        backRightModule.printDriveEncoderValue("BR");
+    }
+
+    public void printGyroValue() {
+        System.out.println("Gyro Value: " + getGyroAngle());
+    }
+
+    public void printOdometerPose() {
+        System.out.println("Odometer Pose: " + getPose());
     }
 }
