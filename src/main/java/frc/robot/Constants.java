@@ -23,6 +23,15 @@ public final class Constants {
 
   public static class DriveConstants {
     public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(16);
+    public static enum DriveType {
+      ARCADE,
+      SWERVE, 
+      DRIVE, // spins the drive motors // used to determine direction of drive motors
+      SPIN, // spins the angle motors // used to determine direction of angle motors
+      TEST, // drive is disabled
+      ALIGN; // aligns all wheels to be straight forward
+    }
+    public static final DriveType driveType = DriveType.SWERVE;
   }
 
   public static class SwerveConstants {
@@ -57,6 +66,7 @@ public final class Constants {
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
   }
 
   public static class AbsoluteEncoderConstants {
@@ -79,14 +89,30 @@ public final class Constants {
   }
 
   public static class MotorConstants {
-    public static final int kIntakeDeployMotorDeviceId = 16;
-    public static final int kIntakeRollerMotorDeviceId = 9;
-    public static final int kIntakeIndexMotorDeviceId = 15; 
+    public static final int kArmServoChannel = 15;
+    public static final int kWristServoChannel = 16;
+    public static final int kIntakeMotorDeviceId = 18;
   }
 
   public static class IntakeConstants {
-    public static final double kDeployPosition = 12;
-    public static final double kRetractPosition = 0;
-    public static final double kP = 0.04;
+    public enum IntakeState {
+      GroundIntake(0, 0), 
+      SourceIntake(45, 0), 
+      CoralScore(45, 90), 
+      Stow(90, 90);
+  
+      public final double armAngle;
+      public final double wristAngle;
+  
+      private IntakeState(double armAngle, double wristAngle) {
+        this.armAngle = armAngle;
+        this.wristAngle = wristAngle;
+      }
+    } 
+
+    // Placeholder Constants if needed, will delete later if not needed
+    public static class ElevatorConstants {
+        public static final int kLimitSwitchChannel = 1;
+    }
   }
 }

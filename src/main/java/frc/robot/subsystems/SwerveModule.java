@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.hardware.AbsoluteEncoder;
+import frc.robot.hardware.Motor;
 import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 
 public class SwerveModule {

@@ -1,26 +1,16 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.Controller;
+import frc.robot.Controller.DriverController;
+import frc.robot.Constants.DriveConstants;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class DriveCommand extends Command {
-    private enum DriveType {
-        ARCADE, 
-        SWERVE, 
-        DRIVE, // spins the drive motors // used to determine direction of drive motors
-        SPIN, // spins the angle motors // used to determine direction of angle motors
-        TEST,
-        ALIGN;
-    }
-
     private final DriveSubsystem driveSubsystem;
-    private final Controller controller;
+    private final DriverController controller;
 
-    private final DriveType driveType = DriveType.SWERVE;
-
-    public DriveCommand(DriveSubsystem subsystem, Controller controller) {
+    public DriveCommand(DriveSubsystem subsystem, DriverController controller) {
         driveSubsystem = subsystem;
         this.controller = controller;
         addRequirements(driveSubsystem);
@@ -33,7 +23,7 @@ public class DriveCommand extends Command {
 
     @Override
     public void execute() {
-        switch (driveType) {
+        switch (DriveConstants.driveType) {
             case ARCADE:
                 driveSubsystem.arcadeDrive(getLeftStickY(), getRightStickX());
                 break;
