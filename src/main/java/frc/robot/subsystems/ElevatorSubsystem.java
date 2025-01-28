@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -34,8 +34,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final SparkMax leftElevatorMotor = new SparkMax(1, MotorType.kBrushless);
   private final SparkMax rightElevatorMotor = new SparkMax(2, MotorType.kBrushless);
 
-  private final RelativeEncoder leftMotorEncoder = leftElevatorMotor.getEncoder();
-  private final RelativeEncoder rightMotorEncoder = rightElevatorMotor.getEncoder();
+  private final AbsoluteEncoder leftMotorEncoder = leftElevatorMotor.getAbsoluteEncoder();
+  private final AbsoluteEncoder rightMotorEncoder = rightElevatorMotor.getAbsoluteEncoder();
 
   private final PIDController controller = new PIDController(0.1, 0, 0);
 
