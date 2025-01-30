@@ -19,9 +19,6 @@ public class SwerveModuleSparkMax {
 
     public SwerveModuleSparkMax(int driveMotorDeviceId, int angleMotorDeviceId, EncoderConfig config) {
         driveMotor = new SparkMaxMotor(driveMotorDeviceId, false, false);
-        
-        // option 1: true, true
-        // option 2: false, false
         angleMotor = new SparkMaxMotor(angleMotorDeviceId, true, true);
 
         wheelAngleAbsoluteEncoder = new AbsoluteEncoder(config, SensorDirectionValue.CounterClockwise_Positive);

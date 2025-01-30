@@ -23,6 +23,8 @@ public class SwerveModule {
 
     public SwerveModule(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig config) {
         driveMotor = new KrakenMotor(driveMotorDeviceId, false, false);
+        
+        // option 1: true, true // option 2: false, false
         angleMotor = new KrakenMotor(angleMotorDeviceId, false, false);
 
         double unnormalizedTurnAngleRadians = (Math.PI / 2) - DriveUtils.getAngleRadiansFromComponents(location.getY(), location.getX());

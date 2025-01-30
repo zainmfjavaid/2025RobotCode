@@ -28,10 +28,10 @@ public class TeleopDriveCommand extends Command {
             case SWERVE:
                 swerveSubsystem.swerveDriveTeleop(controller);
                 break;
-            case DRIVE:
+            case SPINDRIVE:
                 swerveSubsystem.spinDriveMotors();
                 break;
-            case ROTATE:
+            case SPINANGLE:
                 swerveSubsystem.spinAngleMotors();
                 break;
             case ALIGN:

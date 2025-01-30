@@ -33,8 +33,8 @@ public final class Constants {
     public static enum DriveType {
       ARCADE, 
       SWERVE, 
-      DRIVE, // spins the drive motors // used to determine direction of drive motors
-      ROTATE, // spins the angle motors // used to determine direction of angle motors
+      SPINDRIVE, // spins the drive motors // used to determine direction of drive motors
+      SPINANGLE, // spins the angle motors // used to determine direction of angle motors
       ALIGN,
       TEST;
     }

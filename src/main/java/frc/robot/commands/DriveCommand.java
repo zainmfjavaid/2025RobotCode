@@ -39,10 +39,10 @@ public class DriveCommand extends Command {
       case SWERVE:
         driveSubsystem.swerveDriveTeleopRelativeSpeeds(getLeftStickX(), getLeftStickY(), controller.getRightStickX());
         break;
-      case DRIVE:
+      case SPINDRIVE:
         driveSubsystem.drive();
         break;
-      case ROTATE:
+      case SPINANGLE:
         driveSubsystem.spin();
         break;
       case ALIGN:
