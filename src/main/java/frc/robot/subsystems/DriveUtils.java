@@ -40,27 +40,14 @@ public class DriveUtils {
         return speed;
     }
 
-    /**
-     * Optimize the error so that the motor moves the shorter direction
-     * If the error is greater than pi, the other direction is shorter, so flip the angle
-     * @param errorRadians the difference from the desired angle and the current angle
-     * @return the optimized error
-     */
-    public static double optimizeErrorRadians(double errorRadians) {
-        return errorRadians > Math.PI ? errorRadians = -(Constants.kTau - errorRadians) : errorRadians;
-    }
-
-     /**
-     * Convert the angle to be between -pi and pi
-     * @param angleRadians the unnormalized angle radians
-     * @return the normalized angle radians
-     */
+    // Convert to between -pi and pi
     public static double normalizeAngleRadiansSigned(double angleRadians) {
         while (angleRadians < -Math.PI || angleRadians > Math.PI) {
             angleRadians += angleRadians < -Math.PI ? Constants.kTau : -Constants.kTau;
         }
         return angleRadians;
     }
+    // Convert to between 0 and 2pi
     public static double normalizeAngleRadiansUnsigned(double angleRadians) {
         while (angleRadians < 0 || angleRadians > Constants.kTau) {
             angleRadians += angleRadians < 0 ? Constants.kTau : -Constants.kTau;
