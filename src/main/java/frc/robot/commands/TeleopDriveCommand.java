@@ -2,16 +2,17 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.hardware.Controller;
+import frc.robot.hardware.Controller.DriverController;
+
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class TeleopDriveCommand extends Command {
     private final SwerveSubsystem swerveSubsystem;
-    private final Controller controller;
+    private final DriverController driverController;
 
-    public TeleopDriveCommand(SwerveSubsystem swerveSubsystem, Controller controller) {
+    public TeleopDriveCommand(SwerveSubsystem swerveSubsystem, DriverController driverController) {
         this.swerveSubsystem = swerveSubsystem;
-        this.controller = controller;
+        this.driverController = driverController;
         addRequirements(swerveSubsystem);
     }
 
@@ -26,7 +27,7 @@ public class TeleopDriveCommand extends Command {
             case ARCADE:
                 break;
             case SWERVE:
-                swerveSubsystem.swerveDriveTeleop(controller);
+                swerveSubsystem.swerveDriveTeleop(driverController);
                 break;
             case SPINDRIVE:
                 swerveSubsystem.spinDriveMotors(0.05);

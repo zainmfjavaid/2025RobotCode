@@ -6,10 +6,9 @@ package frc.robot;
 
 import java.util.List;
 
-import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.AutoSwerveConstants;
 
-import frc.robot.hardware.Controller;
+import frc.robot.hardware.Controller.DriverController;
 
 import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.commands.AutoDriveCommand;
@@ -17,6 +16,7 @@ import frc.robot.commands.AutoDriveCommand;
 import frc.robot.subsystems.SwerveSubsystem;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -34,27 +34,25 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
  */
 
 public class RobotContainer {
-    // The robot's subsystems and commands are defined here...
-    private final Controller controller = new Controller(OperatorConstants.kDriverControllerPort);
+    private final DriverController driverController = new DriverController();
 
-    // private final DriveSubsystem driveSubsystem = new DriveSubsystem();
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, controller));
+        swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
         configureBindings();
     }
 
     private void configureBindings() { 
         // Test
-        // controller.getButton(Button.X).onTrue(new InstantCommand(() -> driveSubsystem.printEncoderValues()));
-        // controller.getButton(Button.A).onTrue(new InstantCommand(() -> driveSubsystem.printGyroValue()));
-        // controller.getButton(Button.Y).onTrue(new InstantCommand(() -> controller.printJoystickAxes()));
-        // controller.getButton(Button.B).onTrue(new InstantCommand(() -> driveSubsystem.printOdometerPose()));
+        driverController.getButton(DriverController.Button.X).onTrue(new InstantCommand(() -> swerveSubsystem.printEncoderValues()));
+        driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(() -> swerveSubsystem.printGyroValue()));
+        driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(() -> driverController.printJoystickAxes()));
+        driverController.getButton(DriverController.Button.B).onTrue(new InstantCommand(() -> swerveSubsystem.printOdometerPose()));
 
         // Drive
-        // controller.getButton(Button.Start).onTrue(new InstantCommand(() -> driveSubsystem.reset()));
+        driverController.getButton(DriverController.Button.Start).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
     }
 
     public Command getAutonomousCommand() {

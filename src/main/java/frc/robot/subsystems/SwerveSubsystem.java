@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
-import frc.robot.hardware.Controller;
+import frc.robot.hardware.Controller.DriverController;
 import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -40,10 +40,10 @@ public class SwerveSubsystem extends SubsystemBase {
         backRightModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
     }
 
-    public void swerveDriveTeleop(Controller controller) {
-        double longitudinalSpeedMetersPerSecond = controller.getLeftStickY() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
-        double lateralSpeedMetersPerSecond = controller.getLeftStickX() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
-        double rotationSpeedRadiansPerSecond = controller.getRightStickX() * TeleopSwerveConstants.kMaxRotationSpeedRadiansPerSecond;
+    public void swerveDriveTeleop(DriverController driveController) {
+        double longitudinalSpeedMetersPerSecond = driveController.getLeftStickY() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
+        double lateralSpeedMetersPerSecond = driveController.getLeftStickX() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
+        double rotationSpeedRadiansPerSecond = driveController.getRightStickX() * TeleopSwerveConstants.kMaxRotationSpeedRadiansPerSecond;
         setModuleStates(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
     }
 
@@ -69,6 +69,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void resetOdometer() {
         odometer.resetPosition(getGyroAngle(), getModulePositions(), new Pose2d(0, 0, getGyroAngle()));
+    }
+
+    public void resetGyroAndOdometer() {
+        resetGyro();
+        resetOdometer();
     }
 
     public void updateOdometer() {
