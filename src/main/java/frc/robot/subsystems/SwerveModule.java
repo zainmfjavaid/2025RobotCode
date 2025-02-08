@@ -64,8 +64,8 @@ public class SwerveModule {
         driveMotor.set(DriveUtils.normalizeSpeed(speedMetersPerSecond / DriveConstants.kMaxDriveSpeedMetersPerSecond));
     }
 
-    public void setAngleMotorSpeed(double speedMetersPerSecond) {
-        angleMotor.set(DriveUtils.normalizeSpeed(speedMetersPerSecond / TeleopSwerveConstants.kMaxRotationSpeedRadiansPerSecond));
+    public void setAngleMotorSpeed(double speedRadiansPerSecond) {
+        angleMotor.set(DriveUtils.normalizeSpeed(speedRadiansPerSecond / SwerveConstants.kMaxRotationSpeedRadiansPerSecond));
     }
 
     public void resetEncoders() {

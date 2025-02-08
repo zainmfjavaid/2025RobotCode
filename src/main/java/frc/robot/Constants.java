@@ -27,7 +27,7 @@ public final class Constants {
   }
 
   public static class DriveConstants {
-    public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(16);
+    public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(16); // not exact
     public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 2;
 
     public static enum DriveType {
@@ -47,6 +47,9 @@ public final class Constants {
 
     public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5);
     public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
+
+    // calculate this from max drive speed // use rotational kinematics
+    public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 2; // not exact
   } 
 
   public static class TeleopSwerveConstants {
