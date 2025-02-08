@@ -4,7 +4,6 @@ import frc.robot.hardware.KrakenMotor;
 import frc.robot.hardware.AbsoluteEncoder;
 import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
 
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -35,37 +34,39 @@ public class SwerveModule {
         resetEncoders();
     }
 
-    public void setState(double robotLongitundalSpeed, double robotLateralSpeed, double robotRotationSpeed) {
-        // speeds
-        double longitundalSpeed = robotLongitundalSpeed + robotRotationSpeed * Math.sin(turnAngleRadians);
-        double lateralSpeed = robotLateralSpeed + robotRotationSpeed * Math.cos(turnAngleRadians);
+    public void setState(double robotLongitudinalSpeedMetersPerSecond, double robotLateralSpeedMetersPerSecond, double robotRotationSpeedRadiansPerSecond) {
+        double rotationSpeedMetersPerSecond = robotRotationSpeedRadiansPerSecond / DriveConstants.kMaxRotationSpeedRadiansPerSecond * DriveConstants.kMaxWheelDriveSpeedMetersPerSecond;
         
-        double driveMotorSpeed = Math.hypot(lateralSpeed, longitundalSpeed);
+        double longitudinalSpeedMetersPerSecond = robotLongitudinalSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.sin(turnAngleRadians);
+        double lateralSpeedMetersPerSecond = robotLateralSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.cos(turnAngleRadians);
+
+        double wheelDriveSpeedMetersPerSecond = Math.hypot(lateralSpeedMetersPerSecond, longitudinalSpeedMetersPerSecond);
         
-        // angles
-        double desiredWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.getAngleRadiansFromComponents(longitundalSpeed, lateralSpeed));
+        // angles in radians
+        double desiredWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.getAngleRadiansFromComponents(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond));
         double currentWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.angleMotorToWheel(angleMotor.getPositionRadians()));
-        
-        double wheelErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
+
+        double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
         
         // if greater than 90 deg, add 180 deg and flip drive motor direction
-        if (Math.abs(wheelErrorRadians) > Math.PI / 2) {
-            wheelErrorRadians = DriveUtils.normalizeAngleRadiansSigned(wheelErrorRadians + Math.PI);
-            driveMotorSpeed = -driveMotorSpeed;
+        if (Math.abs(wheelAngleErrorRadians) > Math.PI / 2) {
+            wheelAngleErrorRadians = DriveUtils.normalizeAngleRadiansSigned(wheelAngleErrorRadians + Math.PI);
+            wheelDriveSpeedMetersPerSecond = -wheelDriveSpeedMetersPerSecond;
         }
         
-        double wheelAngleSpeed = TeleopSwerveConstants.kRotationController.calculate(currentWheelAngleRadians, desiredWheelAngleRadians);
-        setAngleMotorSpeed(DriveUtils.angleWheelToMotor(wheelAngleSpeed));
-
-        setDriveMotorSpeed(driveMotorSpeed);
+        double wheelAngleSpeedRadiansPerSecond = TeleopSwerveConstants.kRotationController.calculate(currentWheelAngleRadians, desiredWheelAngleRadians);
+        double angleMotorRelativeSpeed = wheelAngleSpeedRadiansPerSecond / DriveConstants.kMaxWheelAngleSpeedRadiansPerSecond;
+        setAngleMotorRelativeSpeed(angleMotorRelativeSpeed);
+        
+        setDriveMotorRelativeSpeed(wheelDriveSpeedMetersPerSecond / DriveConstants.kMaxWheelDriveSpeedMetersPerSecond);
     }
 
-    public void setDriveMotorSpeed(double speedMetersPerSecond) {
-        driveMotor.set(DriveUtils.normalizeSpeed(speedMetersPerSecond / DriveConstants.kMaxDriveSpeedMetersPerSecond));
+    public void setDriveMotorRelativeSpeed(double relativeSpeed) {
+        driveMotor.set(relativeSpeed);
     }
 
-    public void setAngleMotorSpeed(double speedRadiansPerSecond) {
-        angleMotor.set(DriveUtils.normalizeSpeed(speedRadiansPerSecond / SwerveConstants.kMaxRotationSpeedRadiansPerSecond));
+    public void setAngleMotorRelativeSpeed(double relativeSpeed) {
+        angleMotor.set(relativeSpeed);
     }
 
     public void resetEncoders() {
@@ -74,7 +75,7 @@ public class SwerveModule {
     }
 
     public SwerveModulePosition getPosition() {
-        double distanceMeters = DriveUtils.driveMotorToWheel(driveMotor.getPositionRadians()) * SwerveConstants.kWheelRadiusMeters;
+        double distanceMeters = DriveUtils.driveMotorToWheel(driveMotor.getPositionRadians()) * DriveConstants.kWheelRadiusMeters;
         Rotation2d angle = Rotation2d.fromRadians(DriveUtils.angleMotorToWheel(angleMotor.getPositionRadians()));
         return new SwerveModulePosition(distanceMeters, angle);
     }

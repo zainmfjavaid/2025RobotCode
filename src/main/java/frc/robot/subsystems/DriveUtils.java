@@ -1,22 +1,22 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
 
 public class DriveUtils {
     public static double angleWheelToMotor(double value) {
-        return value / SwerveConstants.kAngleMotorGearRatio;
+        return value / DriveConstants.kAngleMotorGearRatio;
     }
     public static double angleMotorToWheel(double value) {
-        return value * SwerveConstants.kAngleMotorGearRatio;
+        return value * DriveConstants.kAngleMotorGearRatio;
     }
 
     public static double driveWheelToMotor(double value) {
-        return value / SwerveConstants.kDriveMotorGearRatio;
+        return value / DriveConstants.kDriveMotorGearRatio;
     }
     public static double driveMotorToWheel(double value) {
-        return value * SwerveConstants.kDriveMotorGearRatio;
+        return value * DriveConstants.kDriveMotorGearRatio;
     }
 
     public static double rotationsToRadians(double rotations) {

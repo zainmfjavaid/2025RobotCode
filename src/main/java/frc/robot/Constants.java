@@ -4,9 +4,11 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
+
+import frc.robot.subsystems.DriveUtils;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -22,38 +24,45 @@ public final class Constants {
   public static final double kPeriodicDuration = 0.03; // 30 milliseconds // unused
 
   public static class RobotConstants {
-    public static final double width = Units.inchesToMeters(19.75);
-    public static final double length = Units.inchesToMeters(19.75);
+    public static final double kWidthMeters = Units.inchesToMeters(19.75);
+    public static final double kLengthMeters = Units.inchesToMeters(19.75);
+
+    public static final double kKrakenMotorMaxRotationsPerMinute = 6000;
+    public static final double kKrakenMotorMaxRadiansPerSecond = kKrakenMotorMaxRotationsPerMinute / 60 * kTau;
   }
-
+  
   public static class DriveConstants {
-    public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(16); // not exact
-    public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 2;
-
     public static enum DriveType {
       ARCADE, 
       SWERVE, 
       SPINDRIVE, // spins the drive motors // used to determine direction of drive motors
       SPINANGLE, // spins the angle motors // used to determine direction of angle motors
+      SPIN, // set rotation speed
+      DRIVE, // set longitudinal speed
       ALIGN,
       TEST;
     }
-    public static final DriveType driveType = DriveType.SWERVE;
-  }
-
-  public static class SwerveConstants {
-    public static final double kAngleMotorGearRatio = (14.0 / 50.0) * (10.0 / 60.0);
-    public static final double kDriveMotorGearRatio = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
-
+    public static final DriveType driveType = DriveType.DRIVE;
+    
     public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5);
     public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
 
-    // calculate this from max drive speed // use rotational kinematics
-    public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 2; // not exact
-  } 
+    public static final double kDriveMotorGearRatio = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
+    public static final double kAngleMotorGearRatio = (14.0 / 50.0) * (10.0 / 60.0);
+
+    private static final double kMaxWheelDriveSpeedRadiansPerSecond = DriveUtils.driveMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
+    public static final double kMaxWheelAngleSpeedRadiansPerSecond = DriveUtils.angleMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
+
+    public static final double kMaxWheelDriveSpeedMetersPerSecond = kMaxWheelDriveSpeedRadiansPerSecond * kWheelRadiusMeters;
+    // public static final double kMaxDriveSpeedMetersPerSecond = kMaxWheelDriveSpeedMetersPerSecond;
+
+    private static final double kRotationRadiusMeters = Math.hypot(RobotConstants.kWidthMeters / 2, RobotConstants.kLengthMeters / 2);
+    public static final double kMaxRotationSpeedRadiansPerSecond = kMaxWheelDriveSpeedMetersPerSecond / kRotationRadiusMeters;
+  }
 
   public static class TeleopSwerveConstants {
     public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(2);
+
     public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 6;
 
     public static final PIDController kRotationController = new PIDController(0.1 / Math.PI, 0, 0);

@@ -18,10 +18,10 @@ import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 import com.kauailabs.navx.frc.AHRS;
 
 public class SwerveSubsystem extends SubsystemBase {
-    private static final Translation2d frontLeftLocation = new Translation2d(RobotConstants.width/2, RobotConstants.length/2);
-    private static final Translation2d frontRightLocation = new Translation2d(RobotConstants.width/2, -RobotConstants.length/2);
-    private static final Translation2d backLeftLocation = new Translation2d(-RobotConstants.width/2, RobotConstants.length/2);
-    private static final Translation2d backRightLocation = new Translation2d(-RobotConstants.width/2, -RobotConstants.length/2);
+    private static final Translation2d frontLeftLocation = new Translation2d(RobotConstants.kWidthMeters/2, RobotConstants.kLengthMeters/2);
+    private static final Translation2d frontRightLocation = new Translation2d(RobotConstants.kWidthMeters/2, -RobotConstants.kLengthMeters/2);
+    private static final Translation2d backLeftLocation = new Translation2d(-RobotConstants.kWidthMeters/2, RobotConstants.kLengthMeters/2);
+    private static final Translation2d backRightLocation = new Translation2d(-RobotConstants.kWidthMeters/2, -RobotConstants.kLengthMeters/2);
             
     private final SwerveModule frontLeftModule = new SwerveModule(MotorConstants.kFrontLeftDriveMotorDeviceId, MotorConstants.kFrontLeftAngleMotorDeviceId, frontLeftLocation, EncoderConfig.FRONT_LEFT);
     private final SwerveModule frontRightModule = new SwerveModule(MotorConstants.kFrontRightDriveMotorDeviceId, MotorConstants.kFrontRightAngleMotorDeviceId, frontRightLocation, EncoderConfig.FRONT_RIGHT);
@@ -33,18 +33,18 @@ public class SwerveSubsystem extends SubsystemBase {
     private final AHRS gyro = new AHRS(Port.kUSB);
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(getKinematics(), new Rotation2d(0), getModulePositions());
 
-    public void setModuleStates(double longitudinalSpeed, double lateralSpeed, double rotationSpeed) {
-        frontLeftModule.setState(longitudinalSpeed, lateralSpeed, rotationSpeed);
-        frontRightModule.setState(longitudinalSpeed, lateralSpeed, rotationSpeed);
-        backLeftModule.setState(longitudinalSpeed, lateralSpeed, rotationSpeed);
-        backRightModule.setState(longitudinalSpeed, lateralSpeed, rotationSpeed);
+    public void setModuleStates(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
+        frontLeftModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
+        frontRightModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
+        backLeftModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
+        backRightModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
     }
 
     public void swerveDriveTeleop(Controller controller) {
-        double longitudinalSpeed = controller.getLeftStickY() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
-        double lateralSpeed = controller.getLeftStickX() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
-        double rotationSpeed = controller.getRightStickX() * TeleopSwerveConstants.kMaxRotationSpeedRadiansPerSecond;
-        setModuleStates(longitudinalSpeed, lateralSpeed, rotationSpeed);
+        double longitudinalSpeedMetersPerSecond = controller.getLeftStickY() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
+        double lateralSpeedMetersPerSecond = controller.getLeftStickX() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
+        double rotationSpeedRadiansPerSecond = controller.getRightStickX() * TeleopSwerveConstants.kMaxRotationSpeedRadiansPerSecond;
+        setModuleStates(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
     }
 
     public SwerveDriveKinematics getKinematics() {
@@ -76,18 +76,26 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     // OTHER
-    public void spinDriveMotors() {
-        frontLeftModule.setDriveMotorSpeed(0.05);
-        frontRightModule.setDriveMotorSpeed(0.05);
-        backLeftModule.setDriveMotorSpeed(0.05);
-        backRightModule.setDriveMotorSpeed(0.05);
+    public void spinDriveMotors(double speed) {
+        frontLeftModule.setDriveMotorRelativeSpeed(speed);
+        frontRightModule.setDriveMotorRelativeSpeed(speed);
+        backLeftModule.setDriveMotorRelativeSpeed(speed);
+        backRightModule.setDriveMotorRelativeSpeed(speed);
     }
 
-    public void spinAngleMotors() {
-        frontLeftModule.setAngleMotorSpeed(0.05);
-        frontRightModule.setAngleMotorSpeed(0.05);
-        backLeftModule.setAngleMotorSpeed(0.05);
-        backRightModule.setAngleMotorSpeed(0.05);
+    public void spinAngleMotors(double speed) {
+        frontLeftModule.setDriveMotorRelativeSpeed(speed);
+        frontRightModule.setDriveMotorRelativeSpeed(speed);
+        backLeftModule.setDriveMotorRelativeSpeed(speed);
+        backRightModule.setDriveMotorRelativeSpeed(speed);
+    }
+
+    public void drive(double longitudinalSpeed) {
+        setModuleStates(longitudinalSpeed, 0, 0);
+    }
+
+    public void spin(double speedRadiansPerSecond) {
+        setModuleStates(0, 0, speedRadiansPerSecond);
     }
 
     // print

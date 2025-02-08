@@ -29,16 +29,23 @@ public class TeleopDriveCommand extends Command {
                 swerveSubsystem.swerveDriveTeleop(controller);
                 break;
             case SPINDRIVE:
-                swerveSubsystem.spinDriveMotors();
+                swerveSubsystem.spinDriveMotors(0.05);
                 break;
             case SPINANGLE:
-                swerveSubsystem.spinAngleMotors();
+                swerveSubsystem.spinAngleMotors(0.05);
+                break;
+            case SPIN:
+                swerveSubsystem.spin(1);
+                break;
+            case DRIVE:
+                swerveSubsystem.drive(1);
                 break;
             case ALIGN:
                 break;
             default:
                 break;
         }
+        swerveSubsystem.updateOdometer();
     } 
 
     @Override
