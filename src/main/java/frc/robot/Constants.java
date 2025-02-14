@@ -42,7 +42,7 @@ public final class Constants {
       ALIGN,
       TEST;
     }
-    public static final DriveType driveType = DriveType.DRIVE;
+    public static final DriveType driveType = DriveType.SWERVE;
     
     public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5);
     public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
@@ -62,9 +62,9 @@ public final class Constants {
   public static class TeleopSwerveConstants {
     public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(2);
 
-    public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 6;
+    public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 2;
 
-    public static final PIDController kRotationController = new PIDController(0.1 / Math.PI, 0, 0);
+    public static final PIDController kRotationController = new PIDController(0.8, 0, 0);
   }
 
   public static class AutoSwerveConstants {
@@ -97,10 +97,10 @@ public final class Constants {
      */
 
     // possibly fix these
-    public static final double kFrontLeftOffset = -1.7441 / Constants.kTau;
-    public static final double kFrontRightOffset = 2.0678 / Constants.kTau;
-    public static final double kBackLeftOffset = (-2.0801 + Math.PI) / Constants.kTau;
-    public static final double kBackRightOffset = 2.8041 / Constants.kTau;
+    public static final double kFrontLeftOffset = 0;
+    public static final double kFrontRightOffset = 0;
+    public static final double kBackLeftOffset = 0;
+    public static final double kBackRightOffset = 0;
 
     public static final double kAbsoluteSensorDiscontinuityPoint = 0.5;
   }
@@ -110,14 +110,14 @@ public final class Constants {
     public static final int kIntakeRollerMotorDeviceId = 9;
     public static final int kIntakeIndexMotorDeviceId = 15; 
 
-    public static final int kFrontLeftDriveMotorDeviceId = 5;
-    public static final int kFrontLeftAngleMotorDeviceId = 6;
-    public static final int kFrontRightDriveMotorDeviceId = 7;
-    public static final int kFrontRightAngleMotorDeviceId = 8;
-    public static final int kBackLeftDriveMotorDeviceId = 9;
-    public static final int kBackLeftAngleMotorDeviceId = 10;
-    public static final int kBackRightDriveMotorDeviceId = 11;
-    public static final int kBackRightAngleMotorDeviceId = 12;
+    public static final int kFrontLeftDriveMotorDeviceId = 1;
+    public static final int kFrontLeftAngleMotorDeviceId = 2;
+    public static final int kFrontRightDriveMotorDeviceId = 3;
+    public static final int kFrontRightAngleMotorDeviceId = 4;
+    public static final int kBackLeftDriveMotorDeviceId = 5;
+    public static final int kBackLeftAngleMotorDeviceId = 6;
+    public static final int kBackRightDriveMotorDeviceId = 8;
+    public static final int kBackRightAngleMotorDeviceId = 7;
   }
 
   public static class IntakeConstants {

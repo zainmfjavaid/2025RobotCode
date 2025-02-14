@@ -89,10 +89,10 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void spinAngleMotors(double speed) {
-        frontLeftModule.setDriveMotorRelativeSpeed(speed);
-        frontRightModule.setDriveMotorRelativeSpeed(speed);
-        backLeftModule.setDriveMotorRelativeSpeed(speed);
-        backRightModule.setDriveMotorRelativeSpeed(speed);
+        frontLeftModule.setAngleMotorRelativeSpeed(speed);
+        frontRightModule.setAngleMotorRelativeSpeed(speed);
+        backLeftModule.setAngleMotorRelativeSpeed(speed);
+        backRightModule.setAngleMotorRelativeSpeed(speed);
     }
 
     public void drive(double longitudinalSpeed) {
