@@ -10,7 +10,7 @@ public class KrakenMotor {
     private final boolean reverseEncoder;
 
     public KrakenMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
-        motor = new TalonFX(deviceId);
+        motor = new TalonFX(deviceId, "CANivore2158");
         this.reverseMotor = reverseMotor;
         this.reverseEncoder = reverseEncoder;
     }

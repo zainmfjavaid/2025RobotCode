@@ -22,8 +22,6 @@ public class SwerveModule {
 
     public SwerveModule(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig config) {
         driveMotor = new KrakenMotor(driveMotorDeviceId, false, false);
-        
-        // option 1: true, true // option 2: false, false
         angleMotor = new KrakenMotor(angleMotorDeviceId, false, false);
 
         double unnormalizedTurnAngleRadians = (Math.PI / 2) - DriveUtils.getAngleRadiansFromComponents(location.getY(), location.getX());
@@ -39,6 +37,7 @@ public class SwerveModule {
         
         double longitudinalSpeedMetersPerSecond = robotLongitudinalSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.sin(turnAngleRadians);
         double lateralSpeedMetersPerSecond = robotLateralSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.cos(turnAngleRadians);
+        System.out.println("A:" + longitudinalSpeedMetersPerSecond + " " + lateralSpeedMetersPerSecond);
 
         double wheelDriveSpeedMetersPerSecond = Math.hypot(lateralSpeedMetersPerSecond, longitudinalSpeedMetersPerSecond);
         
@@ -55,6 +54,9 @@ public class SwerveModule {
         }
         
         double wheelAngleSpeedRadiansPerSecond = TeleopSwerveConstants.kRotationController.calculate(currentWheelAngleRadians, desiredWheelAngleRadians);
+        
+        System.out.println("B: " + wheelAngleSpeedRadiansPerSecond + " " + DriveConstants.kMaxWheelAngleSpeedRadiansPerSecond);
+        
         double angleMotorRelativeSpeed = wheelAngleSpeedRadiansPerSecond / DriveConstants.kMaxWheelAngleSpeedRadiansPerSecond;
         setAngleMotorRelativeSpeed(angleMotorRelativeSpeed);
         
