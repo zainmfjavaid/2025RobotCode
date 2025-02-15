@@ -62,7 +62,7 @@ public final class Constants {
   public static class TeleopSwerveConstants {
     public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(2);
 
-    public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 2;
+    public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
 
     public static final PIDController kRotationController = new PIDController(0.8, 0, 0);
   }
@@ -87,20 +87,18 @@ public final class Constants {
   }
 
   public static class AbsoluteEncoderConstants {
-    /*
-     * HOW TO GET THE VALUES (this might not work)
-     * set the offsets to 0
-     * run the robot on arcade drive, and align the wheels so that they are all facing forward
-     * record the absolute encoder values
-     * set the offsets to the negative of the recorded values
-     * (To see the offsets, you have to run twice for some reason.)
-     */
+/*
+ * FL: RRot -1.73779296875, RRad -0.08109700520833334, ARot 0.0, ARad 0.0
+FR: RRot 11.640380859375, RRad 0.5432177734375, ARot -0.19140625, ARad -4.1015625
+BL: RRot 1.230224609375, RRad 0.057410481770833334, ARot 0.15185546875, ARad 3.254045758928571
+BR: RRot -17.4873046875, RRad -0.8160742187500001, ARot 0.208984375, ARad 4.478236607142857
 
-    // possibly fix these
+ */
+
     public static final double kFrontLeftOffset = 0;
-    public static final double kFrontRightOffset = 0;
-    public static final double kBackLeftOffset = 0;
-    public static final double kBackRightOffset = 0;
+    public static final double kFrontRightOffset = -0.19140625;
+    public static final double kBackLeftOffset = 0.15185546875;
+    public static final double kBackRightOffset = 0.208984375;
 
     public static final double kAbsoluteSensorDiscontinuityPoint = 0.5;
   }

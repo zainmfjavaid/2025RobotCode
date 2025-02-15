@@ -11,10 +11,10 @@ import frc.robot.Constants.AbsoluteEncoderConstants;
 public class AbsoluteEncoder {
     public enum EncoderConfig {
         // Modify these values
-        FRONT_LEFT(23, AbsoluteEncoderConstants.kFrontLeftOffset),
-        FRONT_RIGHT(24, AbsoluteEncoderConstants.kFrontRightOffset),
-        BACK_LEFT(25, AbsoluteEncoderConstants.kBackLeftOffset),
-        BACK_RIGHT(26, AbsoluteEncoderConstants.kBackRightOffset);
+        FRONT_LEFT(1, AbsoluteEncoderConstants.kFrontLeftOffset),
+        FRONT_RIGHT(2, AbsoluteEncoderConstants.kFrontRightOffset),
+        BACK_LEFT(3, AbsoluteEncoderConstants.kBackLeftOffset),
+        BACK_RIGHT(4, AbsoluteEncoderConstants.kBackRightOffset);
 
         private int deviceId;
         private double offset; // in wheel rotations // positive is counterclockwise
@@ -36,14 +36,14 @@ public class AbsoluteEncoder {
     private final CANcoder absoluteEncoder;
 
     public AbsoluteEncoder(EncoderConfig config, SensorDirectionValue directionValue) {
-        absoluteEncoder = new CANcoder(config.getDeviceId());
+        absoluteEncoder = new CANcoder(config.getDeviceId(), "rio");
 
         CANcoderConfiguration CANcoderConfig = new CANcoderConfiguration();
         MagnetSensorConfigs magnetSensorConfigs = new MagnetSensorConfigs();
 
         magnetSensorConfigs.withAbsoluteSensorDiscontinuityPoint(AbsoluteEncoderConstants.kAbsoluteSensorDiscontinuityPoint);
         magnetSensorConfigs.withSensorDirection(directionValue);
-        magnetSensorConfigs.withMagnetOffset(config.getOffset()); // don't flip offset because joystick is flipped, I think
+        magnetSensorConfigs.withMagnetOffset(-config.getOffset());
 
         CANcoderConfig.withMagnetSensor(magnetSensorConfigs);
         absoluteEncoder.getConfigurator().apply(CANcoderConfig);
