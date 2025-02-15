@@ -42,7 +42,7 @@ public final class Constants {
       ALIGN,
       TEST;
     }
-    public static final DriveType driveType = DriveType.SWERVE;
+    public static final DriveType driveType = DriveType.DRIVE;
     
     public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5);
     public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
@@ -64,7 +64,7 @@ public final class Constants {
 
     public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
 
-    public static final PIDController kRotationController = new PIDController(0.8, 0, 0);
+    public static final PIDController kRotationController = new PIDController(1, 0, 0);
   }
 
   public static class AutoSwerveConstants {
