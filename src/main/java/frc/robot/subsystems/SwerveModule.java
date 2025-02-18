@@ -22,14 +22,14 @@ public class SwerveModule {
 
     public SwerveModule(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig config) {
         driveMotor = new KrakenMotor(driveMotorDeviceId, false, false);
-        angleMotor = new KrakenMotor(angleMotorDeviceId, false, false);
+
+        // change the reverse motor and reverse encoder booleans if needed
+        angleMotor = new KrakenMotor(angleMotorDeviceId, true, true);
 
         double unnormalizedTurnAngleRadians = (Math.PI / 2) - DriveUtils.getAngleRadiansFromComponents(location.getY(), location.getX());
         turnAngleRadians = DriveUtils.normalizeAngleRadiansSigned(unnormalizedTurnAngleRadians);
         
         wheelAngleAbsoluteEncoder = new AbsoluteEncoder(config, SensorDirectionValue.CounterClockwise_Positive);
-
-        resetEncoders();
     }
 
     public void setState(double robotLongitudinalSpeedMetersPerSecond, double robotLateralSpeedMetersPerSecond, double robotRotationSpeedRadiansPerSecond) {
@@ -43,7 +43,7 @@ public class SwerveModule {
         
         // angles in radians
         double desiredWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.getAngleRadiansFromComponents(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond));
-        double currentWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.angleMotorToWheel(angleMotor.getPositionRadians()));
+        double currentWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(wheelAngleAbsoluteEncoder.getPositionRadians());
 
         double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
         

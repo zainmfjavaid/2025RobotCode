@@ -6,6 +6,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import frc.robot.Constants.AbsoluteEncoderConstants;
+import frc.robot.subsystems.DriveUtils;
 
 // Copied from 2024 Robot Code
 public class AbsoluteEncoder {
@@ -51,5 +52,9 @@ public class AbsoluteEncoder {
 
     public double getPositionRotations() {
         return absoluteEncoder.getAbsolutePosition().getValueAsDouble();
+    }
+
+    public double getPositionRadians() {
+        return DriveUtils.rotationsToRadians(getPositionRotations());
     }
 }
