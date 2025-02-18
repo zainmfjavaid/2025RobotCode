@@ -23,7 +23,7 @@ public class SwerveModule {
     public SwerveModule(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig config) {
         driveMotor = new KrakenMotor(driveMotorDeviceId, false, false);
 
-        // modify reverse motor and reverse encoder so that it matches direction of absolute encoder
+        // change the reverse motor and reverse encoder booleans if needed
         angleMotor = new KrakenMotor(angleMotorDeviceId, true, true);
 
         // supplement
@@ -44,9 +44,7 @@ public class SwerveModule {
         
         // angles in radians
         double desiredWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.getAngleRadiansFromComponents(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond));
-        // System.out.println(desiredWheelAngleRadians + " " + longitudinalSpeedMetersPerSecond + " " + lateralSpeedMetersPerSecond);
-        
-        double currentWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.angleMotorToWheel(angleMotor.getPositionRadians()));
+        double currentWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(wheelAngleAbsoluteEncoder.getPositionRadians());
 
         double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
         // if greater than 90 deg, add 180 deg and flip drive motor direction
@@ -73,7 +71,7 @@ public class SwerveModule {
 
     public void resetEncoders() {
         driveMotor.setEncoderPosition(0);
-        angleMotor.setEncoderPosition(DriveUtils.angleWheelToMotor(wheelAngleAbsoluteEncoder.getPositionRotations()));
+        // angleMotor.setEncoderPosition(DriveUtils.angleWheelToMotor(wheelAngleAbsoluteEncoder.getPositionRotations()));
     }
 
     public SwerveModulePosition getPosition() {
