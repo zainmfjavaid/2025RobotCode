@@ -42,7 +42,7 @@ public final class Constants {
       ALIGN,
       TEST;
     }
-    public static final DriveType driveType = DriveType.DRIVE;
+    public static final DriveType driveType = DriveType.SWERVE;
     
     public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5);
     public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
@@ -51,7 +51,11 @@ public final class Constants {
     public static final double kAngleMotorGearRatio = (14.0 / 50.0) * (10.0 / 60.0);
 
     private static final double kMaxWheelDriveSpeedRadiansPerSecond = DriveUtils.driveMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
+    
+    // ignore this - it doesn't work
     public static final double kMaxWheelAngleSpeedRadiansPerSecond = DriveUtils.angleMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
+    //
+
 
     public static final double kMaxWheelDriveSpeedMetersPerSecond = kMaxWheelDriveSpeedRadiansPerSecond * kWheelRadiusMeters;
 
@@ -64,7 +68,7 @@ public final class Constants {
 
     public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
 
-    public static final PIDController kRotationController = new PIDController(1, 0, 0);
+    public static final PIDController kRotationController = new PIDController(0.6, 0, 0);
   }
 
   public static class AutoSwerveConstants {
@@ -87,35 +91,31 @@ public final class Constants {
   }
 
   public static class AbsoluteEncoderConstants {
-/*
- * FL: RRot -1.73779296875, RRad -0.08109700520833334, ARot 0.0, ARad 0.0
-FR: RRot 11.640380859375, RRad 0.5432177734375, ARot -0.19140625, ARad -4.1015625
-BL: RRot 1.230224609375, RRad 0.057410481770833334, ARot 0.15185546875, ARad 3.254045758928571
-BR: RRot -17.4873046875, RRad -0.8160742187500001, ARot 0.208984375, ARad 4.478236607142857
+  /*
+  FL: RRot -0.0, RRad -0.0, ARot 0.288330078125, ARad 1.8116313104929422
+FR: RRot -0.0, RRad -0.0, ARot 0.4794921875, ARad 3.0127382674073995
+BL: RRot -0.0, RRad -0.0, ARot 0.396728515625, ARad 2.492718780314167
+BR: RRot -0.0, RRad -0.0, ARot -0.18994140625, ARad -1.193437052975029
 
- */
+  */
 
-    public static final double kFrontLeftOffset = 0;
-    public static final double kFrontRightOffset = -0.19140625;
-    public static final double kBackLeftOffset = 0.15185546875;
-    public static final double kBackRightOffset = 0.208984375;
+    public static final double kFrontLeftOffset = -(.288330078125);
+    public static final double kFrontRightOffset = -(.4794921875); // -(-0.19140625);
+    public static final double kBackLeftOffset = -(.396728515625); // -(0.15185546875);
+    public static final double kBackRightOffset = -(-.18994140625); // -(0.208984375);
 
     public static final double kAbsoluteSensorDiscontinuityPoint = 0.5;
   }
 
   public static class MotorConstants {
-    public static final int kIntakeDeployMotorDeviceId = 16;
-    public static final int kIntakeRollerMotorDeviceId = 9;
-    public static final int kIntakeIndexMotorDeviceId = 15; 
-
     public static final int kFrontLeftDriveMotorDeviceId = 1;
     public static final int kFrontLeftAngleMotorDeviceId = 2;
-    public static final int kFrontRightDriveMotorDeviceId = 3;
-    public static final int kFrontRightAngleMotorDeviceId = 4;
-    public static final int kBackLeftDriveMotorDeviceId = 5;
-    public static final int kBackLeftAngleMotorDeviceId = 6;
-    public static final int kBackRightDriveMotorDeviceId = 8;
-    public static final int kBackRightAngleMotorDeviceId = 7;
+    public static final int kFrontRightDriveMotorDeviceId = 8;
+    public static final int kFrontRightAngleMotorDeviceId = 7;
+    public static final int kBackLeftDriveMotorDeviceId = 3;
+    public static final int kBackLeftAngleMotorDeviceId = 4;
+    public static final int kBackRightDriveMotorDeviceId = 5;
+    public static final int kBackRightAngleMotorDeviceId = 6;
   }
 
   public static class IntakeConstants {

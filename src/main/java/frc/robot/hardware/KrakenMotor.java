@@ -15,9 +15,12 @@ public class KrakenMotor {
         this.reverseEncoder = reverseEncoder;
     }
 
+    public KrakenMotor(int deviceId, Boolean reverse) {
+        this(deviceId, reverse, reverse);
+    }
+
     public double getPositionRotations() {
-        double positionRotations = motor.getPosition().getValueAsDouble();
-        return reverseEncoder ? -positionRotations : positionRotations;
+        return reverseEncoder ? -motor.getPosition().getValueAsDouble() : motor.getPosition().getValueAsDouble();
     }
 
     public double getPositionRadians() {
@@ -28,7 +31,7 @@ public class KrakenMotor {
         motor.setPosition(reverseEncoder ? -position : position);
     }
 
-    public void set(double relativeSpeed) {
+    public void setRelativeSpeed(double relativeSpeed) {
         motor.set(reverseMotor ? -relativeSpeed : relativeSpeed);
     }
 }

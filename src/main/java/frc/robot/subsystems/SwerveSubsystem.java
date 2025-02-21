@@ -40,6 +40,28 @@ public class SwerveSubsystem extends SubsystemBase {
         backRightModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
     }
 
+    /*
+    make a method for field centric swerve
+
+    public void fieldCentricSwerve(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
+        Rotation2d gyroRotation = gyro.getRotation2d(); -- I don't what this measures exactly
+
+        suppose gyro rotation = 30 deg
+
+        OLD
+        longitudinal = 1
+        lateral = 0.5
+
+        NEW
+        longitudinal = figure this out
+        lateral = figure this out
+
+        based on this value, determine new longitudinal and lateral speeds
+
+        setModuleStates(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeed);
+    }
+    */
+
     public void swerveDriveTeleop(DriverController driveController) {
         double longitudinalSpeedMetersPerSecond = driveController.getLeftStickY() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
         double lateralSpeedMetersPerSecond = driveController.getLeftStickX() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
@@ -52,7 +74,12 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public SwerveModulePosition[] getModulePositions() {
-        return new SwerveModulePosition[] {frontLeftModule.getPosition(), frontRightModule.getPosition(), backLeftModule.getPosition(), backRightModule.getPosition()};
+        return new SwerveModulePosition[] {
+            frontLeftModule.getPosition(), 
+            frontRightModule.getPosition(), 
+            backLeftModule.getPosition(), 
+            backRightModule.getPosition()
+        };
     }
 
     public Rotation2d getGyroAngle() {

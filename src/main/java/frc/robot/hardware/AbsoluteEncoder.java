@@ -13,9 +13,9 @@ public class AbsoluteEncoder {
     public enum EncoderConfig {
         // Modify these values
         FRONT_LEFT(1, AbsoluteEncoderConstants.kFrontLeftOffset),
-        FRONT_RIGHT(2, AbsoluteEncoderConstants.kFrontRightOffset),
+        FRONT_RIGHT(4, AbsoluteEncoderConstants.kFrontRightOffset),
         BACK_LEFT(3, AbsoluteEncoderConstants.kBackLeftOffset),
-        BACK_RIGHT(4, AbsoluteEncoderConstants.kBackRightOffset);
+        BACK_RIGHT(2, AbsoluteEncoderConstants.kBackRightOffset);
 
         private int deviceId;
         private double offset; // in wheel rotations // positive is counterclockwise
@@ -44,9 +44,10 @@ public class AbsoluteEncoder {
 
         magnetSensorConfigs.withAbsoluteSensorDiscontinuityPoint(AbsoluteEncoderConstants.kAbsoluteSensorDiscontinuityPoint);
         magnetSensorConfigs.withSensorDirection(directionValue);
-        magnetSensorConfigs.withMagnetOffset(-config.getOffset());
+        magnetSensorConfigs.withMagnetOffset(config.getOffset());
 
         CANcoderConfig.withMagnetSensor(magnetSensorConfigs);
+
         absoluteEncoder.getConfigurator().apply(CANcoderConfig);
     }
 

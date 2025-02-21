@@ -12,6 +12,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
+// USES ABSOLUTE ENCODER
+
+// future update: make it so that it stays at last angle, when controller goes to 0
+
 public class SwerveModule {
     public final KrakenMotor driveMotor;
     public final KrakenMotor angleMotor;
@@ -23,11 +27,12 @@ public class SwerveModule {
     public SwerveModule(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig config) {
         driveMotor = new KrakenMotor(driveMotorDeviceId, false, false);
 
-        // change the reverse motor and reverse encoder booleans if needed
+        // reverse motor if needed to match direction of absolute encoder
+        // (reversing encoder doesn't matter because relative encoder is not used, but it would if it were)
         angleMotor = new KrakenMotor(angleMotorDeviceId, true, true);
 
         // supplement
-        double unnormalizedTurnAngleRadians = (Math.PI / 2) - DriveUtils.getAngleRadiansFromComponents(location.getY(), location.getX());
+        double unnormalizedTurnAngleRadians = DriveUtils.getAngleRadiansFromComponents(location.getX(), location.getY()) + Math.PI / 2;
         turnAngleRadians = DriveUtils.normalizeAngleRadiansSigned(unnormalizedTurnAngleRadians);
         
         wheelAngleAbsoluteEncoder = new AbsoluteEncoder(config, SensorDirectionValue.CounterClockwise_Positive);
@@ -35,38 +40,46 @@ public class SwerveModule {
         resetEncoders();
     }
 
-    public void setState(double robotLongitudinalSpeedMetersPerSecond, double robotLateralSpeedMetersPerSecond, double robotRotationSpeedRadiansPerSecond) {
+    public void setState(double robotLongitudinalSpeedMetersPerSecond, double robotLateralSpeedMetersPerSecond, double robotRotationSpeedRadiansPerSecond) {        
         double rotationSpeedMetersPerSecond = robotRotationSpeedRadiansPerSecond / DriveConstants.kMaxRotationSpeedRadiansPerSecond * DriveConstants.kMaxWheelDriveSpeedMetersPerSecond;
         
-        double longitudinalSpeedMetersPerSecond = robotLongitudinalSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.sin(turnAngleRadians);
-        double lateralSpeedMetersPerSecond = robotLateralSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.cos(turnAngleRadians);
-        double wheelDriveSpeedMetersPerSecond = Math.hypot(lateralSpeedMetersPerSecond, longitudinalSpeedMetersPerSecond);
+        double longitudinalSpeedMetersPerSecond = robotLongitudinalSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.cos(turnAngleRadians);
+        double lateralSpeedMetersPerSecond = robotLateralSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.sin(turnAngleRadians);
         
-        // angles in radians
-        double desiredWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.getAngleRadiansFromComponents(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond));
-        double currentWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(wheelAngleAbsoluteEncoder.getPositionRadians());
+        double wheelDriveSpeedMetersPerSecond = Math.hypot(lateralSpeedMetersPerSecond, longitudinalSpeedMetersPerSecond);
+
+        double desiredWheelAngleRadians = 0;
+        if (DriveUtils.toDriveRelativeSpeed(wheelDriveSpeedMetersPerSecond) > 0.01) {
+            desiredWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.getAngleRadiansFromComponents(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond));
+        } 
+
+        // no need to normalize because it automatically normalizes
+        double currentWheelAngleRadians = wheelAngleAbsoluteEncoder.getPositionRadians();
 
         double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
+
         // if greater than 90 deg, add 180 deg and flip drive motor direction
         if (Math.abs(wheelAngleErrorRadians) > Math.PI / 2) {
             wheelAngleErrorRadians = DriveUtils.normalizeAngleRadiansSigned(wheelAngleErrorRadians + Math.PI);
             wheelDriveSpeedMetersPerSecond = -wheelDriveSpeedMetersPerSecond;
         }
+
+        desiredWheelAngleRadians = currentWheelAngleRadians + wheelAngleErrorRadians;
         
         double wheelAngleSpeedRadiansPerSecond = TeleopSwerveConstants.kRotationController.calculate(currentWheelAngleRadians, desiredWheelAngleRadians);        
-        double angleMotorRelativeSpeed = wheelAngleSpeedRadiansPerSecond / DriveConstants.kMaxWheelAngleSpeedRadiansPerSecond;
+        double angleMotorRelativeSpeed = DriveUtils.radiansToRotations(wheelAngleSpeedRadiansPerSecond);
         setAngleMotorRelativeSpeed(angleMotorRelativeSpeed);
         
-        double driveMotorRelativeSpeed = wheelDriveSpeedMetersPerSecond / DriveConstants.kMaxWheelDriveSpeedMetersPerSecond;
+        double driveMotorRelativeSpeed = DriveUtils.toDriveRelativeSpeed(wheelDriveSpeedMetersPerSecond);
         setDriveMotorRelativeSpeed(driveMotorRelativeSpeed);
     }
 
     public void setDriveMotorRelativeSpeed(double relativeSpeed) {
-        driveMotor.set(relativeSpeed);
+        driveMotor.setRelativeSpeed(relativeSpeed);
     }
 
     public void setAngleMotorRelativeSpeed(double relativeSpeed) {
-        angleMotor.set(relativeSpeed);
+        angleMotor.setRelativeSpeed(relativeSpeed);
     }
 
     public void resetEncoders() {

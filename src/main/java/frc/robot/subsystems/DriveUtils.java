@@ -64,6 +64,13 @@ public class DriveUtils {
 
     // Return the angle in radians formed by the x and y components
     public static double getAngleRadiansFromComponents(double y, double x) {
-        return normalizeAngleRadiansSigned(Math.atan2(y, x));
+        return normalizeAngleRadiansSigned(Math.atan2(x, y));
+    }
+
+    public static double toDriveRelativeSpeed(double driveSpeedMetersPerSecond) {
+        return driveSpeedMetersPerSecond / DriveConstants.kMaxWheelDriveSpeedMetersPerSecond;
+    }
+    public static double toAngleRelativeSpeed(double angleSpeedRadiansPerSecond) {
+        return angleSpeedRadiansPerSecond / DriveConstants.kMaxWheelAngleSpeedRadiansPerSecond;
     }
 }
