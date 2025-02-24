@@ -20,11 +20,18 @@ import frc.robot.commands.WristCommand;
 import frc.robot.subsystems.WristSubsystem.IntakeState;
 import frc.robot.commands.CoralOuttakeCommand;
 
+import frc.robot.hardware.Controller.DriverController;
+
+import frc.robot.commands.TeleopDriveCommand;
+import frc.robot.commands.AutoDriveCommand;
+import frc.robot.subsystems.ElevatorTesting;
+import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -37,6 +44,14 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
  */
 
 public class RobotContainer {
+    private final DriverController driverController = new DriverController();
+    
+    private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
+    private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
+
+    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    public RobotContainer() {
+        swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
     // The robot's subsystems and commands are defined here...
     private final Controller controller = new Controller(OperatorConstants.kDriverControllerPort);
 
@@ -60,6 +75,18 @@ public class RobotContainer {
     }
     
     private void configureBindings() { 
+        // Elevator Testing
+        driverController.getButton(DriverController.Button.LB).whileTrue(elevatorTestingSubsystem.goUpCommand());
+        driverController.getButton(DriverController.Button.RB).whileTrue(elevatorTestingSubsystem.goDownCommand());
+
+        // Test
+        driverController.getButton(DriverController.Button.X).onTrue(new InstantCommand(() -> swerveSubsystem.printEncoderValues()));
+        driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(() -> swerveSubsystem.printGyroValue()));
+        driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(() -> driverController.printJoystickAxes()));
+        driverController.getButton(DriverController.Button.B).onTrue(new InstantCommand(() -> swerveSubsystem.printOdometerPose()));
+
+        // Drive
+        driverController.getButton(DriverController.Button.Start).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
         controller.getButton(Button.Start).onTrue(new InstantCommand(() -> driveSubsystem.reset()));
 
         // Algae System
@@ -81,26 +108,21 @@ public class RobotContainer {
         TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
             AutoSwerveConstants.kMaxDriveSpeedMetersPerSecond, 
             AutoSwerveConstants.kMaxAccelerationMetersPerSecondSquared);
-        trajectoryConfig.setKinematics(driveSubsystem.getKinematics());
+        trajectoryConfig.setKinematics(swerveSubsystem.getKinematics());
 
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
             new Pose2d(0, 0, new Rotation2d(0)),
             List.of(
-                // new Translation2d(1, 0),
-                // new Translation2d(0.5, 0.5),
-                // new Translation2d(0, -0.5)
+                new Translation2d(1, 0),
+                new Translation2d(0.5, 0.5),
+                new Translation2d(0, -0.5)
             ),
             new Pose2d(0.4, 0.4, Rotation2d.fromDegrees(0)),
             trajectoryConfig
         );
 
         return new SequentialCommandGroup(
-            // Drive
-            new AutoDriveCommand(driveSubsystem, trajectory)
-            // Intake
-            // new IntakeDeployCommand(intakeSubsystem, true),
-            // new IntakeRollerCommand(intakeSubsystem, 0.3, 0.5),
-            // new IntakeDeployCommand(intakeSubsystem, false)
+            new AutoDriveCommand(swerveSubsystem, trajectory)
         );
     }
 }
