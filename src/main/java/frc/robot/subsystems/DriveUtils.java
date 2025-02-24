@@ -1,22 +1,22 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
 
 public class DriveUtils {
     public static double angleWheelToMotor(double value) {
-        return value / SwerveConstants.kAngleMotorGearRatio;
+        return value / DriveConstants.kAngleMotorGearRatio;
     }
     public static double angleMotorToWheel(double value) {
-        return value * SwerveConstants.kAngleMotorGearRatio;
+        return value * DriveConstants.kAngleMotorGearRatio;
     }
 
     public static double driveWheelToMotor(double value) {
-        return value / SwerveConstants.kDriveMotorGearRatio;
+        return value / DriveConstants.kDriveMotorGearRatio;
     }
     public static double driveMotorToWheel(double value) {
-        return value * SwerveConstants.kDriveMotorGearRatio;
+        return value * DriveConstants.kDriveMotorGearRatio;
     }
 
     public static double rotationsToRadians(double rotations) {
@@ -40,27 +40,14 @@ public class DriveUtils {
         return speed;
     }
 
-    /**
-     * Optimize the error so that the motor moves the shorter direction
-     * If the error is greater than pi, the other direction is shorter, so flip the angle
-     * @param errorRadians the difference from the desired angle and the current angle
-     * @return the optimized error
-     */
-    public static double optimizeErrorRadians(double errorRadians) {
-        return errorRadians > Math.PI ? errorRadians = -(Constants.kTau - errorRadians) : errorRadians;
-    }
-
-     /**
-     * Convert the angle to be between -pi and pi
-     * @param angleRadians the unnormalized angle radians
-     * @return the normalized angle radians
-     */
+    // Convert to between -pi and pi
     public static double normalizeAngleRadiansSigned(double angleRadians) {
         while (angleRadians < -Math.PI || angleRadians > Math.PI) {
             angleRadians += angleRadians < -Math.PI ? Constants.kTau : -Constants.kTau;
         }
         return angleRadians;
     }
+    // Convert to between 0 and 2pi
     public static double normalizeAngleRadiansUnsigned(double angleRadians) {
         while (angleRadians < 0 || angleRadians > Constants.kTau) {
             angleRadians += angleRadians < 0 ? Constants.kTau : -Constants.kTau;
@@ -73,5 +60,17 @@ public class DriveUtils {
         double currentMotorAngleRadians = angleWheelToMotor(currentWheelAngleRadians);
         double desiredMotorAngleRadians = currentMotorAngleRadians + motorErrorRadians;
         return TeleopSwerveConstants.kRotationController.calculate(motorErrorRadians, desiredMotorAngleRadians);
+    }
+
+    // Return the angle in radians formed by the x and y components
+    public static double getAngleRadiansFromComponents(double y, double x) {
+        return normalizeAngleRadiansSigned(Math.atan2(x, y));
+    }
+
+    public static double toDriveRelativeSpeed(double driveSpeedMetersPerSecond) {
+        return driveSpeedMetersPerSecond / DriveConstants.kMaxWheelDriveSpeedMetersPerSecond;
+    }
+    public static double toAngleRelativeSpeed(double angleSpeedRadiansPerSecond) {
+        return angleSpeedRadiansPerSecond / DriveConstants.kMaxWheelAngleSpeedRadiansPerSecond;
     }
 }

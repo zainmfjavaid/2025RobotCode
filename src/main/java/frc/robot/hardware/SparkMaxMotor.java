@@ -1,18 +1,41 @@
-package frc.robot.subsystems;
+package frc.robot.hardware;
 
+import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-public class Motor {
+import frc.robot.subsystems.DriveUtils;
+
+public class SparkMaxMotor {
     private final SparkMax motor;
     private final RelativeEncoder encoder;
     private final boolean reverseMotor;
     private final boolean reverseEncoder;
+    SparkBaseConfig config = new SparkMaxConfig();
 
-    public Motor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
+    public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
+        this(deviceId, reverseMotor, reverseEncoder, false);
+    }
+    
+    
+    public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder, Boolean isBrake) {
         motor = new SparkMax(deviceId, MotorType.kBrushless);
         encoder = motor.getEncoder();
+
+        if (isBrake) {
+            config.idleMode(IdleMode.kBrake);
+        } else {
+            config.idleMode(IdleMode.kCoast);
+        }
+        
+        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
         this.reverseMotor = reverseMotor;
         this.reverseEncoder = reverseEncoder;
     }

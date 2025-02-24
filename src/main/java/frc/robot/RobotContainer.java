@@ -6,19 +6,21 @@ package frc.robot;
 
 import java.util.List;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.DriveCommand;
-import frc.robot.commands.AutoDriveCommand;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.Controller.Button;
 import frc.robot.Constants.AutoSwerveConstants;
 
+import frc.robot.hardware.Controller.DriverController;
+
+import frc.robot.commands.TeleopDriveCommand;
+import frc.robot.commands.AutoDriveCommand;
+import frc.robot.subsystems.ElevatorTesting;
+import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -31,58 +33,51 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
  */
 
 public class RobotContainer {
-    // The robot's subsystems and commands are defined here...
-    private final Controller controller = new Controller(OperatorConstants.kDriverControllerPort);
-
-    private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-    // private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-
-    private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
+    private final DriverController driverController = new DriverController();
+    
+    private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
+    private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, controller));
+        swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
         configureBindings();
     }
 
     private void configureBindings() { 
+        // Elevator Testing
+        driverController.getButton(DriverController.Button.LB).whileTrue(elevatorTestingSubsystem.goUpCommand());
+        driverController.getButton(DriverController.Button.RB).whileTrue(elevatorTestingSubsystem.goDownCommand());
+
         // Test
-        controller.getButton(Button.X).onTrue(new InstantCommand(() -> driveSubsystem.printEncoderValues()));
-        controller.getButton(Button.A).onTrue(new InstantCommand(() -> driveSubsystem.printGyroValue()));
-        // controller.getButton(Button.B).onTrue(new InstantCommand(() -> System.out.println(intakeSubsystem.getIntakeDeployRelativePosition())));
-        controller.getButton(Button.Y).onTrue(new InstantCommand(() -> driveCommand.printJoystickAxes()));
-        controller.getButton(Button.B).onTrue(new InstantCommand(() -> driveSubsystem.printOdometerPose()));
+        driverController.getButton(DriverController.Button.X).onTrue(new InstantCommand(() -> swerveSubsystem.printEncoderValues()));
+        driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(() -> swerveSubsystem.printGyroValue()));
+        driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(() -> driverController.printJoystickAxes()));
+        driverController.getButton(DriverController.Button.B).onTrue(new InstantCommand(() -> swerveSubsystem.printOdometerPose()));
 
-        controller.getButton(Button.Start).onTrue(new InstantCommand(() -> driveSubsystem.reset()));
-
-        // new JoystickButton(joystick, Button.B2.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(-1)));
-        // new JoystickButton(joystick, Button.B3.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(1)));
+        // Drive
+        driverController.getButton(DriverController.Button.Start).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
     }
 
     public Command getAutonomousCommand() {
         TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
             AutoSwerveConstants.kMaxDriveSpeedMetersPerSecond, 
             AutoSwerveConstants.kMaxAccelerationMetersPerSecondSquared);
-        trajectoryConfig.setKinematics(driveSubsystem.getKinematics());
+        trajectoryConfig.setKinematics(swerveSubsystem.getKinematics());
 
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
             new Pose2d(0, 0, new Rotation2d(0)),
             List.of(
-                // new Translation2d(1, 0),
-                // new Translation2d(0.5, 0.5),
-                // new Translation2d(0, -0.5)
+                new Translation2d(1, 0),
+                new Translation2d(0.5, 0.5),
+                new Translation2d(0, -0.5)
             ),
             new Pose2d(0.4, 0.4, Rotation2d.fromDegrees(0)),
             trajectoryConfig
         );
 
         return new SequentialCommandGroup(
-            // Drive
-            new AutoDriveCommand(driveSubsystem, trajectory)
-            // Intake
-            // new IntakeDeployCommand(intakeSubsystem, true),
-            // new IntakeRollerCommand(intakeSubsystem, 0.3, 0.5),
-            // new IntakeDeployCommand(intakeSubsystem, false)
+            new AutoDriveCommand(swerveSubsystem, trajectory)
         );
     }
 }
