@@ -19,6 +19,7 @@ public class TeleopDriveCommand extends Command {
     @Override
     public void initialize() {
         System.out.println("Begin drive command");
+        swerveSubsystem.resetGyroAndOdometer();
     }
 
     @Override

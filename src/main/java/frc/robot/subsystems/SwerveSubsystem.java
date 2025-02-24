@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -15,7 +16,7 @@ import frc.robot.Constants.TeleopSwerveConstants;
 import frc.robot.hardware.Controller.DriverController;
 import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 
-import com.kauailabs.navx.frc.AHRS;
+import com.ctre.phoenix6.hardware.Pigeon2;
 
 public class SwerveSubsystem extends SubsystemBase {
     private static final Translation2d frontLeftLocation = new Translation2d(RobotConstants.kWidthMeters/2, RobotConstants.kLengthMeters/2);
@@ -30,7 +31,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
 
-    private final AHRS gyro = new AHRS(Port.kUSB);
+    private final Pigeon2 gyro = new Pigeon2(20, "CANivore2158");
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(getKinematics(), new Rotation2d(0), getModulePositions());
 
     public void setModuleStates(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
@@ -40,33 +41,19 @@ public class SwerveSubsystem extends SubsystemBase {
         backRightModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
     }
 
-    /*
-    make a method for field centric swerve
-
     public void fieldCentricSwerve(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
-        Rotation2d gyroRotation = gyro.getRotation2d(); -- I don't what this measures exactly
-
-        suppose gyro rotation = 30 deg
-
-        OLD
-        longitudinal = 1
-        lateral = 0.5
-
-        NEW
-        longitudinal = figure this out
-        lateral = figure this out
-
-        based on this value, determine new longitudinal and lateral speeds
-
-        setModuleStates(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeed);
+        double offsetRadians = -getGyroAngle().getRadians();
+        setModuleStates(
+            longitudinalSpeedMetersPerSecond * Math.cos(offsetRadians) - lateralSpeedMetersPerSecond * Math.sin(offsetRadians), 
+            longitudinalSpeedMetersPerSecond * Math.sin(offsetRadians) + lateralSpeedMetersPerSecond * Math.cos(offsetRadians), 
+            rotationSpeedRadiansPerSecond);
     }
-    */
 
     public void swerveDriveTeleop(DriverController driveController) {
         double longitudinalSpeedMetersPerSecond = driveController.getLeftStickY() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
         double lateralSpeedMetersPerSecond = driveController.getLeftStickX() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
         double rotationSpeedRadiansPerSecond = driveController.getRightStickX() * TeleopSwerveConstants.kMaxRotationSpeedRadiansPerSecond;
-        setModuleStates(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
+        fieldCentricSwerve(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
     }
 
     public SwerveDriveKinematics getKinematics() {
@@ -82,6 +69,7 @@ public class SwerveSubsystem extends SubsystemBase {
         };
     }
 
+    // counterclockwise is positive
     public Rotation2d getGyroAngle() {
         return gyro.getRotation2d();
     }

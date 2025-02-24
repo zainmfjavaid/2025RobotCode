@@ -64,11 +64,13 @@ public final class Constants {
   }
 
   public static class TeleopSwerveConstants {
+    // if you want to change speeds
+
     public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(2);
 
     public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
 
-    public static final PIDController kRotationController = new PIDController(0.6, 0, 0);
+    public static final PIDController kRotationController = new PIDController(0.85, 0, 0);
   }
 
   public static class AutoSwerveConstants {

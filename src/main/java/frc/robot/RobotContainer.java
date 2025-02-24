@@ -12,7 +12,7 @@ import frc.robot.hardware.Controller.DriverController;
 
 import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.commands.AutoDriveCommand;
-
+import frc.robot.subsystems.ElevatorTesting;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -34,8 +34,9 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 
 public class RobotContainer {
     private final DriverController driverController = new DriverController();
-
+    
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
+    private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -44,6 +45,10 @@ public class RobotContainer {
     }
 
     private void configureBindings() { 
+        // Elevator Testing
+        driverController.getButton(DriverController.Button.LB).whileTrue(elevatorTestingSubsystem.goUpCommand());
+        driverController.getButton(DriverController.Button.RB).whileTrue(elevatorTestingSubsystem.goDownCommand());
+
         // Test
         driverController.getButton(DriverController.Button.X).onTrue(new InstantCommand(() -> swerveSubsystem.printEncoderValues()));
         driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(() -> swerveSubsystem.printGyroValue()));

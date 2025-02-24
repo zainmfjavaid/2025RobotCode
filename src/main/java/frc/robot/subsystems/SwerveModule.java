@@ -14,7 +14,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 // USES ABSOLUTE ENCODER
 
-// future update: make it so that it stays at last angle, when controller goes to 0
+// current issues: the robot doesn't go completely straight, it turns a bit
+// the issue is not with the gyro but with my code or the absolute encoder offsets
 
 public class SwerveModule {
     public final KrakenMotor driveMotor;
@@ -24,14 +25,15 @@ public class SwerveModule {
 
     public final AbsoluteEncoder wheelAngleAbsoluteEncoder;
 
+    public double lastAngleRadians = 0;
+
     public SwerveModule(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig config) {
-        driveMotor = new KrakenMotor(driveMotorDeviceId, false, false);
+        driveMotor = new KrakenMotor(driveMotorDeviceId, true, true);
 
         // reverse motor if needed to match direction of absolute encoder
         // (reversing encoder doesn't matter because relative encoder is not used, but it would if it were)
         angleMotor = new KrakenMotor(angleMotorDeviceId, true, true);
 
-        // supplement
         double unnormalizedTurnAngleRadians = DriveUtils.getAngleRadiansFromComponents(location.getX(), location.getY()) + Math.PI / 2;
         turnAngleRadians = DriveUtils.normalizeAngleRadiansSigned(unnormalizedTurnAngleRadians);
         
@@ -48,12 +50,11 @@ public class SwerveModule {
         
         double wheelDriveSpeedMetersPerSecond = Math.hypot(lateralSpeedMetersPerSecond, longitudinalSpeedMetersPerSecond);
 
-        double desiredWheelAngleRadians = 0;
-        if (DriveUtils.toDriveRelativeSpeed(wheelDriveSpeedMetersPerSecond) > 0.01) {
+        double desiredWheelAngleRadians = lastAngleRadians;
+        if (DriveUtils.toDriveRelativeSpeed(wheelDriveSpeedMetersPerSecond) > 1E-6) {
             desiredWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.getAngleRadiansFromComponents(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond));
         } 
 
-        // no need to normalize because it automatically normalizes
         double currentWheelAngleRadians = wheelAngleAbsoluteEncoder.getPositionRadians();
 
         double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
@@ -72,6 +73,8 @@ public class SwerveModule {
         
         double driveMotorRelativeSpeed = DriveUtils.toDriveRelativeSpeed(wheelDriveSpeedMetersPerSecond);
         setDriveMotorRelativeSpeed(driveMotorRelativeSpeed);
+
+        lastAngleRadians = desiredWheelAngleRadians;
     }
 
     public void setDriveMotorRelativeSpeed(double relativeSpeed) {
