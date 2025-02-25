@@ -110,8 +110,12 @@ public class SwerveSubsystem extends SubsystemBase {
         backRightModule.setAngleMotorRelativeSpeed(speed);
     }
 
-    public void drive(double longitudinalSpeed) {
+    public void driveForward(double longitudinalSpeed) {
         setModuleStates(longitudinalSpeed, 0, 0);
+    }
+
+    public void driveLaterally(double lateralSpeed) {
+        setModuleStates(0, lateralSpeed, 0);
     }
 
     public void spin(double speedRadiansPerSecond) {

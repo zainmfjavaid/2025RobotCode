@@ -30,7 +30,7 @@ public class PhotonVision {
         }
     }
 
-    public double getXOffset() {
+    public double getXOffsetDegrees() {
         return target.getYaw();
     }
 
@@ -46,9 +46,14 @@ public class PhotonVision {
         return hasResults;
     }
 
-    public double getDistance() {
+    public double getDistanceInches() {
         double heightDifference = Math.abs(Constants.aprilTagHeightInches - Constants.cameraHeightInches);
 
         return Math.abs(Math.tan(getPitch()) * heightDifference);
     }
+
+    public double getXOffsetInches() {
+        return getDistanceInches() * Math.cos(getXOffsetDegrees());
+    }
+
 }
