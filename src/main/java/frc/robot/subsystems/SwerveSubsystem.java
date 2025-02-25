@@ -6,8 +6,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.MotorConstants;
@@ -117,6 +115,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public void driveLaterally(double lateralSpeed) {
         setModuleStates(0, lateralSpeed, 0);
     }
+    
 
     public void spin(double speedRadiansPerSecond) {
         setModuleStates(0, 0, speedRadiansPerSecond);

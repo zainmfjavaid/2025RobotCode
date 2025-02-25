@@ -34,10 +34,12 @@ public class ReefAlignCommand extends Command {
         double distance = photonVision.getDistanceInches();
         double xOffset = photonVision.getXOffsetInches();
         // P only pid control loops to minimize skew (become parallel w apriltag)
-        swerveSubsystem.spin((skewAngleDegrees) * (Constants.RobotConstants.kKrakenMotorMaxRadiansPerSecond * 0.05));
+        swerveSubsystem.spin((skewAngleDegrees) * (Constants.DriveConstants.kMaxRotationSpeedRadiansPerSecond * 0.05));
     
-        swerveSubsystem.driveForward((12 - distance) * (maxDriveSpeedFeetPerSecond * 0.01));
-        swerveSubsystem.driveLaterally((12 - xOffset) * (maxDriveSpeedFeetPerSecond * 0.01));
+        double xSpeed = (12 - distance) * (maxDriveSpeedFeetPerSecond * 0.01);
+        double ySpeed = (12 - xOffset) * (maxDriveSpeedFeetPerSecond * 0.01);
+
+        swerveSubsystem.setModuleStates(xSpeed, ySpeed, 0);
     }
 
     // Called once the command ends or is interrupted.
