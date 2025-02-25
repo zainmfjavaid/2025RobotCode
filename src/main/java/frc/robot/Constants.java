@@ -129,6 +129,12 @@ BR: RRot -0.0, RRad -0.0, ARot -0.19677734375, ARad -1.2363885150358267
     public static final int kBackLeftAngleMotorDeviceId = 4;
     public static final int kBackRightDriveMotorDeviceId = 5;
     public static final int kBackRightAngleMotorDeviceId = 6;
+
+    public static final int kAlgaeRollerMotorID = 17;
+    public static final int kAlgaeServoDeviceID = 1;
+    public static final int kArmMotorId = 15;
+    public static final int kWristServoChannel = 16;
+    public static final int kIntakeMoterID = 18;
   }
 
   public static class IntakeConstants {
@@ -136,4 +142,24 @@ BR: RRot -0.0, RRad -0.0, ARot -0.19677734375, ARad -1.2363885150358267
     public static final double kRetractPosition = 0;
     public static final double kP = 0.04;
   }
+
+  //Algae Constants
+  public static enum IntakePosition {
+    Retract(0),
+    Deploy(60);
+
+    private int intakePosition;
+    
+    IntakePosition(int intakePosition) {
+      this.intakePosition = intakePosition;
+    }
+
+    public int getPosition() {
+      return intakePosition;
+    }
+
+  }
+
+  public static final double algaeIntakeRollerSpeed = 1;
+  public static final double algaeOuttakeRollerSpeed = -1;
 }
