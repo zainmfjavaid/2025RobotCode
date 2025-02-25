@@ -6,7 +6,19 @@ package frc.robot;
 
 import java.util.List;
 
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.DriveCommand;
+import frc.robot.commands.AutoDriveCommand;
+import frc.robot.subsystems.AlgaeSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.WristSubsystem;
+import frc.robot.Controller.Button;
 import frc.robot.Constants.AutoSwerveConstants;
+import frc.robot.commands.CoralIntakeCommand;
+import frc.robot.subsystems.CoralIntakeSubsystem;
+import frc.robot.commands.WristCommand;
+import frc.robot.subsystems.WristSubsystem.IntakeState;
+import frc.robot.commands.CoralOuttakeCommand;
 
 import frc.robot.hardware.Controller.DriverController;
 
@@ -17,7 +29,6 @@ import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -41,9 +52,28 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
+    // The robot's subsystems and commands are defined here...
+    private final Controller controller = new Controller(OperatorConstants.kDriverControllerPort);
+
+    private final CoralIntakeSubsystem coralSubsystem = new CoralIntakeSubsystem();
+    private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+    private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
+    private final WristSubsystem wristSubsystem = new WristSubsystem();
+    
+    private final DriveCommand driveCommand = new DriveCommand(driveSubsystem, controller);
+    private final CoralIntakeCommand coralIntake = new CoralIntakeCommand(coralSubsystem);
+    private final CoralOuttakeCommand coralOuttake = new CoralOuttakeCommand(coralSubsystem);
+    private final WristCommand groundIntakeCommand = new WristCommand(wristSubsystem, IntakeState.GroundIntake);
+    private final WristCommand sourceIntakeCommand = new WristCommand(wristSubsystem, IntakeState.SourceIntake);
+    private final WristCommand coralScoreCommand = new WristCommand(wristSubsystem, IntakeState.CoralScore);
+    private final WristCommand stowCommand = new WristCommand(wristSubsystem, IntakeState.Stow);
+
+    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    public RobotContainer() {
+        driveSubsystem.setDefaultCommand(driveCommand);
         configureBindings();
     }
-
+    
     private void configureBindings() { 
         // Elevator Testing
         driverController.getButton(DriverController.Button.LB).whileTrue(elevatorTestingSubsystem.goUpCommand());
@@ -57,6 +87,21 @@ public class RobotContainer {
 
         // Drive
         driverController.getButton(DriverController.Button.Start).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
+        controller.getButton(Button.Start).onTrue(new InstantCommand(() -> driveSubsystem.reset()));
+
+        // Algae System
+        controller.getButton(Button.RB).whileTrue(algaeSubsystem.getIntakeCommand());
+        controller.getButton(Button.LB).whileTrue(algaeSubsystem.getOuttakeCommand());
+        controller.getButton(Button.A).onTrue(groundIntakeCommand);
+        controller.getButton(Button.B).onTrue(sourceIntakeCommand);
+        controller.getButton(Button.X).onTrue(coralScoreCommand);
+        controller.getButton(Button.Y).onTrue(stowCommand);
+
+        // new JoystickButton(joystick, Button.B2.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(-1)));
+        // new JoystickButton(joystick, Button.B3.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(1)));
+
+        controller.getButton(Button.LT).onTrue(coralIntake);    
+        controller.getButton(Button.RT).onTrue(coralOuttake);
     }
 
     public Command getAutonomousCommand() {

@@ -12,10 +12,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
-// USES ABSOLUTE ENCODER
-
 // current issues: the robot doesn't go completely straight, it turns a bit
 // the issue is not with the gyro but with my code or the absolute encoder offsets
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.SwerveConstants;
+import frc.robot.hardware.AbsoluteEncoder;
+import frc.robot.hardware.Motor;
+import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 
 public class SwerveModule {
     public final KrakenMotor driveMotor;

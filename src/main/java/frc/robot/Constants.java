@@ -21,7 +21,9 @@ import frc.robot.subsystems.DriveUtils;
 public final class Constants {
   public static final double kTau = Math.PI * 2;
 
-  public static final double kPeriodicDuration = 0.03; // 30 milliseconds // unused
+  public static final double aprilTagHeightInches = 12.125;
+  public static final double cameraHeightInches = 6;
+
 
   public static class RobotConstants {
     public static final double kWidthMeters = Units.inchesToMeters(19.75);
@@ -70,7 +72,7 @@ public final class Constants {
 
     public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
 
-    public static final PIDController kRotationController = new PIDController(0.85, 0, 0);
+    public static final PIDController kRotationController = new PIDController(1.5, 0, 0);
   }
 
   public static class AutoSwerveConstants {
@@ -93,18 +95,10 @@ public final class Constants {
   }
 
   public static class AbsoluteEncoderConstants {
-  /*
-  FL: RRot -0.0, RRad -0.0, ARot 0.288330078125, ARad 1.8116313104929422
-FR: RRot -0.0, RRad -0.0, ARot 0.4794921875, ARad 3.0127382674073995
-BL: RRot -0.0, RRad -0.0, ARot 0.396728515625, ARad 2.492718780314167
-BR: RRot -0.0, RRad -0.0, ARot -0.18994140625, ARad -1.193437052975029
-
-  */
-
-    public static final double kFrontLeftOffset = -(.288330078125);
-    public static final double kFrontRightOffset = -(.4794921875); // -(-0.19140625);
-    public static final double kBackLeftOffset = -(.396728515625); // -(0.15185546875);
-    public static final double kBackRightOffset = -(-.18994140625); // -(0.208984375);
+    public static final double kFrontLeftOffset = -(0.29296875);
+    public static final double kFrontRightOffset = -(0.46142578125);
+    public static final double kBackLeftOffset = -(0.3974609375);
+    public static final double kBackRightOffset = -(-0.19677734375);
 
     public static final double kAbsoluteSensorDiscontinuityPoint = 0.5;
   }
@@ -118,6 +112,12 @@ BR: RRot -0.0, RRad -0.0, ARot -0.18994140625, ARad -1.193437052975029
     public static final int kBackLeftAngleMotorDeviceId = 4;
     public static final int kBackRightDriveMotorDeviceId = 5;
     public static final int kBackRightAngleMotorDeviceId = 6;
+
+    public static final int kAlgaeRollerMotorID = 17;
+    public static final int kAlgaeServoDeviceID = 1;
+    public static final int kArmMotorId = 15;
+    public static final int kWristServoChannel = 16;
+    public static final int kIntakeMoterID = 18;
   }
 
   public static class IntakeConstants {
@@ -125,4 +125,24 @@ BR: RRot -0.0, RRad -0.0, ARot -0.18994140625, ARad -1.193437052975029
     public static final double kRetractPosition = 0;
     public static final double kP = 0.04;
   }
+
+  //Algae Constants
+  public static enum IntakePosition {
+    Retract(0),
+    Deploy(60);
+
+    private int intakePosition;
+    
+    IntakePosition(int intakePosition) {
+      this.intakePosition = intakePosition;
+    }
+
+    public int getPosition() {
+      return intakePosition;
+    }
+
+  }
+
+  public static final double algaeIntakeRollerSpeed = 1;
+  public static final double algaeOuttakeRollerSpeed = -1;
 }

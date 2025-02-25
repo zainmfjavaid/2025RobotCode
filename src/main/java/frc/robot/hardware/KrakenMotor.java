@@ -1,6 +1,7 @@
 package frc.robot.hardware;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import frc.robot.subsystems.DriveUtils;
 
@@ -11,6 +12,7 @@ public class KrakenMotor {
 
     public KrakenMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
         motor = new TalonFX(deviceId, "CANivore2158");
+        motor.setNeutralMode(NeutralModeValue.Brake);
         this.reverseMotor = reverseMotor;
         this.reverseEncoder = reverseEncoder;
     }
