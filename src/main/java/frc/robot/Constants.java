@@ -70,7 +70,7 @@ public final class Constants {
 
     public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
 
-    public static final PIDController kRotationController = new PIDController(0.85, 0, 0);
+    public static final PIDController kRotationController = new PIDController(1.5, 0, 0);
   }
 
   public static class AutoSwerveConstants {
@@ -94,17 +94,28 @@ public final class Constants {
 
   public static class AbsoluteEncoderConstants {
   /*
-  FL: RRot -0.0, RRad -0.0, ARot 0.288330078125, ARad 1.8116313104929422
+FL: RRot -0.0, RRad -0.0, ARot 0.288330078125, ARad 1.8116313104929422
 FR: RRot -0.0, RRad -0.0, ARot 0.4794921875, ARad 3.0127382674073995
 BL: RRot -0.0, RRad -0.0, ARot 0.396728515625, ARad 2.492718780314167
 BR: RRot -0.0, RRad -0.0, ARot -0.18994140625, ARad -1.193437052975029
 
+FL: RRot -0.0, RRad -0.0, ARot 0.293701171875, ARad 1.8453788878264263 ﻿
+FR: RRot -0.0, RRad -0.0, ARot 0.426513671875, ARad 2.679864436436215 ﻿
+BL: RRot -0.0, RRad -0.0, ARot 0.396240234375, ARad 2.4896508187383954 ﻿
+BR: RRot -0.0, RRad -0.0, ARot -0.19482421875, ARad -1.2241166687327416 
+
+FL: RRot -0.0, RRad -0.0, ARot 0.29296875, ARad 1.8407769454627694
+FR: RRot -0.0, RRad -0.0, ARot 0.46142578125, ARad 2.8992236891038616
+BL: RRot -0.0, RRad -0.0, ARot 0.3974609375, ARad 2.497320722677824
+BR: RRot -0.0, RRad -0.0, ARot -0.19677734375, ARad -1.2363885150358267
+
+
   */
 
-    public static final double kFrontLeftOffset = -(.288330078125);
-    public static final double kFrontRightOffset = -(.4794921875); // -(-0.19140625);
-    public static final double kBackLeftOffset = -(.396728515625); // -(0.15185546875);
-    public static final double kBackRightOffset = -(-.18994140625); // -(0.208984375);
+    public static final double kFrontLeftOffset = -(0.29296875);
+    public static final double kFrontRightOffset = -(0.46142578125);
+    public static final double kBackLeftOffset = -(0.3974609375);
+    public static final double kBackRightOffset = -(-0.19677734375);
 
     public static final double kAbsoluteSensorDiscontinuityPoint = 0.5;
   }
