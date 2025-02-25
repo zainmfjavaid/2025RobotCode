@@ -21,7 +21,8 @@ import frc.robot.subsystems.DriveUtils;
 public final class Constants {
   public static final double kTau = Math.PI * 2;
 
-  public static final double kPeriodicDuration = 0.03; // 30 milliseconds // unused
+  public static final double aprilTagHeightInches = 12.125;
+  public static final double cameraHeightInches = 6;
 
   public static class RobotConstants {
     public static final double kWidthMeters = Units.inchesToMeters(19.75);
