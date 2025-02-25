@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.PIDController;
 
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -32,12 +33,13 @@ public class WristSubsystem extends SubsystemBase {
     }
   } 
 
-  private final SparkMax armMotor = new SparkMax(MotorConstants.kArmMotorId, MotorType.kBrushless);
+  private final SparkMax armMotor = new SparkMax(MotorConstants.kWristMotorId, MotorType.kBrushless);
+  private final SparkMax intakeMotor = new SparkMax(MotorConstants.kIntakeMoterId, MotorType.kBrushless);
   private final RelativeEncoder armEncoder = armMotor.getEncoder();
   
   private final Servo servoWristMotor = new Servo(MotorConstants.kWristServoChannel);
 
-  private final PIDController armPID = new PIDController(.1, .1,0);
+  private final PIDController wristPID = new PIDController(.1, .1,0);
   
   /** Creates a new WristSubsystem. */  
   public WristSubsystem() {}
@@ -47,10 +49,18 @@ public class WristSubsystem extends SubsystemBase {
     armMotor.set(speed);
   }
 
+  public void setIntakeMotorSpeed(double speed) {
+    intakeMotor.set(speed);
+  }
+
+  public void stopIntake() {
+    intakeMotor.set(0);
+  }
+
 
   public void setArmMotorPosition(double desiredPosition) {
     double currentPosition = armEncoder.getPosition();
-    double speed = armPID.calculate(currentPosition, desiredPosition);
+    double speed = wristPID.calculate(currentPosition, desiredPosition);
     setArmMotorSpeed(speed);
   }
 
