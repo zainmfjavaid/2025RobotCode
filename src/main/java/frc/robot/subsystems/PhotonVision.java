@@ -2,11 +2,10 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.hardware;
+package frc.robot.subsystems;
 
 import java.util.List;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -37,6 +36,14 @@ public class PhotonVision {
 
     public double getPitch() {
         return target.getPitch();
+    }
+
+    public double getSkew() {
+        return target.getSkew();
+    }
+
+    public boolean hasResults() {
+        return hasResults;
     }
 
     public double getDistance() {

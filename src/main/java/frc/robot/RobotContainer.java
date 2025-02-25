@@ -12,6 +12,7 @@ import frc.robot.hardware.Controller.DriverController;
 
 import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.commands.AutoDriveCommand;
+import frc.robot.commands.ReefAlignCommand;
 import frc.robot.subsystems.ElevatorTesting;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,6 +39,8 @@ public class RobotContainer {
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
     private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
 
+    private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
+
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
@@ -49,10 +52,12 @@ public class RobotContainer {
         driverController.getButton(DriverController.Button.LB).whileTrue(elevatorTestingSubsystem.goUpCommand());
         driverController.getButton(DriverController.Button.RB).whileTrue(elevatorTestingSubsystem.goDownCommand());
 
+        // Alignment
+        driverController.getButton(DriverController.Button.Y).whileTrue(reefAlignCommand);
+
         // Test
         driverController.getButton(DriverController.Button.X).onTrue(new InstantCommand(() -> swerveSubsystem.printEncoderValues()));
         driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(() -> swerveSubsystem.printGyroValue()));
-        driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(() -> driverController.printJoystickAxes()));
         driverController.getButton(DriverController.Button.B).onTrue(new InstantCommand(() -> swerveSubsystem.printOdometerPose()));
 
         // Drive
