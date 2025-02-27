@@ -22,7 +22,6 @@ public class SparkMaxMotor {
         this(deviceId, reverseMotor, reverseEncoder, false);
     }
     
-    
     public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder, Boolean isBrake) {
         motor = new SparkMax(deviceId, MotorType.kBrushless);
         encoder = motor.getEncoder();

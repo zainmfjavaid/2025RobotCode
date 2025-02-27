@@ -39,7 +39,7 @@ public class RobotContainer {
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
     private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
 
-    private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
+    //private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -52,8 +52,8 @@ public class RobotContainer {
         driverController.getButton(DriverController.Button.LB).whileTrue(elevatorTestingSubsystem.goUpCommand());
         driverController.getButton(DriverController.Button.RB).whileTrue(elevatorTestingSubsystem.goDownCommand());
 
-        // Alignment
-        driverController.getButton(DriverController.Button.Y).whileTrue(reefAlignCommand);
+        // Alignment (uncomment PLEASE)
+        //driverController.getButton(DriverController.Button.Y).whileTrue(reefAlignCommand);
 
         // Test
         driverController.getButton(DriverController.Button.X).onTrue(new InstantCommand(() -> swerveSubsystem.printEncoderValues()));

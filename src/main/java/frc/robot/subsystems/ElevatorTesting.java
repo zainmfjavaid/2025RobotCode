@@ -10,8 +10,8 @@ import frc.robot.hardware.SparkMaxMotor;
 
 public class ElevatorTesting extends SubsystemBase {
   /** Creates a new ElevatorTesting. */
-  SparkMaxMotor motorOne = new SparkMaxMotor(5, true, false, true);
-  SparkMaxMotor motorTwo = new SparkMaxMotor(6, false, false, true);
+  SparkMaxMotor motorOne = new SparkMaxMotor(5, false, false, true);
+  SparkMaxMotor motorTwo = new SparkMaxMotor(6, true, false, true);
 
   public ElevatorTesting() {
   }
@@ -22,13 +22,13 @@ public class ElevatorTesting extends SubsystemBase {
   }
 
   public void goUp() {
-    motorOne.set(0.15);
-    motorTwo.set(0.15);
+    motorOne.set(1);
+    motorTwo.set(1);
   }
 
   public void goDown() {
-    motorOne.set(-0.30);
-    motorTwo.set(-0.30);
+    motorOne.set(-0.15);
+    motorTwo.set(-0.15);
   }
 
   public StartEndCommand goUpCommand() {
