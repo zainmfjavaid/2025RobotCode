@@ -11,6 +11,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 // USES ABSOLUTE ENCODER
 
@@ -44,7 +45,6 @@ public class SwerveModule {
 
     public void setState(double robotLongitudinalSpeedMetersPerSecond, double robotLateralSpeedMetersPerSecond, double robotRotationSpeedRadiansPerSecond) {        
         double rotationSpeedMetersPerSecond = robotRotationSpeedRadiansPerSecond / DriveConstants.kMaxRotationSpeedRadiansPerSecond * DriveConstants.kMaxWheelDriveSpeedMetersPerSecond;
-        
         double longitudinalSpeedMetersPerSecond = robotLongitudinalSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.cos(turnAngleRadians);
         double lateralSpeedMetersPerSecond = robotLateralSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.sin(turnAngleRadians);
         
@@ -75,6 +75,36 @@ public class SwerveModule {
         setDriveMotorRelativeSpeed(driveMotorRelativeSpeed);
 
         lastAngleRadians = desiredWheelAngleRadians;
+    }
+
+    public void setState(SwerveModuleState desiredState) {
+        double wheelDriveSpeedMetersPerSecond = desiredState.speedMetersPerSecond;
+        double desiredWheelAngleRadians = desiredState.angle.getRadians();
+        
+        double currentWheelAngleRadians = wheelAngleAbsoluteEncoder.getPositionRadians();
+        double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
+
+        // if greater than 90 degrees, add 180 degrees and flip drive motor direction
+        if (Math.abs(wheelAngleErrorRadians) > Math.PI / 2) {
+            wheelAngleErrorRadians = DriveUtils.normalizeAngleRadiansSigned(wheelAngleErrorRadians + Math.PI);
+            wheelDriveSpeedMetersPerSecond = -wheelDriveSpeedMetersPerSecond;
+        }
+
+        desiredWheelAngleRadians = currentWheelAngleRadians + wheelAngleErrorRadians;
+        
+        double wheelAngleSpeedRadiansPerSecond = TeleopSwerveConstants.kRotationController.calculate(currentWheelAngleRadians, desiredWheelAngleRadians);
+        double angleMotorRelativeSpeed = DriveUtils.radiansToRotations(wheelAngleSpeedRadiansPerSecond);
+        setAngleMotorRelativeSpeed(angleMotorRelativeSpeed);
+        
+        double driveMotorRelativeSpeed = DriveUtils.toDriveRelativeSpeed(wheelDriveSpeedMetersPerSecond);
+        setDriveMotorRelativeSpeed(driveMotorRelativeSpeed);
+
+        lastAngleRadians = desiredWheelAngleRadians;
+    }
+
+
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(driveMotor.getRealtiveSpeed(), new Rotation2d(angleMotor.getPositionRadians()));
     }
 
     public void setDriveMotorRelativeSpeed(double relativeSpeed) {

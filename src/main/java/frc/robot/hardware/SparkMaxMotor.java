@@ -18,6 +18,10 @@ public class SparkMaxMotor {
     private final boolean reverseEncoder;
     SparkBaseConfig config = new SparkMaxConfig();
 
+    public SparkMaxMotor(int deviceId) {
+        this(deviceId, false, false, false);
+    }
+
     public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
         this(deviceId, reverseMotor, reverseEncoder, false);
     }
