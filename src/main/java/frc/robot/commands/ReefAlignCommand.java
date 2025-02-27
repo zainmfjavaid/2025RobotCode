@@ -39,7 +39,7 @@ public class ReefAlignCommand extends Command {
         double xSpeed = (12 - distance) * (maxDriveSpeedFeetPerSecond * 0.01);
         double ySpeed = (12 - xOffset) * (maxDriveSpeedFeetPerSecond * 0.01);
 
-        swerveSubsystem.setModuleStates(xSpeed, ySpeed, 0);
+        swerveSubsystem.setModuleSpeeds(xSpeed, ySpeed, 0);
     }
 
     // Called once the command ends or is interrupted.
