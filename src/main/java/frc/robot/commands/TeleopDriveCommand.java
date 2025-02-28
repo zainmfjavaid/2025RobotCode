@@ -37,10 +37,10 @@ public class TeleopDriveCommand extends Command {
                 swerveSubsystem.spinAngleMotors(0.05);
                 break;
             case SPIN:
-                swerveSubsystem.spin(1);
+                swerveSubsystem.spin(0.05);
                 break;
             case DRIVE:
-                swerveSubsystem.drive(1);
+                swerveSubsystem.driveForward(0.05);
                 break;
             case ALIGN:
                 break;

@@ -4,31 +4,38 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.hardware.SparkMaxMotor;
 
 public class ElevatorTesting extends SubsystemBase {
   /** Creates a new ElevatorTesting. */
-  SparkMaxMotor motorOne = new SparkMaxMotor(5, true, false, true);
-  SparkMaxMotor motorTwo = new SparkMaxMotor(6, false, false, true);
+  SparkMaxMotor motorOne = new SparkMaxMotor(5, false, false, true);
+  SparkMaxMotor motorTwo = new SparkMaxMotor(6, true, false, true);
 
-  public ElevatorTesting() {
-  }
+  Encoder elevatorEncoder = new Encoder(0, 1);
+
+
+  public ElevatorTesting() {}
 
   public void stop() {
     motorOne.set(0);
     motorTwo.set(0);
+
+    System.out.println(elevatorEncoder.getDistance());
   }
 
   public void goUp() {
-    motorOne.set(0.15);
-    motorTwo.set(0.15);
+    motorOne.set(1);
+    motorTwo.set(1);
+    System.out.println(elevatorEncoder.getDistance());
   }
 
   public void goDown() {
-    motorOne.set(-0.30);
-    motorTwo.set(-0.30);
+    motorOne.set(-0.15);
+    motorTwo.set(-0.15);
+    System.out.println(elevatorEncoder.getDistance());
   }
 
   public StartEndCommand goUpCommand() {

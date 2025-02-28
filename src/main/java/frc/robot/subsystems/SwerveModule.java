@@ -11,6 +11,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 // USES ABSOLUTE ENCODER
 
@@ -42,7 +43,7 @@ public class SwerveModule {
         resetEncoders();
     }
 
-    public void setState(double robotLongitudinalSpeedMetersPerSecond, double robotLateralSpeedMetersPerSecond, double robotRotationSpeedRadiansPerSecond) {        
+    public void setSpeeds(double robotLongitudinalSpeedMetersPerSecond, double robotLateralSpeedMetersPerSecond, double robotRotationSpeedRadiansPerSecond) {
         double rotationSpeedMetersPerSecond = robotRotationSpeedRadiansPerSecond / DriveConstants.kMaxRotationSpeedRadiansPerSecond * DriveConstants.kMaxWheelDriveSpeedMetersPerSecond;
         
         double longitudinalSpeedMetersPerSecond = robotLongitudinalSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.cos(turnAngleRadians);
@@ -55,6 +56,10 @@ public class SwerveModule {
             desiredWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.getAngleRadiansFromComponents(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond));
         } 
 
+        setState(wheelDriveSpeedMetersPerSecond, desiredWheelAngleRadians);
+    }
+
+    public void setState(double wheelDriveSpeedMetersPerSecond, double desiredWheelAngleRadians) {        
         double currentWheelAngleRadians = wheelAngleAbsoluteEncoder.getPositionRadians();
 
         double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
@@ -75,6 +80,14 @@ public class SwerveModule {
         setDriveMotorRelativeSpeed(driveMotorRelativeSpeed);
 
         lastAngleRadians = desiredWheelAngleRadians;
+    }
+
+    public void setState(SwerveModuleState desiredState) {
+        setState(desiredState.speedMetersPerSecond, desiredState.angle.getRadians());
+    }
+
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(driveMotor.getRelativeSpeed(), Rotation2d.fromRadians(angleMotor.getPositionRadians()));
     }
 
     public void setDriveMotorRelativeSpeed(double relativeSpeed) {
