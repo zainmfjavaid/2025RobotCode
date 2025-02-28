@@ -50,9 +50,9 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
  */
 
 public class RobotContainer {
-    private ShuffleboardTab configTab = Shuffleboard.getTab("config");
+    //private ShuffleboardTab configTab = Shuffleboard.getTab("config");
 
-    private final SendableChooser<Command> autonChooser;
+    //private final SendableChooser<Command> autonChooser;
     private final DriverController driverController = new DriverController();
     
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
@@ -79,11 +79,11 @@ public class RobotContainer {
         swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
         configureBindings();
     
-        autonChooser = AutoBuilder.buildAutoChooser();
+        //autonChooser = AutoBuilder.buildAutoChooser();
 
         //NamedCommands.registerCommand("elevatorUp", elevatorTestingSubsystem.goUpCommand());
         //NamedCommands.registerCommand("elevatorDown", elevatorTestingSubsystem.goDownCommand());
-        configTab.add("Auton Selection", autonChooser).withSize(3, 1);
+        //configTab.add("Auton Selection", autonChooser).withSize(3, 1);
     }
 
     private void configureBindings() { 
@@ -127,15 +127,14 @@ public class RobotContainer {
         // return new SequentialCommandGroup(
         //     new AutoDriveCommand(swerveSubsystem, trajectory)
         // );
-        return autonChooser.getSelected();
+        //return autonChooser.getSelected();
 
 
-        // no auton case:
-        // return new SequentialCommandGroup(
-        //     new InstantCommand(() -> swerveSubsystem.driveForward(0.1), swerveSubsystem)
-        //         .withTimeout(2)
-        //     .andThen(() -> swerveSubsystem.driveForward(0), swerveSubsystem)
-        // );
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> swerveSubsystem.driveForward(0.1), swerveSubsystem)
+                .withTimeout(2)
+                .andThen(() -> swerveSubsystem.driveForward(0), swerveSubsystem)
+        );
     }
 }
 

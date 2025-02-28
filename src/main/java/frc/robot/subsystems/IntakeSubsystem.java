@@ -19,7 +19,7 @@ public class IntakeSubsystem extends SubsystemBase {
     SparkMaxMotor rollerMotor = new SparkMaxMotor(30);
 
     Encoder armEncoder = new Encoder(2, 3);
-    Encoder wristEncoder = new Encoder(0, 0);
+    Encoder wristEncoder = new Encoder(4, 5);
     
     PIDController armPIDController = new PIDController(0.001, 0, 0);
     PIDController wristPIDController = new PIDController(0.001, 0, 0);
@@ -96,9 +96,11 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        if (!atSetpoint()) { // UNCOMMENT THIS 
-            // setArmPosition(currentGoal.getArmPosition());
-            // setWristPosition(currentGoal.getWristValue());
+        if (currentGoal != null) {
+            if (!atSetpoint()) { // UNCOMMENT THIS 
+                // setArmPosition(currentGoal.getArmPosition());
+                // setWristPosition(currentGoal.getWristValue());
+            }
         }
     }
 }

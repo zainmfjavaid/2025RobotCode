@@ -65,8 +65,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		if (!atSetpoint(currentGoal)) {
-			setPosition(currentGoal);
+		if (currentGoal != null) {
+			if (!atSetpoint(currentGoal)) {
+				setPosition(currentGoal);
+			}
 		}
 	}
 }
