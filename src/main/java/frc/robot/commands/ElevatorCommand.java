@@ -33,7 +33,7 @@ public class ElevatorCommand extends Command {
   @Override
   public void execute() {
     elevatorSubsystem.setPosition(intakeState);
-    intakeSubsystem.setIntakeState(intakeState);
+    intakeSubsystem.setGoal(intakeState);
   }
 
   // Called once the command ends or is interrupted.

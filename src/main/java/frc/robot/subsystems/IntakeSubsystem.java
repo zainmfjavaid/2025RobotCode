@@ -19,6 +19,7 @@ public class IntakeSubsystem extends SubsystemBase {
     SparkMaxMotor rollerMotor = new SparkMaxMotor(30);
 
     Encoder armEncoder = new Encoder(2, 3);
+    Encoder wristEncoder = new Encoder(0, 0);
     
     PIDController armPIDController = new PIDController(0.001, 0, 0);
     PIDController wristPIDController = new PIDController(0.001, 0, 0);
@@ -80,6 +81,14 @@ public class IntakeSubsystem extends SubsystemBase {
         return new StartEndCommand(() -> {armMotor.set(-0.4); System.out.println(armEncoder.getDistance());}, () -> armMotor.set(0), this);
     }
 
+    public StartEndCommand runWristTest() {
+        return new StartEndCommand(() -> {wristMotor.set(0.1); System.out.println(wristEncoder.getDistance());}, () -> {wristMotor.set(0);}, this);
+    }
+
+    public StartEndCommand reverseWristTest() {
+        return new StartEndCommand(() -> {wristMotor.set(-0.1); System.out.println(wristEncoder.getDistance());}, () -> wristMotor.set(0), this);
+    }
+
     public StartEndCommand runKickerTest() {
         return new StartEndCommand(() -> runKickerWheel(0.5), () -> runKickerWheel(0), this);
     }
@@ -87,9 +96,9 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        if (!atSetpoint()) {
-            setArmPosition(currentGoal.getArmPosition());
-            setWristPosition(currentGoal.getWristValue());
+        if (!atSetpoint()) { // UNCOMMENT THIS 
+            // setArmPosition(currentGoal.getArmPosition());
+            // setWristPosition(currentGoal.getWristValue());
         }
     }
 }

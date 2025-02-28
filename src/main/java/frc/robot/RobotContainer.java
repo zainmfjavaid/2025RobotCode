@@ -65,7 +65,7 @@ public class RobotContainer {
     private final L3 levelThreeCommand = new L3(intakeSubsystem, elevatorSubsystem);
     private final L4 LevelFourCommand = new L4(intakeSubsystem, elevatorSubsystem);
 
-    private final ElevatorScore elevatorScoreCommand = new ElevatorScore(intakeSubsystem, elevatorSubsystem);
+    // private final ElevatorScore elevatorScoreCommand = new ElevatorScore(intakeSubsystem, elevatorSubsystem); // create new cmd AT the trigger
 
     private final WristCommand wristCommand = new WristCommand(intakeSubsystem);
     
@@ -128,6 +128,14 @@ public class RobotContainer {
         //     new AutoDriveCommand(swerveSubsystem, trajectory)
         // );
         return autonChooser.getSelected();
+
+
+        // no auton case:
+        // return new SequentialCommandGroup(
+        //     new InstantCommand(() -> swerveSubsystem.driveForward(0.1), swerveSubsystem)
+        //         .withTimeout(2)
+        //     .andThen(() -> swerveSubsystem.driveForward(0), swerveSubsystem)
+        // );
     }
 }
 

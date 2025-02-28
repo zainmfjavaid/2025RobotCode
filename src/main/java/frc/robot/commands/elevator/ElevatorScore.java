@@ -28,11 +28,7 @@ public class ElevatorScore extends Command {
 
     // Called when the command is initially scheduled.
     @Override
-    public void initialize() {}
-
-    // Called every time the scheduler runs while the command is scheduled.
-    @Override
-    public void execute() {
+    public void initialize() {
         // TODO: NEED TO CHECK THIS STATE
         if (intakeState == IntakeState.TROUGH) {
             intakeSubsystem.runRollerMotor(-0.5);
@@ -41,11 +37,17 @@ public class ElevatorScore extends Command {
         }
     }
 
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        elevatorSubsystem.resetElevatorPosition();
+    }
+
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        elevatorSubsystem.resetElevatorPosition();
-        // TODO: REFACTOR TO SETGOAL()
+        intakeSubsystem.runRollerMotor(0);
+        intakeSubsystem.runKickerWheel(0);
     }
 
     // Returns true when the command should end.
