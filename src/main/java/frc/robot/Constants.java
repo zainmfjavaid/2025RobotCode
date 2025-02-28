@@ -105,9 +105,10 @@ public final class Constants {
             // ARM VALUES/WRIST ANGLES ARE TEMPORARY
             STOW(10, 0, 0),
             INTAKE(5, 0, 0),
-            TROUGH(2, 0, 0),
-            REEF(5, 0, 0),
-            L4(8, 0, 0),
+            TROUGH(2, 0, -10500),
+            L2(2, 0, -17000),
+            L3(5, 0, -19000),
+            L4(8, 0, -25000),
             TORCH(0, 0, 0);
 
             private final double armValue;

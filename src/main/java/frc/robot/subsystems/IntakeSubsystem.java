@@ -5,25 +5,36 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.hardware.SparkMaxMotor;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 
 public class IntakeSubsystem extends SubsystemBase {
     /** Creates a new IntakeSubsystem. */
-    SparkMaxMotor armMotor = new SparkMaxMotor(15);
-    Servo wrist = new Servo(0);
-	SparkMaxMotor kickerMotor = new SparkMaxMotor(7);
-    SparkMaxMotor rollerMotor = new SparkMaxMotor(1);
+    SparkMaxMotor armMotor = new SparkMaxMotor(32);
+    Servo wrist = new Servo(9);
+	SparkMaxMotor kickerMotor = new SparkMaxMotor(31, false, false, true);
+    SparkMaxMotor rollerMotor = new SparkMaxMotor(30);
+
+    Encoder armEncoder = new Encoder(2, 3);
+
+
+    int cycles = 0;
     
     PIDController armPIDController = new PIDController(0.001, 0, 0);
 
     public IntakeSubsystem() {}
 
 	public void setWristAngle(double angle) {
-		wrist.setAngle(angle);
+        System.out.println("runnong");
+		wrist.set(angle);
 	}
 
     public void setArmPosition(double position) {
@@ -45,12 +56,26 @@ public class IntakeSubsystem extends SubsystemBase {
     public void runRollerMotor(double speed) {
         rollerMotor.set(speed);
     }
-    
-	public InstantCommand rotateWristTest() {
-		return new InstantCommand(() -> {
-			wrist.setAngle(45);
-		}, this);
-	}
+
+    public StartEndCommand runRollersTest() {
+        return new StartEndCommand(() -> runRollerMotor(0.5), () -> runRollerMotor(0), this);
+    }
+
+    public StartEndCommand reverseRollersTest() {
+        return new StartEndCommand(() -> runRollerMotor(-0.3), () -> runRollerMotor(0), this);
+    }
+
+    public StartEndCommand runArmTest(){
+        return new StartEndCommand(() -> {armMotor.set(0.4); System.out.println(armEncoder.getDistance());}, () -> armMotor.set(0), this);
+    }
+
+    public StartEndCommand reverseArmTest(){
+        return new StartEndCommand(() -> {armMotor.set(-0.4); System.out.println(armEncoder.getDistance());}, () -> armMotor.set(0), this);
+    }
+
+    public StartEndCommand runKickerTest() {
+        return new StartEndCommand(() -> runKickerWheel(0.5), () -> runKickerWheel(0), this);
+    }
 
     @Override
     public void periodic() {

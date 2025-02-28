@@ -10,7 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
@@ -49,7 +49,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, 1000); //TODO Replace with max speed
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kMaxWheelDriveSpeedMetersPerSecond); //TODO Replace with max speed
         frontLeftModule.setState(desiredStates[0]);
         frontRightModule.setState(desiredStates[1]);
         backLeftModule.setState(desiredStates[2]);

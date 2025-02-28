@@ -7,16 +7,19 @@ package frc.robot;
 import java.util.List;
 
 import frc.robot.Constants.AutoSwerveConstants;
-
+import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.hardware.Controller.DriverController;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import frc.robot.commands.TeleopDriveCommand;
+import frc.robot.commands.WristCommand;
 import frc.robot.commands.AutoDriveCommand;
+import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.ReefAlignCommand;
 import frc.robot.subsystems.ClimbSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorTesting;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -47,9 +50,11 @@ public class RobotContainer {
     private final DriverController driverController = new DriverController();
     
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
-    private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
-    private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
+    // private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
+    private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+    // private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    private final WristCommand wristCommand = new WristCommand(intakeSubsystem);
     
 
     //private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
@@ -59,22 +64,30 @@ public class RobotContainer {
         swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
         configureBindings();
     
-        autonChooser = AutoBuilder.buildAutoChooser("");
-        NamedCommands.registerCommand("elevatorUp", elevatorTestingSubsystem.goUpCommand());
-        NamedCommands.registerCommand("elevatorDown", elevatorTestingSubsystem.goDownCommand());
-        configTab.add("Auton Selection", autonChooser).withSize(3, 1);
+        //autonChooser = AutoBuilder.buildAutoChooser("");
+        //NamedCommands.registerCommand("elevatorUp", elevatorTestingSubsystem.goUpCommand());
+        //NamedCommands.registerCommand("elevatorDown", elevatorTestingSubsystem.goDownCommand());
+        //configTab.add("Auton Selection", autonChooser).withSize(3, 1);
     }
 
     private void configureBindings() { 
         // Elevator Testing
-        driverController.getButton(DriverController.Button.LB).whileTrue(elevatorTestingSubsystem.goUpCommand());
-        driverController.getButton(DriverController.Button.RB).whileTrue(elevatorTestingSubsystem.goDownCommand());
+        driverController.getButton(DriverController.Button.LB).onTrue(new ElevatorCommand(elevatorSubsystem, IntakeState.INTAKE));
+        // driverController.getButton(DriverController.Button.RB).onTrue(new ElevatorCommand(elevatorSubsystem, IntakeState.L4));
+        driverController.getButton(DriverController.Button.RB).onTrue(new ElevatorCommand(elevatorSubsystem, IntakeState.TROUGH));
+
+        // driverController.getButton(DriverController.Button.LB).whileTrue(elevatorTestingSubsystem.goDownCommand());
+        // driverController.getButton(DriverController.Button.RB).whileTrue(elevatorTestingSubsystem.goUpCommand());
 
         // Intake Testing
-        driverController.getButton(DriverController.Button.A).onTrue(intakeSubsystem.rotateWristTest());
+        // driverController.getButton(DriverController.Button.A).whileTrue(new WristCommand(intakeSubsystem)); WRIST ONE
+        // driverController.getButton(DriverController.Button.RB).whileTrue(intakeSubsystem.runRollersTest());
+        driverController.getButton(DriverController.Button.B).whileTrue(intakeSubsystem.runKickerTest());
+        driverController.getButton(DriverController.Button.X).whileTrue(intakeSubsystem.reverseArmTest());
+        driverController.getButton(DriverController.Button.Y).whileTrue(intakeSubsystem.runArmTest());
 
         // Climb 
-        driverController.getButton(DriverController.Button.X).onTrue(new InstantCommand(() -> climbSubsystem.setClimb()));
+        // driverController.getButton(DriverController.Button.X).onTrue(new InstantCommand(() -> climbSubsystem.setClimb()));
         // Alignment (uncomment PLEASE)
         //driverController.getButton(DriverController.Button.Y).whileTrue(reefAlignCommand);
 
