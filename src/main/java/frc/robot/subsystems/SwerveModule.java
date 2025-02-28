@@ -43,8 +43,9 @@ public class SwerveModule {
         resetEncoders();
     }
 
-    public void setState(double robotLongitudinalSpeedMetersPerSecond, double robotLateralSpeedMetersPerSecond, double robotRotationSpeedRadiansPerSecond) {        
+    public void setSpeeds(double robotLongitudinalSpeedMetersPerSecond, double robotLateralSpeedMetersPerSecond, double robotRotationSpeedRadiansPerSecond) {
         double rotationSpeedMetersPerSecond = robotRotationSpeedRadiansPerSecond / DriveConstants.kMaxRotationSpeedRadiansPerSecond * DriveConstants.kMaxWheelDriveSpeedMetersPerSecond;
+        
         double longitudinalSpeedMetersPerSecond = robotLongitudinalSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.cos(turnAngleRadians);
         double lateralSpeedMetersPerSecond = robotLateralSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.sin(turnAngleRadians);
         
@@ -55,6 +56,10 @@ public class SwerveModule {
             desiredWheelAngleRadians = DriveUtils.normalizeAngleRadiansSigned(DriveUtils.getAngleRadiansFromComponents(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond));
         } 
 
+        setState(wheelDriveSpeedMetersPerSecond, desiredWheelAngleRadians);
+    }
+
+    public void setState(double wheelDriveSpeedMetersPerSecond, double desiredWheelAngleRadians) {        
         double currentWheelAngleRadians = wheelAngleAbsoluteEncoder.getPositionRadians();
 
         double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
@@ -78,33 +83,11 @@ public class SwerveModule {
     }
 
     public void setState(SwerveModuleState desiredState) {
-        double wheelDriveSpeedMetersPerSecond = desiredState.speedMetersPerSecond;
-        double desiredWheelAngleRadians = desiredState.angle.getRadians();
-        
-        double currentWheelAngleRadians = wheelAngleAbsoluteEncoder.getPositionRadians();
-        double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
-
-        // if greater than 90 degrees, add 180 degrees and flip drive motor direction
-        if (Math.abs(wheelAngleErrorRadians) > Math.PI / 2) {
-            wheelAngleErrorRadians = DriveUtils.normalizeAngleRadiansSigned(wheelAngleErrorRadians + Math.PI);
-            wheelDriveSpeedMetersPerSecond = -wheelDriveSpeedMetersPerSecond;
-        }
-
-        desiredWheelAngleRadians = currentWheelAngleRadians + wheelAngleErrorRadians;
-        
-        double wheelAngleSpeedRadiansPerSecond = TeleopSwerveConstants.kRotationController.calculate(currentWheelAngleRadians, desiredWheelAngleRadians);
-        double angleMotorRelativeSpeed = DriveUtils.radiansToRotations(wheelAngleSpeedRadiansPerSecond);
-        setAngleMotorRelativeSpeed(angleMotorRelativeSpeed);
-        
-        double driveMotorRelativeSpeed = DriveUtils.toDriveRelativeSpeed(wheelDriveSpeedMetersPerSecond);
-        setDriveMotorRelativeSpeed(driveMotorRelativeSpeed);
-
-        lastAngleRadians = desiredWheelAngleRadians;
+        setState(desiredState.speedMetersPerSecond, desiredState.angle.getRadians());
     }
 
-
     public SwerveModuleState getState() {
-        return new SwerveModuleState(driveMotor.getRealtiveSpeed(), new Rotation2d(angleMotor.getPositionRadians()));
+        return new SwerveModuleState(driveMotor.getRelativeSpeed(), Rotation2d.fromRadians(angleMotor.getPositionRadians()));
     }
 
     public void setDriveMotorRelativeSpeed(double relativeSpeed) {

@@ -51,7 +51,7 @@ public class AutoDriveCommand extends Command {
     double lateralSpeed = AutoSwerveConstants.kYController.calculate(currentPose.getY(), desiredPose.getY());
     double rotationSpeed = AutoSwerveConstants.kThetaController.calculate(currentPose.getRotation().getRadians(), desiredPose.getRotation().getRadians());
 
-    swerveSubsystem.setModuleStates(longitudinalSpeed, lateralSpeed, rotationSpeed);
+    swerveSubsystem.setModuleSpeeds(longitudinalSpeed, lateralSpeed, rotationSpeed);
   }
 
   // Called once the command ends or is interrupted.

@@ -41,11 +41,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private static RobotConfig config;
 
-    public void setModuleStates(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
-        frontLeftModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
-        frontRightModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
-        backLeftModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
-        backRightModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
+    public void setModuleSpeeds(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
+        frontLeftModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
+        frontRightModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
+        backLeftModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
+        backRightModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
     }
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
@@ -62,13 +62,12 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveModuleArray[1] = frontRightModule.getState();
         swerveModuleArray[2] = backLeftModule.getState();
         swerveModuleArray[3] = backRightModule.getState();
-
         return swerveModuleArray;
     }
 
     public void fieldCentricSwerve(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
         double offsetRadians = -getGyroAngle().getRadians();
-        setModuleStates(
+        setModuleSpeeds(
             longitudinalSpeedMetersPerSecond * Math.cos(offsetRadians) - lateralSpeedMetersPerSecond * Math.sin(offsetRadians), 
             longitudinalSpeedMetersPerSecond * Math.sin(offsetRadians) + lateralSpeedMetersPerSecond * Math.cos(offsetRadians), 
             rotationSpeedRadiansPerSecond);
@@ -148,15 +147,15 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void driveForward(double longitudinalSpeed) {
-        setModuleStates(longitudinalSpeed, 0, 0);
+        setModuleSpeeds(longitudinalSpeed, 0, 0);
     }
 
     public void driveLaterally(double lateralSpeed) {
-        setModuleStates(0, lateralSpeed, 0);
+        setModuleSpeeds(0, lateralSpeed, 0);
     }
 
     public void spin(double speedRadiansPerSecond) {
-        setModuleStates(0, 0, speedRadiansPerSecond);
+        setModuleSpeeds(0, 0, speedRadiansPerSecond);
     }
 
     // print
