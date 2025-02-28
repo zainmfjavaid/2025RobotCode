@@ -112,12 +112,12 @@ public final class Constants {
             TORCH(0, 0, 0);
 
             private final double armValue;
-            private final double wristAngle;
+            private final double wristValue;
             private final double elevatorValue;
 
-            IntakeState(double armValue, double wristAngle, double elevatorValue) {
+            IntakeState(double armValue, double wristValue, double elevatorValue) {
                 this.armValue = armValue;
-                this.wristAngle = wristAngle;
+                this.wristValue = wristValue;
                 this.elevatorValue = elevatorValue;
             }
 
@@ -125,8 +125,8 @@ public final class Constants {
                 return armValue;
             }
 
-            public double getWristAngle() {
-                return wristAngle;
+            public double getWristValue() {
+                return wristValue;
             }
 
             public double getElevatorValue() {

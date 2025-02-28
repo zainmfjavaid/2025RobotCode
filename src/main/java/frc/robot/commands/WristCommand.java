@@ -21,7 +21,7 @@ public class WristCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intakeSubsystem.setWristAngle(0.15);
+    //intakeSubsystem.setWristAngle(0.15);
     cycleCount = 0;
   }
 

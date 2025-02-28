@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.hardware.SparkMaxMotor;
@@ -19,6 +18,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     Encoder elevatorEncoder = new Encoder(0, 1);
 
 	double currentPosition = 0;
+	IntakeState currentGoal = null;
 
 	/** Creates a new ElevatorSubsystem. */
 	public ElevatorSubsystem() {}
@@ -43,8 +43,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 			rightElevatorMotor.set(1);
 		} else {
 			if (intakeState.getElevatorValue() != 0) {
-				leftElevatorMotor.set(0);
-				rightElevatorMotor.set(0);
+				stop();
 			} else {
 				resetElevatorPosition();
 			}
@@ -59,15 +58,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 		rightElevatorMotor.set(-pidOutput);
 	}
 
-	// public InstantCommand elevatorTest(IntakeState position) {
-	// 	return new InstantCommand(() -> {
-	// 		System.out.println("moving elevator??!?!?");
-	// 		setPosition(position);
-	// 	});
-	// }
+	public void setGoal(IntakeState intakeState) {
+		currentGoal = intakeState;
+	}
 
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
+		if (!atSetpoint(currentGoal)) {
+			setPosition(currentGoal);
+		}
 	}
 }
