@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 // USES ABSOLUTE ENCODER
+// don't use angle motor relative encoder
 
 // current issues: the robot doesn't go completely straight, it turns a bit
 // the issue is not with the gyro but with my code or the absolute encoder offsets
@@ -64,7 +65,7 @@ public class SwerveModule {
 
         double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
 
-        // if greater than 90 deg, add 180 deg and flip drive motor direction
+        // If greater than 90 deg, add 180 deg and flip drive motor direction
         if (Math.abs(wheelAngleErrorRadians) > Math.PI / 2) {
             wheelAngleErrorRadians = DriveUtils.normalizeAngleRadiansSigned(wheelAngleErrorRadians + Math.PI);
             wheelDriveSpeedMetersPerSecond = -wheelDriveSpeedMetersPerSecond;
@@ -87,7 +88,10 @@ public class SwerveModule {
     }
 
     public SwerveModuleState getState() {
-        return new SwerveModuleState(driveMotor.getRelativeSpeed(), Rotation2d.fromRadians(angleMotor.getPositionRadians()));
+        double speedRadiansPerSecond = DriveUtils.rotationsToRadians(driveMotor.getSpeedRotationsPerSecond());
+        double speedMetersPerSecond = DriveUtils.getWheelLinearVelocity(speedRadiansPerSecond);
+        Rotation2d angle = Rotation2d.fromRadians(wheelAngleAbsoluteEncoder.getPositionRadians());
+        return new SwerveModuleState(speedMetersPerSecond, angle);
     }
 
     public void setDriveMotorRelativeSpeed(double relativeSpeed) {
@@ -109,8 +113,7 @@ public class SwerveModule {
         return new SwerveModulePosition(distanceMeters, angle);
     }
 
-    // print encoder
-    
+    // Print encoder values
 
     // rotation of wheel
     public void printEncoderPositions(String name) {

@@ -37,7 +37,7 @@ public class KrakenMotor {
         motor.set(reverseMotor ? -relativeSpeed : relativeSpeed);
     }
 
-    public double getRelativeSpeed(){
+    public double getSpeedRotationsPerSecond(){
         return motor.getVelocity().getValueAsDouble();
     }
 }

@@ -73,4 +73,11 @@ public class DriveUtils {
     public static double toAngleRelativeSpeed(double angleSpeedRadiansPerSecond) {
         return angleSpeedRadiansPerSecond / DriveConstants.kMaxWheelAngleSpeedRadiansPerSecond;
     }
+
+    public static double getLinearVelocity(double radiansPerSecond, double radius) {
+        return radiansPerSecond * radius;
+    } 
+    public static double getWheelLinearVelocity(double radiansPerSecond) {
+        return getLinearVelocity(radiansPerSecond, DriveConstants.kWheelRadiusMeters);
+    }
 }

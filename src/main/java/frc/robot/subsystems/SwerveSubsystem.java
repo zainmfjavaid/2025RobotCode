@@ -57,12 +57,12 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public SwerveModuleState[] getModuleStates() {
-        SwerveModuleState[] swerveModuleArray = new SwerveModuleState[4];
-        swerveModuleArray[0] = frontLeftModule.getState();
-        swerveModuleArray[1] = frontRightModule.getState();
-        swerveModuleArray[2] = backLeftModule.getState();
-        swerveModuleArray[3] = backRightModule.getState();
-        return swerveModuleArray;
+        return new SwerveModuleState[] {
+            frontLeftModule.getState(),
+            frontRightModule.getState(),
+            backLeftModule.getState(),
+            backRightModule.getState()
+        };
     }
 
     public void fieldCentricSwerve(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
