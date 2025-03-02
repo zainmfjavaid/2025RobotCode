@@ -88,7 +88,7 @@ public class SwerveModule {
     }
 
     public SwerveModuleState getState() {
-        double speedRadiansPerSecond = DriveUtils.rotationsToRadians(driveMotor.getSpeedRotationsPerSecond());
+        double speedRadiansPerSecond = DriveUtils.driveMotorToWheel(driveMotor.getSpeedRadiansPerSecond());
         double speedMetersPerSecond = DriveUtils.getWheelLinearVelocity(speedRadiansPerSecond);
         Rotation2d angle = Rotation2d.fromRadians(wheelAngleAbsoluteEncoder.getPositionRadians());
         return new SwerveModuleState(speedMetersPerSecond, angle);

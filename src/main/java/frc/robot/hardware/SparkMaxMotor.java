@@ -30,12 +30,7 @@ public class SparkMaxMotor {
         motor = new SparkMax(deviceId, MotorType.kBrushless);
         encoder = motor.getEncoder();
 
-        if (isBrake) {
-            config.idleMode(IdleMode.kBrake);
-        } else {
-            config.idleMode(IdleMode.kCoast);
-        }
-        
+        config.idleMode(isBrake ? IdleMode.kBrake : IdleMode.kCoast);
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         this.reverseMotor = reverseMotor;
