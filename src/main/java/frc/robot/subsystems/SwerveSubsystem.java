@@ -1,49 +1,65 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import frc.robot.Constants.MotorConstants;
-import frc.robot.Constants.RobotConstants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
+import frc.robot.Constants.SwerveConstants.Module;
 import frc.robot.hardware.Controller.DriverController;
-import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 public class SwerveSubsystem extends SubsystemBase {
-    private static final Translation2d frontLeftLocation = new Translation2d(RobotConstants.kWidthMeters/2, RobotConstants.kLengthMeters/2);
-    private static final Translation2d frontRightLocation = new Translation2d(RobotConstants.kWidthMeters/2, -RobotConstants.kLengthMeters/2);
-    private static final Translation2d backLeftLocation = new Translation2d(-RobotConstants.kWidthMeters/2, RobotConstants.kLengthMeters/2);
-    private static final Translation2d backRightLocation = new Translation2d(-RobotConstants.kWidthMeters/2, -RobotConstants.kLengthMeters/2);
-            
-    private final SwerveModule frontLeftModule = new SwerveModule(MotorConstants.kFrontLeftDriveMotorDeviceId, MotorConstants.kFrontLeftAngleMotorDeviceId, frontLeftLocation, EncoderConfig.FRONT_LEFT);
-    private final SwerveModule frontRightModule = new SwerveModule(MotorConstants.kFrontRightDriveMotorDeviceId, MotorConstants.kFrontRightAngleMotorDeviceId, frontRightLocation, EncoderConfig.FRONT_RIGHT);
-    private final SwerveModule backLeftModule = new SwerveModule(MotorConstants.kBackLeftDriveMotorDeviceId, MotorConstants.kBackLeftAngleMotorDeviceId, backLeftLocation, EncoderConfig.BACK_LEFT);
-    private final SwerveModule backRightModule = new SwerveModule(MotorConstants.kBackRightDriveMotorDeviceId, MotorConstants.kBackRightAngleMotorDeviceId, backRightLocation, EncoderConfig.BACK_RIGHT); 
+    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT);
+    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT);
+    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT);
+    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT); 
 
-    private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
+    private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Module.FRONT_LEFT.getLocation(), Module.FRONT_RIGHT.getLocation(), Module.BACK_LEFT.getLocation(), Module.BACK_RIGHT.getLocation());
 
     private final Pigeon2 gyro = new Pigeon2(20, "CANivore2158");
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(getKinematics(), new Rotation2d(0), getModulePositions());
 
-    public void setModuleStates(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
-        frontLeftModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
-        frontRightModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
-        backLeftModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
-        backRightModule.setState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
+    private static RobotConfig config;
+
+    public void setModuleSpeeds(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
+        frontLeftModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
+        frontRightModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
+        backLeftModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
+        backRightModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
+    }
+
+    public void setModuleStates(SwerveModuleState[] desiredStates) {
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kMaxWheelDriveSpeedMetersPerSecond); //TODO Replace with max speed
+        frontLeftModule.setState(desiredStates[0]);
+        frontRightModule.setState(desiredStates[1]);
+        backLeftModule.setState(desiredStates[2]);
+        backRightModule.setState(desiredStates[3]);
+    }
+
+    public SwerveModuleState[] getModuleStates() {
+        return new SwerveModuleState[] {
+            frontLeftModule.getState(),
+            frontRightModule.getState(),
+            backLeftModule.getState(),
+            backRightModule.getState()
+        };
     }
 
     public void fieldCentricSwerve(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
         double offsetRadians = -getGyroAngle().getRadians();
-        setModuleStates(
+        setModuleSpeeds(
             longitudinalSpeedMetersPerSecond * Math.cos(offsetRadians) - lateralSpeedMetersPerSecond * Math.sin(offsetRadians), 
             longitudinalSpeedMetersPerSecond * Math.sin(offsetRadians) + lateralSpeedMetersPerSecond * Math.cos(offsetRadians), 
             rotationSpeedRadiansPerSecond);
@@ -58,6 +74,14 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public SwerveDriveKinematics getKinematics() {
         return kinematics;
+    }
+
+    public void setChassisSpeeds(ChassisSpeeds speeds) {
+        setModuleStates(kinematics.toSwerveModuleStates(speeds));
+    }
+
+    public ChassisSpeeds getChassisSpeeds() {
+        return kinematics.toChassisSpeeds(getModuleStates());
     }
 
     public SwerveModulePosition[] getModulePositions() {
@@ -80,6 +104,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void resetGyro() {
         gyro.reset();
+    }
+
+    public void resetOdometer(Pose2d pose) {
+        odometer.resetPosition(getGyroAngle(), getModulePositions(), pose);
     }
 
     public void resetOdometer() {
@@ -110,12 +138,16 @@ public class SwerveSubsystem extends SubsystemBase {
         backRightModule.setAngleMotorRelativeSpeed(speed);
     }
 
-    public void drive(double longitudinalSpeed) {
-        setModuleStates(longitudinalSpeed, 0, 0);
+    public void driveForward(double longitudinalSpeed) {
+        setModuleSpeeds(longitudinalSpeed, 0, 0);
+    }
+
+    public void driveLaterally(double lateralSpeed) {
+        setModuleSpeeds(0, lateralSpeed, 0);
     }
 
     public void spin(double speedRadiansPerSecond) {
-        setModuleStates(0, 0, speedRadiansPerSecond);
+        setModuleSpeeds(0, 0, speedRadiansPerSecond);
     }
 
     // print
@@ -141,5 +173,37 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void printOdometerPose() {
         System.out.println("Odometer Pose: " + getPose());
+    }
+
+    public void initAuton(){
+        try{
+            config = RobotConfig.fromGUISettings();
+        } catch (Exception e) {
+            // Handle exception as needed
+            e.printStackTrace();
+        }
+        AutoBuilder.configure(
+            this::getPose, // Robot pose supplier
+            this::resetOdometer, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, feedforwards) -> setChassisSpeeds(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+            ),
+            config, // The robot configuration
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
     }
 }

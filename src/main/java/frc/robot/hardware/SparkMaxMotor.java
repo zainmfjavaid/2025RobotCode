@@ -1,6 +1,5 @@
 package frc.robot.hardware;
 
-import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -19,21 +18,19 @@ public class SparkMaxMotor {
     private final boolean reverseEncoder;
     SparkBaseConfig config = new SparkMaxConfig();
 
+    public SparkMaxMotor(int deviceId) {
+        this(deviceId, false, false, false);
+    }
+
     public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
         this(deviceId, reverseMotor, reverseEncoder, false);
     }
-    
     
     public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder, Boolean isBrake) {
         motor = new SparkMax(deviceId, MotorType.kBrushless);
         encoder = motor.getEncoder();
 
-        if (isBrake) {
-            config.idleMode(IdleMode.kBrake);
-        } else {
-            config.idleMode(IdleMode.kCoast);
-        }
-        
+        config.idleMode(isBrake ? IdleMode.kBrake : IdleMode.kCoast);
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         this.reverseMotor = reverseMotor;
