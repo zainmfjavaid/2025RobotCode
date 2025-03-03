@@ -63,8 +63,10 @@ public class DriveUtils {
     }
 
     // Return the angle in radians formed by the x and y components
-    public static double getAngleRadiansFromComponents(double y, double x) {
-        return normalizeAngleRadiansSigned(Math.atan2(x, y));
+    // x is longitudinal, y is lateral
+    // y is opposite, x is adjacent
+    public static double getAngleRadiansFromComponents(double x, double y) {
+        return normalizeAngleRadiansSigned(Math.atan2(y, x));
     }
 
     public static double toDriveRelativeSpeed(double driveSpeedMetersPerSecond) {

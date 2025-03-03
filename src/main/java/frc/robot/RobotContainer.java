@@ -60,10 +60,13 @@ public class RobotContainer {
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
     // Elevator commands
+
+    // Future fix: this seems inefficient, maybe create a single command class instead having 4 different command classes
     private final L1 levelOneCommand = new L1(intakeSubsystem, elevatorSubsystem);
     private final L2 levelTwoCommand = new L2(intakeSubsystem, elevatorSubsystem);
     private final L3 levelThreeCommand = new L3(intakeSubsystem, elevatorSubsystem);
     private final L4 LevelFourCommand = new L4(intakeSubsystem, elevatorSubsystem);
+
 
     // private final ElevatorScore elevatorScoreCommand = new ElevatorScore(intakeSubsystem, elevatorSubsystem); // create new cmd AT the trigger
 

@@ -2,14 +2,13 @@ package frc.robot.subsystems;
 
 import frc.robot.hardware.KrakenMotor;
 import frc.robot.hardware.AbsoluteEncoder;
-import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
+import frc.robot.Constants.SwerveConstants.Module;
 
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
@@ -29,17 +28,17 @@ public class SwerveModule {
 
     public double lastAngleRadians = 0;
 
-    public SwerveModule(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig config) {
-        driveMotor = new KrakenMotor(driveMotorDeviceId, true, true);
+    public SwerveModule(Module module) {
+        driveMotor = new KrakenMotor(module.getDriveMotorDeviceId(), true, true);
 
         // reverse motor if needed to match direction of absolute encoder
         // (reversing encoder doesn't matter because relative encoder is not used, but it would if it were)
-        angleMotor = new KrakenMotor(angleMotorDeviceId, true, true);
+        angleMotor = new KrakenMotor(module.getAngleMotorDeviceId(), true, true);
 
-        double unnormalizedTurnAngleRadians = DriveUtils.getAngleRadiansFromComponents(location.getX(), location.getY()) + Math.PI / 2;
+        double unnormalizedTurnAngleRadians = DriveUtils.getAngleRadiansFromComponents(module.getLocation().getX(), module.getLocation().getY()) + Math.PI / 2;
         turnAngleRadians = DriveUtils.normalizeAngleRadiansSigned(unnormalizedTurnAngleRadians);
         
-        wheelAngleAbsoluteEncoder = new AbsoluteEncoder(config, SensorDirectionValue.CounterClockwise_Positive);
+        wheelAngleAbsoluteEncoder = new AbsoluteEncoder(module.getEncoderConfig(), SensorDirectionValue.CounterClockwise_Positive);
 
         resetEncoders();
     }

@@ -10,13 +10,14 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.hardware.SparkMaxMotor;
 import frc.robot.Constants.IntakeConstants.IntakeState;
+import frc.robot.Constants.DeviceIds;
 
 public class IntakeSubsystem extends SubsystemBase {
     /** Creates a new IntakeSubsystem. */
-    SparkMaxMotor armMotor = new SparkMaxMotor(32);
-    SparkMaxMotor wristMotor = new SparkMaxMotor(33);
-	SparkMaxMotor kickerMotor = new SparkMaxMotor(31, false, false, true);
-    SparkMaxMotor rollerMotor = new SparkMaxMotor(30);
+    SparkMaxMotor armMotor = new SparkMaxMotor(DeviceIds.kArmMotor);
+    SparkMaxMotor wristMotor = new SparkMaxMotor(DeviceIds.kWristMotor);
+	SparkMaxMotor kickerMotor = new SparkMaxMotor(DeviceIds.kKickerMotor, false, false, true);
+    SparkMaxMotor rollerMotor = new SparkMaxMotor(DeviceIds.kRollerMotor);
 
     Encoder armEncoder = new Encoder(2, 3);
     Encoder wristEncoder = new Encoder(4, 5);
