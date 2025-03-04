@@ -48,6 +48,7 @@ public class TeleopDriveCommand extends Command {
                 break;
         }
         swerveSubsystem.updateOdometer();
+        swerveSubsystem.tipDetection();
     } 
 
     @Override

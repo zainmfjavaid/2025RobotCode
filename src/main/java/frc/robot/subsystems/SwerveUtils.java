@@ -1,22 +1,22 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.TeleopSwerveConstants;
+import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.SwerveConstants.TeleopSwerveConstants;
 
-public class DriveUtils {
+public class SwerveUtils {
     public static double angleWheelToMotor(double value) {
-        return value / DriveConstants.kAngleMotorGearRatio;
+        return value / SwerveConstants.kAngleMotorGearRatio;
     }
     public static double angleMotorToWheel(double value) {
-        return value * DriveConstants.kAngleMotorGearRatio;
+        return value * SwerveConstants.kAngleMotorGearRatio;
     }
 
     public static double driveWheelToMotor(double value) {
-        return value / DriveConstants.kDriveMotorGearRatio;
+        return value / SwerveConstants.kDriveMotorGearRatio;
     }
     public static double driveMotorToWheel(double value) {
-        return value * DriveConstants.kDriveMotorGearRatio;
+        return value * SwerveConstants.kDriveMotorGearRatio;
     }
 
     public static double rotationsToRadians(double rotations) {
@@ -70,16 +70,16 @@ public class DriveUtils {
     }
 
     public static double toDriveRelativeSpeed(double driveSpeedMetersPerSecond) {
-        return driveSpeedMetersPerSecond / DriveConstants.kMaxWheelDriveSpeedMetersPerSecond;
+        return driveSpeedMetersPerSecond / SwerveConstants.kMaxWheelDriveSpeedMetersPerSecond;
     }
     public static double toAngleRelativeSpeed(double angleSpeedRadiansPerSecond) {
-        return angleSpeedRadiansPerSecond / DriveConstants.kMaxWheelAngleSpeedRadiansPerSecond;
+        return angleSpeedRadiansPerSecond / SwerveConstants.kMaxWheelAngleSpeedRadiansPerSecond;
     }
 
     public static double getLinearVelocity(double radiansPerSecond, double radius) {
         return radiansPerSecond * radius;
     } 
     public static double getWheelLinearVelocity(double radiansPerSecond) {
-        return getLinearVelocity(radiansPerSecond, DriveConstants.kWheelRadiusMeters);
+        return getLinearVelocity(radiansPerSecond, SwerveConstants.kWheelRadiusMeters);
     }
 }

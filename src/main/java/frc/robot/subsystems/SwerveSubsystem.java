@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -9,8 +10,10 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.TeleopSwerveConstants;
+
+import frc.robot.Constants.SwerveConstants;
+import frc.robot.Constants.SwerveConstants.TeleopSwerveConstants;
+import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.SwerveConstants.Module;
 import frc.robot.hardware.Controller.DriverController;
 
@@ -33,6 +36,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private static RobotConfig config;
 
+    private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+
+    private final double retractElevatorThresholdRadians = Rotation2d.fromDegrees(3).getRadians();
+
     public void setModuleSpeeds(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
         frontLeftModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
         frontRightModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
@@ -41,7 +48,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kMaxWheelDriveSpeedMetersPerSecond); //TODO Replace with max speed
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwerveConstants.kMaxWheelDriveSpeedMetersPerSecond); //TODO Replace with max speed
         frontLeftModule.setState(desiredStates[0]);
         frontRightModule.setState(desiredStates[1]);
         backLeftModule.setState(desiredStates[2]);
@@ -93,11 +100,24 @@ public class SwerveSubsystem extends SubsystemBase {
         };
     }
 
-    // counterclockwise is positive
+    // counterclockwise is positive // yaw
     public Rotation2d getGyroAngle() {
         return gyro.getRotation2d();
     }
 
+    public Rotation3d getGyroRotation3d() {
+        return gyro.getRotation3d();
+    }
+
+    public void tipDetection() {
+        double rollRadians = getGyroRotation3d().getX();
+        double pitchRadians = getGyroRotation3d().getY();
+        if (rollRadians > retractElevatorThresholdRadians || pitchRadians > retractElevatorThresholdRadians) {
+            System.out.println("tip");
+            // elevator.setPosition(IntakeState.STOW);
+        }
+    }
+    
     public Pose2d getPose() {
         return odometer.getPoseMeters();
     }
