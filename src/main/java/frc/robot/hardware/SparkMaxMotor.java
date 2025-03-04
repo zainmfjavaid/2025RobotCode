@@ -9,14 +9,14 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import frc.robot.subsystems.DriveUtils;
+import frc.robot.subsystems.SwerveUtils;
 
 public class SparkMaxMotor {
     private final SparkMax motor;
     private final RelativeEncoder encoder;
     private final boolean reverseMotor;
     private final boolean reverseEncoder;
-    SparkBaseConfig config = new SparkMaxConfig();
+    private final SparkBaseConfig config = new SparkMaxConfig();
 
     public SparkMaxMotor(int deviceId) {
         this(deviceId, false, false, false);
@@ -25,7 +25,7 @@ public class SparkMaxMotor {
     public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
         this(deviceId, reverseMotor, reverseEncoder, false);
     }
-    
+
     public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder, Boolean isBrake) {
         motor = new SparkMax(deviceId, MotorType.kBrushless);
         encoder = motor.getEncoder();
@@ -41,11 +41,15 @@ public class SparkMaxMotor {
         return reverseEncoder ? -encoder.getPosition() : encoder.getPosition();
     }
     public double getPositionRadians() {
-        return DriveUtils.rotationsToRadians(getPositionRotations());
+        return SwerveUtils.rotationsToRadians(getPositionRotations());
     }
     
     public void setEncoderPosition(double position) {
         encoder.setPosition(reverseEncoder ? -position : position);
+    }
+
+    public void setVoltage(double voltage) {
+        motor.setVoltage(voltage);
     }
 
     public void set(double relativeSpeed) {

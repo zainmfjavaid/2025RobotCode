@@ -9,13 +9,10 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
-import frc.robot.subsystems.DriveUtils;
+import frc.robot.subsystems.SwerveUtils;
 
 public final class Constants {
     public static final double kTau = Math.PI * 2;
-
-  public static final double aprilTagHeightInches = 12.125;
-  public static final double cameraHeightInches = 6;
 
     public static final double aprilTagHeightInches = 12.125;
     public static final double cameraHeightInches = 6;
@@ -39,22 +36,7 @@ public final class Constants {
 			ALIGN,
 			TEST;
         } 
-
         public static final DriveType driveType = DriveType.SWERVE;
-        
-        public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5); // don't know if this is right
-        public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
-
-        public static final double kDriveMotorGearRatio = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
-        public static final double kAngleMotorGearRatio = (14.0 / 50.0) * (10.0 / 60.0);
-
-        private static final double kMaxWheelDriveSpeedRadiansPerSecond = DriveUtils.driveMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
-        public static final double kMaxWheelDriveSpeedMetersPerSecond = DriveUtils.getLinearVelocity(kMaxWheelDriveSpeedRadiansPerSecond, kWheelRadiusMeters);
-
-        public static final double kMaxWheelAngleSpeedRadiansPerSecond = DriveUtils.angleMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
-
-        private static final double kRotationRadiusMeters = Math.hypot(RobotConstants.kTrackWidth / 2, RobotConstants.kWheelbase / 2);
-        public static final double kMaxRotationSpeedRadiansPerSecond = kMaxWheelDriveSpeedMetersPerSecond / kRotationRadiusMeters;
     }
 
     public static class SwerveConstants {
@@ -89,28 +71,42 @@ public final class Constants {
                 return encoderConfig;
             }
         }
-    }
+        
+        public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5); // don't know if this is right
+        public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
 
-    public static class TeleopSwerveConstants {
-        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(0.5);
+        public static final double kDriveMotorGearRatio = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
+        public static final double kAngleMotorGearRatio = (14.0 / 50.0) * (10.0 / 60.0);
 
-        public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
+        public static final double kMaxWheelDriveSpeedRadiansPerSecond = SwerveUtils.driveMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
+        public static final double kMaxWheelDriveSpeedMetersPerSecond = SwerveUtils.getLinearVelocity(kMaxWheelDriveSpeedRadiansPerSecond, kWheelRadiusMeters);
 
-        public static final PIDController kRotationController = new PIDController(1.5, 0, 0);
-    }
+        public static final double kMaxWheelAngleSpeedRadiansPerSecond = SwerveUtils.angleMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
 
-    public static class AutoSwerveConstants {
-        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(2);
-        public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 6;
+        public static final double kRobotRotationRadiusMeters = Math.hypot(RobotConstants.kTrackWidth / 2, RobotConstants.kWheelbase / 2);
+        public static final double kMaxRotationSpeedRadiansPerSecond = kMaxWheelDriveSpeedMetersPerSecond / kRobotRotationRadiusMeters;
 
-        public static final double kMaxAccelerationMetersPerSecondSquared = kMaxDriveSpeedMetersPerSecond / 6;
-        public static final double kMaxRotationAccelerationRadiansPerSecondSquared = kMaxRotationSpeedRadiansPerSecond / 6;
+        public static class TeleopSwerveConstants {
+            public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(0.5);
 
-        public static final PIDController kXController = new PIDController(0.1, 0, 0.1);
-        public static final PIDController kYController = new PIDController(0.1, 0, 0.1);
+            public static final double kMaxRotationSpeedRadiansPerSecond = SwerveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
 
-        public static final PIDController kThetaController = new PIDController(0.5 / Math.PI, 0, 0);
-        public static final Constraints kThetaConstraints = new Constraints(kMaxRotationSpeedRadiansPerSecond, kMaxRotationAccelerationRadiansPerSecondSquared);
+            public static final PIDController kRotationController = new PIDController(1.5, 0, 0);
+        }
+
+        public static class AutoSwerveConstants {
+            public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(2);
+            public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 6;
+
+            public static final double kMaxAccelerationMetersPerSecondSquared = kMaxDriveSpeedMetersPerSecond / 6;
+            public static final double kMaxRotationAccelerationRadiansPerSecondSquared = kMaxRotationSpeedRadiansPerSecond / 6;
+
+            public static final PIDController kXController = new PIDController(0.1, 0, 0.1);
+            public static final PIDController kYController = new PIDController(0.1, 0, 0.1);
+
+            public static final PIDController kThetaController = new PIDController(0.5 / Math.PI, 0, 0);
+            public static final Constraints kThetaConstraints = new Constraints(kMaxRotationSpeedRadiansPerSecond, kMaxRotationAccelerationRadiansPerSecondSquared);
+        }
     }
 
     public static class OperatorConstants {
