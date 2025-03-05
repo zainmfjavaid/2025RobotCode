@@ -14,7 +14,7 @@ public final class Constants {
     public static final double kTau = Math.PI * 2;
 
     public static final double aprilTagHeightInches = 12.125;
-    public static final double cameraHeightInches = 6;
+    public static final double cameraHeightInches = 12.5;
 
     public static class RobotConstants {
         public static final double kWidthMeters = Units.inchesToMeters(19.75);
@@ -54,7 +54,7 @@ public final class Constants {
     }
 
     public static class TeleopSwerveConstants {
-        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(0.5);
+        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(2.5);
 
         public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
 
@@ -62,7 +62,7 @@ public final class Constants {
     }
 
     public static class AutoSwerveConstants {
-        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(2);
+        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(18);
         public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 6;
 
         public static final double kMaxAccelerationMetersPerSecondSquared = kMaxDriveSpeedMetersPerSecond / 6;
@@ -103,8 +103,8 @@ public final class Constants {
     public static class IntakeConstants {
         public enum IntakeState {
             // ARM VALUES/WRIST ANGLES ARE TEMPORARY
-            STOW(10, 0, 0),
-            INTAKE(5, 0, 0),
+            STOW(-0.6, 0, 0),
+            INTAKE(-10, 0, 0),
             TROUGH(2, 0, -10500),
             L2(2, 0, -17000),
             L3(5, 0, -19000),

@@ -34,17 +34,26 @@ public class ReefAlignCommand extends Command {
         double distance = photonVision.getDistanceInches();
         double xOffset = photonVision.getXOffsetInches();
         // P only pid control loops to minimize skew (become parallel w apriltag)
-        swerveSubsystem.spin((skewAngleDegrees) * (Constants.DriveConstants.kMaxRotationSpeedRadiansPerSecond * 0.05));
-    
-        double xSpeed = (12 - distance) * (maxDriveSpeedFeetPerSecond * 0.01);
-        double ySpeed = (12 - xOffset) * (maxDriveSpeedFeetPerSecond * 0.01);
+        // swerveSubsystem.spin((skewAngleDegrees) * (Constants.DriveConstants.kMaxRotationSpeedRadiansPerSecond * 0.05));
+        System.out.println("DISTANCE CALCULATED FROM TARGET: " + distance);
+        System.out.println("angle of elevation to target " + photonVision.getPitch());
+        System.out.println("xOff: " + xOffset);
+        double xSpeed = (12 - distance) * (maxDriveSpeedFeetPerSecond * .001);
+        double ySpeed = (12 - xOffset) * (maxDriveSpeedFeetPerSecond * .001);
 
-        swerveSubsystem.setModuleSpeeds(xSpeed, ySpeed, 0);
+        // if (photonVision.hasResults()) {
+        //     swerveSubsystem.setModuleSpeeds(0, ySpeed, 0);
+        // } else {
+        //     swerveSubsystem.setModuleSpeeds(0, 0, 0);
+        // }
+        photonVision.updateCameraResults();
     }
 
     // Called once the command ends or is interrupted.
     @Override
-    public void end(boolean interrupted) {}
+    public void end(boolean interrupted) {
+        swerveSubsystem.setModuleSpeeds(0, 0, 0);
+    }
 
     // Returns true when the command should end.
     @Override

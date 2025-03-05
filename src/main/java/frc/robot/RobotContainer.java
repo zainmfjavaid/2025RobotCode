@@ -56,23 +56,26 @@ public class RobotContainer {
     private final DriverController driverController = new DriverController();
     
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
-    private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+    // private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
+
+    AutoDriveCommand autoDriveCommand = new AutoDriveCommand(swerveSubsystem);
 
     // Elevator commands
-    private final L1 levelOneCommand = new L1(intakeSubsystem, elevatorSubsystem);
-    private final L2 levelTwoCommand = new L2(intakeSubsystem, elevatorSubsystem);
-    private final L3 levelThreeCommand = new L3(intakeSubsystem, elevatorSubsystem);
-    private final L4 LevelFourCommand = new L4(intakeSubsystem, elevatorSubsystem);
+    // private final L1 levelOneCommand = new L1(intakeSubsystem, elevatorSubsystem);
+    // private final L2 levelTwoCommand = new L2(intakeSubsystem, elevatorSubsystem);
+    // private final L3 levelThreeCommand = new L3(intakeSubsystem, elevatorSubsystem);
+    // private final L4 LevelFourCommand = new L4(intakeSubsystem, elevatorSubsystem);
 
     // private final ElevatorScore elevatorScoreCommand = new ElevatorScore(intakeSubsystem, elevatorSubsystem); // create new cmd AT the trigger
 
-    private final WristCommand wristCommand = new WristCommand(intakeSubsystem);
+    // private final WristCommand wristCommand = new WristCommand(intakeSubsystem);
     
     // private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
     // private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
-    //private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
+    private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -93,12 +96,22 @@ public class RobotContainer {
         // driverController.getButton(DriverController.Button.LB).whileTrue(elevatorTestingSubsystem.goDownCommand());
         // driverController.getButton(DriverController.Button.RB).whileTrue(elevatorTestingSubsystem.goUpCommand());
 
+        // driverController.getButton(DriverController.Button.RB).whileTrue(climbSubsystem.climbCommandTest());
+        // driverController.getButton(DriverController.Button.LB).whileTrue(climbSubsystem.reverseClimbCommandTest());
+
+        driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
+
+        driverController.getButton(DriverController.Button.B).whileTrue(reefAlignCommand);
         // Intake Testing
         // driverController.getButton(DriverController.Button.A).whileTrue(new WristCommand(intakeSubsystem)); WRIST ONE
         // driverController.getButton(DriverController.Button.RB).whileTrue(intakeSubsystem.runRollersTest());
-        driverController.getButton(DriverController.Button.B).whileTrue(intakeSubsystem.runKickerTest());
-        driverController.getButton(DriverController.Button.X).whileTrue(intakeSubsystem.reverseArmTest());
-        driverController.getButton(DriverController.Button.Y).whileTrue(intakeSubsystem.runArmTest());
+        
+        // driverController.getButton(DriverController.Button.B).whileTrue(intakeSubsystem.runKickerTest());
+        //driverController.getButton(DriverController.Button.X).whileTrue(intakeSubsystem.reverseArmTest());
+        //driverController.getButton(DriverController.Button.Y).whileTrue(intakeSubsystem.runArmTest());
+
+        // driverController.getButton(DriverController.Button.X).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.INTAKE)));
+        // driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.STOW)));
 
         // Climb 
         // driverController.getButton(DriverController.Button.X).onTrue(new InstantCommand(() -> climbSubsystem.setClimb()));
@@ -130,11 +143,8 @@ public class RobotContainer {
         //return autonChooser.getSelected();
 
 
-        return new SequentialCommandGroup(
-            new InstantCommand(() -> swerveSubsystem.driveForward(0.1), swerveSubsystem)
-                .withTimeout(2)
-                .andThen(() -> swerveSubsystem.driveForward(0), swerveSubsystem)
-        );
+        return autoDriveCommand;
+        
     }
 }
 

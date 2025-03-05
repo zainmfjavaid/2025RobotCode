@@ -41,11 +41,21 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private static RobotConfig config;
 
+    private double speedConstant = 1.0;
+
+    public void toggleSpeedConstant() {
+        if (speedConstant == 1.0) {
+            speedConstant = 0.25;
+        } else {
+            speedConstant = 1.0;
+        }
+    }
+
     public void setModuleSpeeds(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
-        frontLeftModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
-        frontRightModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
-        backLeftModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
-        backRightModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
+        frontLeftModule.setSpeeds(longitudinalSpeedMetersPerSecond * speedConstant, lateralSpeedMetersPerSecond * speedConstant, rotationSpeedRadiansPerSecond * speedConstant);
+        frontRightModule.setSpeeds(longitudinalSpeedMetersPerSecond * speedConstant, lateralSpeedMetersPerSecond * speedConstant, rotationSpeedRadiansPerSecond * speedConstant);
+        backLeftModule.setSpeeds(longitudinalSpeedMetersPerSecond * speedConstant, lateralSpeedMetersPerSecond * speedConstant, rotationSpeedRadiansPerSecond * speedConstant);
+        backRightModule.setSpeeds(longitudinalSpeedMetersPerSecond * speedConstant, lateralSpeedMetersPerSecond * speedConstant, rotationSpeedRadiansPerSecond * speedConstant);
     }
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
