@@ -144,6 +144,12 @@ public final class Constants {
         public static final int kRollerMotor = 30;
     }
 
+    public static class MotorConstants {
+        public static final int kIntakeDeployMotorDeviceId = 16;
+        public static final int kIntakeRollerMotorDeviceId = 9;
+        public static final int kIntakeIndexMotorDeviceId = 15; 
+    }
+    
     public static class IntakeConstants {
         public enum IntakeState {
             // ARM VALUES/WRIST ANGLES ARE TEMPORARY

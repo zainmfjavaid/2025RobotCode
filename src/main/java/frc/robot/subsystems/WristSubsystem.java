@@ -4,14 +4,15 @@
 
 package frc.robot.subsystems;
 
+import frc.robot.Constants.DeviceIds;
 import frc.robot.Constants.MotorConstants;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Servo;
 
 public class WristSubsystem extends SubsystemBase {
-  private final Servo armServoMotor = new Servo(MotorConstants.kArmServoChannel);
-  private final Servo wristServoMotor = new Servo(MotorConstants.kWristServoChannel);
+  private final Servo armServoMotor = new Servo(DeviceIds.kArmMotor);
+  private final Servo wristServoMotor = new Servo(DeviceIds.kWristMotor);
 
   /** Creates a new WristSubsystem. */  
   public WristSubsystem() {}

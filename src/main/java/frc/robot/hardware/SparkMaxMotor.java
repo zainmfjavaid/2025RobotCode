@@ -11,11 +11,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import frc.robot.subsystems.DriveUtils;
 
-<<<<<<<< HEAD:src/main/java/frc/robot/hardware/Motor.java
-public class Motor {
-========
 public class SparkMaxMotor {
->>>>>>>> 813de6ede1abfbe03e33dbac5ea31f58e728451a:src/main/java/frc/robot/hardware/SparkMaxMotor.java
     private final SparkMax motor;
     private final RelativeEncoder encoder;
     private final boolean reverseMotor;
