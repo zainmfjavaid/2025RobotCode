@@ -8,12 +8,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import au.grapplerobotics.LaserCan;
 
 
-public class LaserCAN extends SubsystemBase {
+public class LaserCANSubsystem extends SubsystemBase {
  
   LaserCan lc = new LaserCan(22);
 
   /** Creates a new LaserCAN. */
-  public LaserCAN() {}
+  public LaserCANSubsystem() {}
 
 
   public void getLaserCANDistance() {

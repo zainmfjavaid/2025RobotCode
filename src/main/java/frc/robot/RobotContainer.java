@@ -8,7 +8,7 @@ import java.util.List;
 
 import frc.robot.Constants.AutoSwerveConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
-import frc.robot.hardware.LaserCAN;
+import frc.robot.subsystems.LaserCANSubsystem;
 import frc.robot.hardware.Controller.DriverController;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -28,6 +28,7 @@ import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ElevatorTesting;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LaserCANSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -80,7 +81,7 @@ public class RobotContainer {
     // private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
     private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
-    private final LaserCAN laserCAN = new LaserCAN();
+    private final LaserCANSubsystem laserCANSubsystem = new LaserCANSubsystem();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -124,7 +125,7 @@ public class RobotContainer {
         // Drive
         driverController.getButton(DriverController.Button.Start).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
 
-        driverController.getButton(DriverController.Button.RB).onTrue(new InstantCommand(laserCAN::getLaserCANDistance, laserCAN));
+        driverController.getButton(DriverController.Button.RB).onTrue(new InstantCommand(laserCANSubsystem::getLaserCANDistance, laserCANSubsystem));
     }
 
     public Command getAutonomousCommand() {
