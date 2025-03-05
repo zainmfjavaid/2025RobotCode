@@ -7,7 +7,8 @@ package frc.robot;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-
+import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 import frc.robot.subsystems.DriveUtils;
 
 public final class Constants {
@@ -17,8 +18,8 @@ public final class Constants {
     public static final double cameraHeightInches = 12.5;
 
     public static class RobotConstants {
-        public static final double kWidthMeters = Units.inchesToMeters(19.75);
-        public static final double kLengthMeters = Units.inchesToMeters(19.75);
+        public static final double kTrackWidth = Units.inchesToMeters(19.75); // don't know if this is right
+        public static final double kWheelbase = Units.inchesToMeters(19.75); // don't know if this is right
 
         public static final double kKrakenMotorMaxRotationsPerMinute = 6000;
         public static final double kKrakenMotorMaxRadiansPerSecond = kKrakenMotorMaxRotationsPerMinute / 60 * kTau;
@@ -34,23 +35,57 @@ public final class Constants {
 			DRIVE, // set longitudinal speed
 			ALIGN,
 			TEST;
-        }
+        } 
+
         public static final DriveType driveType = DriveType.SWERVE;
         
-        public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5);
+        public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5); // don't know if this is right
         public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
 
         public static final double kDriveMotorGearRatio = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
         public static final double kAngleMotorGearRatio = (14.0 / 50.0) * (10.0 / 60.0);
 
         private static final double kMaxWheelDriveSpeedRadiansPerSecond = DriveUtils.driveMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
-        
+        public static final double kMaxWheelDriveSpeedMetersPerSecond = DriveUtils.getLinearVelocity(kMaxWheelDriveSpeedRadiansPerSecond, kWheelRadiusMeters);
+
         public static final double kMaxWheelAngleSpeedRadiansPerSecond = DriveUtils.angleMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
 
-        public static final double kMaxWheelDriveSpeedMetersPerSecond = kMaxWheelDriveSpeedRadiansPerSecond * kWheelRadiusMeters;
-
-        private static final double kRotationRadiusMeters = Math.hypot(RobotConstants.kWidthMeters / 2, RobotConstants.kLengthMeters / 2);
+        private static final double kRotationRadiusMeters = Math.hypot(RobotConstants.kTrackWidth / 2, RobotConstants.kWheelbase / 2);
         public static final double kMaxRotationSpeedRadiansPerSecond = kMaxWheelDriveSpeedMetersPerSecond / kRotationRadiusMeters;
+    }
+
+    public static class SwerveConstants {
+        public enum Module {
+            FRONT_LEFT(DeviceIds.kFrontLeftDriveMotor, DeviceIds.kFrontLeftAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_LEFT),
+            FRONT_RIGHT(DeviceIds.kFrontRightDriveMotor, DeviceIds.kFrontRightAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, -RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_RIGHT),
+            BACK_LEFT(DeviceIds.kBackLeftDriveMotor, DeviceIds.kBackLeftAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_LEFT),
+            BACK_RIGHT(DeviceIds.kBackRightDriveMotor, DeviceIds.kBackRightAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_RIGHT);
+
+            private final int driveMotorDeviceId;
+            private final int angleMotorDeviceId;
+            private final Translation2d location;
+            private final EncoderConfig encoderConfig;
+
+            private Module(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig encoderConfig) {
+                this.driveMotorDeviceId = driveMotorDeviceId;
+                this.angleMotorDeviceId = angleMotorDeviceId;
+                this.location = location;
+                this.encoderConfig = encoderConfig;
+            }
+
+            public int getDriveMotorDeviceId() {
+                return driveMotorDeviceId;
+            }
+            public int getAngleMotorDeviceId() {
+                return angleMotorDeviceId;
+            }
+            public Translation2d getLocation() {
+                return location;
+            }
+            public EncoderConfig getEncoderConfig() {
+                return encoderConfig;
+            }
+        }
     }
 
     public static class TeleopSwerveConstants {
@@ -89,15 +124,24 @@ public final class Constants {
         public static final double kAbsoluteSensorDiscontinuityPoint = 0.5;
     }
 
-    public static class MotorConstants {
-        public static final int kFrontLeftDriveMotorDeviceId = 1;
-        public static final int kFrontLeftAngleMotorDeviceId = 2;
-        public static final int kFrontRightDriveMotorDeviceId = 8;
-        public static final int kFrontRightAngleMotorDeviceId = 7;
-        public static final int kBackLeftDriveMotorDeviceId = 3;
-        public static final int kBackLeftAngleMotorDeviceId = 4;
-        public static final int kBackRightDriveMotorDeviceId = 5;
-        public static final int kBackRightAngleMotorDeviceId = 6;
+    public static class DeviceIds {
+        // Swerve (TalonFX)
+        public static final int kFrontLeftDriveMotor = 1;
+        public static final int kFrontLeftAngleMotor = 2;
+        public static final int kFrontRightDriveMotor = 8;
+        public static final int kFrontRightAngleMotor = 7;
+        public static final int kBackLeftDriveMotor = 3;
+        public static final int kBackLeftAngleMotor = 4;
+        public static final int kBackRightDriveMotor = 5;
+        public static final int kBackRightAngleMotor = 6;
+        // Elevator (SparkMax)
+        public static final int kLeftElevatorMotor = 5;
+        public static final int kRightElevatorMotor = 6;
+        // Intake (SparkMax)
+        public static final int kArmMotor = 32;
+        public static final int kWristMotor = 33;
+        public static final int kKickerMotor = 31;
+        public static final int kRollerMotor = 30;
     }
 
     public static class IntakeConstants {

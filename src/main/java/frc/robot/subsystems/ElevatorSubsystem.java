@@ -8,11 +8,12 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants.IntakeState;
+import frc.robot.Constants.DeviceIds;
 import frc.robot.hardware.SparkMaxMotor;
 
 public class ElevatorSubsystem extends SubsystemBase {
-	SparkMaxMotor leftElevatorMotor = new SparkMaxMotor(5, false, false, true);
-	SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(6, true, false, true);
+	SparkMaxMotor leftElevatorMotor = new SparkMaxMotor(DeviceIds.kLeftElevatorMotor, false, false, true);
+	SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, false, true);
 
 	PIDController elevatorPIDController = new PIDController(.0001, 0, 0);
     Encoder elevatorEncoder = new Encoder(0, 1);

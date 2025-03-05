@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -11,11 +10,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.MotorConstants;
-import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.TeleopSwerveConstants;
+import frc.robot.Constants.SwerveConstants.Module;
 import frc.robot.hardware.Controller.DriverController;
-import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -24,17 +21,12 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 public class SwerveSubsystem extends SubsystemBase {
-    private static final Translation2d frontLeftLocation = new Translation2d(RobotConstants.kWidthMeters/2, RobotConstants.kLengthMeters/2);
-    private static final Translation2d frontRightLocation = new Translation2d(RobotConstants.kWidthMeters/2, -RobotConstants.kLengthMeters/2);
-    private static final Translation2d backLeftLocation = new Translation2d(-RobotConstants.kWidthMeters/2, RobotConstants.kLengthMeters/2);
-    private static final Translation2d backRightLocation = new Translation2d(-RobotConstants.kWidthMeters/2, -RobotConstants.kLengthMeters/2);
-            
-    private final SwerveModule frontLeftModule = new SwerveModule(MotorConstants.kFrontLeftDriveMotorDeviceId, MotorConstants.kFrontLeftAngleMotorDeviceId, frontLeftLocation, EncoderConfig.FRONT_LEFT);
-    private final SwerveModule frontRightModule = new SwerveModule(MotorConstants.kFrontRightDriveMotorDeviceId, MotorConstants.kFrontRightAngleMotorDeviceId, frontRightLocation, EncoderConfig.FRONT_RIGHT);
-    private final SwerveModule backLeftModule = new SwerveModule(MotorConstants.kBackLeftDriveMotorDeviceId, MotorConstants.kBackLeftAngleMotorDeviceId, backLeftLocation, EncoderConfig.BACK_LEFT);
-    private final SwerveModule backRightModule = new SwerveModule(MotorConstants.kBackRightDriveMotorDeviceId, MotorConstants.kBackRightAngleMotorDeviceId, backRightLocation, EncoderConfig.BACK_RIGHT); 
+    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT);
+    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT);
+    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT);
+    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT); 
 
-    private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
+    private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Module.FRONT_LEFT.getLocation(), Module.FRONT_RIGHT.getLocation(), Module.BACK_LEFT.getLocation(), Module.BACK_RIGHT.getLocation());
 
     private final Pigeon2 gyro = new Pigeon2(20, "CANivore2158");
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(getKinematics(), new Rotation2d(0), getModulePositions());
@@ -67,12 +59,12 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public SwerveModuleState[] getModuleStates() {
-        SwerveModuleState[] swerveModuleArray = new SwerveModuleState[4];
-        swerveModuleArray[0] = frontLeftModule.getState();
-        swerveModuleArray[1] = frontRightModule.getState();
-        swerveModuleArray[2] = backLeftModule.getState();
-        swerveModuleArray[3] = backRightModule.getState();
-        return swerveModuleArray;
+        return new SwerveModuleState[] {
+            frontLeftModule.getState(),
+            frontRightModule.getState(),
+            backLeftModule.getState(),
+            backRightModule.getState()
+        };
     }
 
     public void fieldCentricSwerve(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {

@@ -24,7 +24,6 @@ public class KrakenMotor {
     public double getPositionRotations() {
         return reverseEncoder ? -motor.getPosition().getValueAsDouble() : motor.getPosition().getValueAsDouble();
     }
-
     public double getPositionRadians() {
         return DriveUtils.rotationsToRadians(getPositionRotations());
     }
@@ -37,7 +36,10 @@ public class KrakenMotor {
         motor.set(reverseMotor ? -relativeSpeed : relativeSpeed);
     }
 
-    public double getRelativeSpeed(){
+    public double getSpeedRotationsPerSecond() {
         return motor.getVelocity().getValueAsDouble();
     }
-}
+    public double getSpeedRadiansPerSecond() {
+        return DriveUtils.rotationsToRadians(getSpeedRotationsPerSecond());
+    }
+} 
