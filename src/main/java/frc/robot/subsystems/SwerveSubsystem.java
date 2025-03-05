@@ -10,6 +10,11 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.networktables.GenericEntry;
 
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.SwerveConstants.TeleopSwerveConstants;
@@ -24,10 +29,14 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 public class SwerveSubsystem extends SubsystemBase {
-    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT);
-    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT);
-    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT);
-    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT); 
+    public final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
+    public final ShuffleboardLayout swerveCurrentAnglesLayout = swerveTab.getLayout("Current Module Angles");
+    public final ShuffleboardLayout swerveDesiredAnglesLayout = swerveTab.getLayout("Desired Module Angles");
+
+    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, swerveCurrentAnglesLayout, swerveDesiredAnglesLayout);
+    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, swerveCurrentAnglesLayout, swerveDesiredAnglesLayout);
+    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, swerveCurrentAnglesLayout, swerveDesiredAnglesLayout);
+    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, swerveCurrentAnglesLayout, swerveDesiredAnglesLayout); 
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Module.FRONT_LEFT.getLocation(), Module.FRONT_RIGHT.getLocation(), Module.BACK_LEFT.getLocation(), Module.BACK_RIGHT.getLocation());
 
@@ -36,9 +45,14 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private static RobotConfig config;
 
-    private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-
+    private final ElevatorSubsystem elevatorSubsystem;
     private final double retractElevatorThresholdRadians = Rotation2d.fromDegrees(3).getRadians();
+
+    private final GenericEntry gyroAngleEntry = swerveTab.add("Gyro Angle", 0).withWidget(BuiltInWidgets.kGyro).getEntry();
+
+    public SwerveSubsystem(ElevatorSubsystem elevatorSubsystem) {
+        this.elevatorSubsystem = elevatorSubsystem;
+    }
 
     public void setModuleSpeeds(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
         frontLeftModule.setSpeeds(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
@@ -143,7 +157,11 @@ public class SwerveSubsystem extends SubsystemBase {
         odometer.update(getGyroAngle(), getModulePositions());
     }
 
-    // OTHER
+    public void updateShuffleboard() {
+        gyroAngleEntry.setDouble(getGyroAngle().getDegrees());
+    }
+
+
     public void spinDriveMotors(double speed) {
         frontLeftModule.setDriveMotorRelativeSpeed(speed);
         frontRightModule.setDriveMotorRelativeSpeed(speed);
@@ -168,6 +186,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void spin(double speedRadiansPerSecond) {
         setModuleSpeeds(0, 0, speedRadiansPerSecond);
+    }
+
+    public void stop() {
+        setModuleSpeeds(0, 0, 0);
     }
 
     // print
@@ -217,13 +239,13 @@ public class SwerveSubsystem extends SubsystemBase {
               // This will flip the path being followed to the red side of the field.
               // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
+                var alliance = DriverStation.getAlliance();
+                if (alliance.isPresent()) {
+                    return alliance.get() == DriverStation.Alliance.Red;
+                }
+                return false;
             },
             this // Reference to this subsystem to set requirements
-    );
+        );
     }
 }

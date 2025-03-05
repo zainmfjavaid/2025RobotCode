@@ -11,6 +11,10 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 
 // USES ABSOLUTE ENCODER
 // don't use angle motor relative encoder
@@ -19,16 +23,21 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 // the issue is not with the gyro but with my code or the absolute encoder offsets
 
 public class SwerveModule {
-    public final KrakenMotor driveMotor;
-    public final KrakenMotor angleMotor;
+    private final KrakenMotor driveMotor;
+    private final KrakenMotor angleMotor;
 
     public final double turnAngleRadians;
 
-    public final AbsoluteEncoder wheelAngleAbsoluteEncoder;
+    private final AbsoluteEncoder wheelAngleAbsoluteEncoder;
 
-    public double lastAngleRadians = 0;
+    private double lastAngleRadians = 0;
 
-    public SwerveModule(Module module) {
+    private final String name;
+
+    private final GenericEntry currentAngleEntry;
+    private final GenericEntry desiredAngleEntry;
+
+    public SwerveModule(Module module, ShuffleboardLayout currentAnglesLayout, ShuffleboardLayout desiredAnglesLayout) {
         driveMotor = new KrakenMotor(module.getDriveMotorDeviceId(), true, true);
 
         // reverse motor if needed to match direction of absolute encoder
@@ -39,6 +48,11 @@ public class SwerveModule {
         turnAngleRadians = SwerveUtils.normalizeAngleRadiansSigned(unnormalizedTurnAngleRadians);
         
         wheelAngleAbsoluteEncoder = new AbsoluteEncoder(module.getEncoderConfig(), SensorDirectionValue.CounterClockwise_Positive);
+
+        name = module.getName();
+
+        currentAngleEntry = currentAnglesLayout.add(name, 0).withWidget(BuiltInWidgets.kGyro).getEntry();;
+        desiredAngleEntry = desiredAnglesLayout.add(name, 0).withWidget(BuiltInWidgets.kGyro).getEntry();;
 
         resetEncoders();
     }
@@ -59,8 +73,11 @@ public class SwerveModule {
         setState(wheelDriveSpeedMetersPerSecond, desiredWheelAngleRadians);
     }
 
-    public void setState(double wheelDriveSpeedMetersPerSecond, double desiredWheelAngleRadians) {        
+    public void setState(double wheelDriveSpeedMetersPerSecond, double desiredWheelAngleRadians) {  
         double currentWheelAngleRadians = wheelAngleAbsoluteEncoder.getPositionRadians();
+
+        currentAngleEntry.setDouble(Units.radiansToDegrees(currentWheelAngleRadians));
+        desiredAngleEntry.setDouble(Units.radiansToDegrees(desiredWheelAngleRadians));
 
         double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
 
@@ -112,6 +129,10 @@ public class SwerveModule {
         return new SwerveModulePosition(distanceMeters, angle);
     }
 
+    public double getAngleDegrees() {
+        return Units.rotationsToDegrees(wheelAngleAbsoluteEncoder.getPositionRotations());
+    }
+
     // Print encoder values
 
     // rotation of wheel
@@ -123,7 +144,7 @@ public class SwerveModule {
         double aRad = SwerveUtils.rotationsToRadians(aRot);
         System.out.println("RRot " + rRot + ", RRad " + rRad + ", ARot " + aRot + ", ARad " + aRad);    
     }
-
+    
     public void printDriveEncoderValue(String name) {
         System.out.println(name + ": " + driveMotor.getPositionRotations());
     }

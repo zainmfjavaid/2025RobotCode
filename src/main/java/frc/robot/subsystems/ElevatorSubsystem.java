@@ -5,21 +5,25 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.DeviceIds;
 import frc.robot.hardware.SparkMaxMotor;
+import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
-	SparkMaxMotor leftElevatorMotor = new SparkMaxMotor(DeviceIds.kLeftElevatorMotor, false, false, true);
-	SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, false, true);
+	private final SparkMaxMotor leftElevatorMotor = new SparkMaxMotor(DeviceIds.kLeftElevatorMotor, false, false, true);
+	private final SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, false, true);
 
-	PIDController elevatorPIDController = new PIDController(.0001, 0, 0);
-    Encoder elevatorEncoder = new Encoder(0, 1);
+	private final PIDController elevatorPIDController = new PIDController(.0001, 0, 0);
+    private final Encoder elevatorEncoder = new Encoder(0, 1);
 
-	double currentPosition = 0;
-	IntakeState currentGoal = null;
+	private double currentPosition = 0;
+	private IntakeState currentGoal = null;
+
+	private DigitalInput limitSwitch = new DigitalInput(0);
 
 	/** Creates a new ElevatorSubsystem. */
 	public ElevatorSubsystem() {}
@@ -40,8 +44,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 		if (!atSetpoint(intakeState)) {
 			System.out.println("RUNNING THE MOTORS");
 			System.out.println("curr point: " + currentPosition + " whereas my desired position is: " + intakeState.getElevatorValue());
-			leftElevatorMotor.set(1);
-			rightElevatorMotor.set(1);
+			leftElevatorMotor.set(ElevatorConstants.elevatorSpeed);
+			rightElevatorMotor.set(ElevatorConstants.elevatorSpeed);
 		} else {
 			if (intakeState.getElevatorValue() != 0) {
 				stop();
@@ -61,6 +65,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 	public void setGoal(IntakeState intakeState) {
 		currentGoal = intakeState;
+	}
+
+	public void checkLimitSwtch() {
+		if(!limitSwitch.get()) // Returns false is circuit is closed (Switch pressed)
+		{
+			stop();
+		}
 	}
 
 	@Override

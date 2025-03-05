@@ -17,6 +17,12 @@ public final class Constants {
     public static final double aprilTagHeightInches = 12.125;
     public static final double cameraHeightInches = 6;
 
+    public static enum RobotMode {
+        RUN, TEST;
+    }
+
+    public static final RobotMode kRobotMode = RobotMode.TEST;
+
     public static class RobotConstants {
         public static final double kTrackWidth = Units.inchesToMeters(19.75); // don't know if this is right
         public static final double kWheelbase = Units.inchesToMeters(19.75); // don't know if this is right
@@ -27,35 +33,37 @@ public final class Constants {
 
     public static class DriveConstants {
         public static enum DriveType {
-			ARCADE, 
+			ARCADE, // doesn't exist
 			SWERVE, 
 			SPINDRIVE, // spins the drive motors // used to determine direction of drive motors
 			SPINANGLE, // spins the angle motors // used to determine direction of angle motors
 			SPIN, // set rotation speed
 			DRIVE, // set longitudinal speed
-			ALIGN,
+			ALIGN, // doesn't do anything
 			TEST;
         } 
-        public static final DriveType driveType = DriveType.SWERVE;
+        public static final DriveType kDriveType = DriveType.SWERVE;
     }
 
     public static class SwerveConstants {
         public enum Module {
-            FRONT_LEFT(DeviceIds.kFrontLeftDriveMotor, DeviceIds.kFrontLeftAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_LEFT),
-            FRONT_RIGHT(DeviceIds.kFrontRightDriveMotor, DeviceIds.kFrontRightAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, -RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_RIGHT),
-            BACK_LEFT(DeviceIds.kBackLeftDriveMotor, DeviceIds.kBackLeftAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_LEFT),
-            BACK_RIGHT(DeviceIds.kBackRightDriveMotor, DeviceIds.kBackRightAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_RIGHT);
+            FRONT_LEFT(DeviceIds.kFrontLeftDriveMotor, DeviceIds.kFrontLeftAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_LEFT, "Front Left"),
+            FRONT_RIGHT(DeviceIds.kFrontRightDriveMotor, DeviceIds.kFrontRightAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, -RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_RIGHT, "Front Right"),
+            BACK_LEFT(DeviceIds.kBackLeftDriveMotor, DeviceIds.kBackLeftAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_LEFT, "Back Left"),
+            BACK_RIGHT(DeviceIds.kBackRightDriveMotor, DeviceIds.kBackRightAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_RIGHT, "Back Right");
 
             private final int driveMotorDeviceId;
             private final int angleMotorDeviceId;
             private final Translation2d location;
             private final EncoderConfig encoderConfig;
+            private final String name;
 
-            private Module(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig encoderConfig) {
+            private Module(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig encoderConfig, String name) {
                 this.driveMotorDeviceId = driveMotorDeviceId;
                 this.angleMotorDeviceId = angleMotorDeviceId;
                 this.location = location;
                 this.encoderConfig = encoderConfig;
+                this.name = name;
             }
 
             public int getDriveMotorDeviceId() {
@@ -69,6 +77,9 @@ public final class Constants {
             }
             public EncoderConfig getEncoderConfig() {
                 return encoderConfig;
+            }
+            public String getName() {
+                return name;
             }
         }
         
@@ -87,7 +98,7 @@ public final class Constants {
         public static final double kMaxRotationSpeedRadiansPerSecond = kMaxWheelDriveSpeedMetersPerSecond / kRobotRotationRadiusMeters;
 
         public static class TeleopSwerveConstants {
-            public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(0.5);
+            public static final double kMaxDriveSpeedMetersPerSecond = kRobotMode == RobotMode.TEST ? Units.feetToMeters(0.5) : kMaxWheelDriveSpeedMetersPerSecond * 0.75;
 
             public static final double kMaxRotationSpeedRadiansPerSecond = SwerveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
 
@@ -179,5 +190,9 @@ public final class Constants {
 
         public static final double kickerWheelSpeed = 0.2;
         public static final double rollerMotorSpeed = 0.2;
+    }
+
+    public static class ElevatorConstants {
+        public static final double elevatorSpeed = kRobotMode == RobotMode.TEST ? 0.4 : 1;
     }
 }

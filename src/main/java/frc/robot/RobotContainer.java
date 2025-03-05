@@ -50,8 +50,8 @@ public class RobotContainer {
     //private final SendableChooser<Command> autonChooser;
     private final DriverController driverController = new DriverController();
     
-    private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+    private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(elevatorSubsystem);
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
     // Elevator and intake commands
@@ -123,6 +123,7 @@ public class RobotContainer {
         // return new SequentialCommandGroup(
         //     new AutoDriveCommand(swerveSubsystem, trajectory)
         // );
+
         //return autonChooser.getSelected();
 
 
