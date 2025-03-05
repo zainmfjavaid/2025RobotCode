@@ -8,6 +8,7 @@ import java.util.List;
 
 import frc.robot.Constants.AutoSwerveConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
+import frc.robot.hardware.LaserCAN;
 import frc.robot.hardware.Controller.DriverController;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -79,6 +80,7 @@ public class RobotContainer {
     // private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
     private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
+    private final LaserCAN laserCAN = new LaserCAN();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -121,6 +123,8 @@ public class RobotContainer {
 
         // Drive
         driverController.getButton(DriverController.Button.Start).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
+
+        driverController.getButton(DriverController.Button.RB).onTrue(new InstantCommand(laserCAN::getLaserCANDistance, laserCAN));
     }
 
     public Command getAutonomousCommand() {
