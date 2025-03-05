@@ -1,6 +1,8 @@
 package frc.robot.hardware;
 
 import au.grapplerobotics.ConfigurationFailedException;
+import au.grapplerobotics.LaserCan;
+
 
 
 public class LaserCan {
