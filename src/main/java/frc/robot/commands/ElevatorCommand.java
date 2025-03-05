@@ -4,23 +4,25 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem.ElevatorPosition;
-import frc.robot.Constants;
-import frc.robot.Constants.IntakeConstants.ElevatorConstants;
+import frc.robot.subsystems.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ElevatorCommand extends Command {
-  private ElevatorSubsystem elevatorSubsystem;
-  private ElevatorPosition elevatorPosition;
-
-  DigitalInput limitSwitch = new DigitalInput(ElevatorConstants.kLimitSwitchChannel);
   /** Creates a new ElevatorCommand. */
-  public ElevatorCommand(ElevatorSubsystem elevatorSubsystem, ElevatorPosition elevatorPosition) {
+  ElevatorSubsystem elevatorSubsystem;
+  IntakeState intakeState;
+  IntakeSubsystem intakeSubsystem;
+
+  public ElevatorCommand(ElevatorSubsystem elevatorSubsystem, IntakeSubsystem intakeSubsystem, IntakeState position) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.intakeState = position;
     this.elevatorSubsystem = elevatorSubsystem;
-    addRequirements(elevatorSubsystem);
+    this.intakeSubsystem = intakeSubsystem;
+
+    addRequirements(elevatorSubsystem, intakeSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -30,23 +32,22 @@ public class ElevatorCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(limitSwitch.get()) { // Returns true if circut open/triggered 
-      elevatorSubsystem.stop();
-    }
-    else {
-      elevatorSubsystem.setPosition(elevatorPosition.getPosition());
-    }
+    elevatorSubsystem.setPosition(intakeState);
+    intakeSubsystem.setGoal(intakeState);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    elevatorSubsystem.stop();
+    if (intakeState.getElevatorValue() == 0) {
+      intakeSubsystem.runRollerMotor(0.5);
+    }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    // WRONG
+    return elevatorSubsystem.atSetpoint(intakeState);
   }
 }

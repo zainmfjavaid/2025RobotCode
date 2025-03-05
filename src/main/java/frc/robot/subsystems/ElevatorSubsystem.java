@@ -4,56 +4,72 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.IntakeConstants.IntakeState;
+import frc.robot.Constants.DeviceIds;
+import frc.robot.hardware.SparkMaxMotor;
 
 public class ElevatorSubsystem extends SubsystemBase {
+	SparkMaxMotor leftElevatorMotor = new SparkMaxMotor(DeviceIds.kLeftElevatorMotor, false, false, true);
+	SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, false, true);
 
-  public enum ElevatorPosition {
-    Ground(0),
-    L1(1),
-    L2(2),
-    L3(3),
-    L4(4);
+	PIDController elevatorPIDController = new PIDController(.0001, 0, 0);
+    Encoder elevatorEncoder = new Encoder(0, 1);
 
-    private double position;
+	double currentPosition = 0;
+	IntakeState currentGoal = null;
 
-    private ElevatorPosition(double position) {
-      this.position = position;
-    }
+	/** Creates a new ElevatorSubsystem. */
+	public ElevatorSubsystem() {}
 
-    public double getPosition() {
-      return position;
-    }
-  }
+	public void stop() {
+		leftElevatorMotor.set(0);
+		rightElevatorMotor.set(0);
+	}
 
-  private final SparkMax leftElevatorMotor = new SparkMax(1, MotorType.kBrushless);
-  private final SparkMax rightElevatorMotor = new SparkMax(2, MotorType.kBrushless);
+	public boolean atSetpoint(IntakeState intakeState) {
+		return Math.abs(currentPosition) >= Math.abs(intakeState.getElevatorValue());
+	}
 
-  private final AbsoluteEncoder leftMotorEncoder = leftElevatorMotor.getAbsoluteEncoder();
-  private final AbsoluteEncoder rightMotorEncoder = rightElevatorMotor.getAbsoluteEncoder();
+	public void setPosition(IntakeState intakeState) {
+		System.out.println("at setpoint??? " + atSetpoint(intakeState));
+		currentPosition = elevatorEncoder.getDistance();
 
-  private final PIDController controller = new PIDController(0.1, 0, 0);
+		if (!atSetpoint(intakeState)) {
+			System.out.println("RUNNING THE MOTORS");
+			System.out.println("curr point: " + currentPosition + " whereas my desired position is: " + intakeState.getElevatorValue());
+			leftElevatorMotor.set(1);
+			rightElevatorMotor.set(1);
+		} else {
+			if (intakeState.getElevatorValue() != 0) {
+				stop();
+			} else {
+				resetElevatorPosition();
+			}
+		}
+	}
 
-  /** Creates a new ElevatorSubsystem. */
-  public ElevatorSubsystem() {}
+	public void resetElevatorPosition() {
+		double setpoint = 0;
+        double pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), setpoint);
+		System.out.println(-pidOutput);
+		leftElevatorMotor.set(-pidOutput);
+		rightElevatorMotor.set(-pidOutput);
+	}
 
-  public void stop() {
-    leftElevatorMotor.set(0);
-    rightElevatorMotor.set(0);
-  }
+	public void setGoal(IntakeState intakeState) {
+		currentGoal = intakeState;
+	}
 
-  public void setPosition(double position) {
-    leftElevatorMotor.set(controller.calculate(leftMotorEncoder.getPosition(), position));
-    rightElevatorMotor.set(controller.calculate(rightMotorEncoder.getPosition(), position));
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+	@Override
+	public void periodic() {
+		// This method will be called once per scheduler run
+		if (currentGoal != null) {
+			if (!atSetpoint(currentGoal)) {
+				setPosition(currentGoal);
+			}
+		}
+	}
 }

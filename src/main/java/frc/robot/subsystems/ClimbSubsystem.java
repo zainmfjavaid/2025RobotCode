@@ -4,34 +4,46 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.hardware.SparkMaxMotor;
 import edu.wpi.first.math.controller.PIDController;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-
 public class ClimbSubsystem extends SubsystemBase {
-  /** Creates a new ClimbSubsystem. */
-  private final SparkMax climbMotor = new SparkMax(1, MotorType.kBrushless);
-  private final RelativeEncoder climbMotorEncoder = climbMotor.getEncoder();
 
-  private final PIDController controller = new PIDController(0.1, 0, 0);
+  SparkMaxMotor climbMotor = new SparkMaxMotor(35); // TEMP
 
-  public ClimbSubsystem() {}
+  PIDController climbPIDController = new PIDController(0.1, 0, 0);
 
-  public void setSpeed(double spud) {
-    climbMotor.set(spud);
-  }
+  boolean climbToggle = false;
 
-  public void setPosition(double position) {
-    double currentPosition = climbMotorEncoder.getPosition();
-    double speed = controller.calculate(currentPosition, position);
-    setSpeed(speed);
-  }
+    /** Creates a new ClimbSubsystem. */
+    public ClimbSubsystem() {
+    }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
+    public void setClimbDown() {
+      climbMotor.set(climbPIDController.calculate(climbMotor.getPositionRotations(), 1.0));
+    }
+
+    public void setClimbUp() {
+      climbMotor.set(climbPIDController.calculate(climbMotor.getPositionRotations(), 1.0)); // TEMP POSITION
+    }
+
+    public void setClimb() {
+      if(climbToggle) setClimbDown(); else setClimbUp();
+      climbToggle = climbToggle ? true : false;
+    }
+
+    public StartEndCommand climbCommandTest() {
+      return new StartEndCommand(() -> climbMotor.set(1), () -> climbMotor.set(0), this);
+    }
+
+    public StartEndCommand reverseClimbCommandTest() {
+      return new StartEndCommand(() -> climbMotor.set(-1), () -> climbMotor.set(0), this);
+    }
+    
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+    }
 }
