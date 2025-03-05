@@ -16,7 +16,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 	SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, false, true);
 
 	PIDController elevatorPIDController = new PIDController(.0001, 0, 0);
-    Encoder elevatorEncoder = new Encoder(0, 1);
+    Encoder elevatorEncoder = new Encoder(0, 2);
 
 	double currentPosition = 0;
 	IntakeState currentGoal = null;
