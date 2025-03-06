@@ -52,6 +52,10 @@ public class SwerveSubsystem extends SubsystemBase {
   
     private double speedConstant = 1.0;
 
+    public SwerveSubsystem(ElevatorSubsystem elevatorSubsystem) {
+        this.elevatorSubsystem = elevatorSubsystem;
+    }
+
     public void toggleSpeedConstant() {
         if (speedConstant == 1.0) {
             speedConstant = 0.25;
