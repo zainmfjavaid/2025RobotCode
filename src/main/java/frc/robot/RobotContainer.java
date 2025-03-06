@@ -6,7 +6,7 @@ package frc.robot;
 
 import java.util.List;
 
-import frc.robot.Constants.AutoSwerveConstants;
+// import frc.robot.Constants.AutoSwerveConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.subsystems.LaserCANSubsystem;
 import frc.robot.hardware.Controller.DriverController;
@@ -57,20 +57,20 @@ public class RobotContainer {
     //private final SendableChooser<Command> autonChooser;
     private final DriverController driverController = new DriverController();
     
-    private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
-    private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-    private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
-    private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
+    // private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
+    // private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+    // private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    // private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
-    AutoDriveCommand autoDriveCommand = new AutoDriveCommand(swerveSubsystem);
+    // AutoDriveCommand autoDriveCommand = new AutoDriveCommand(swerveSubsystem);
 
     // Elevator commands
 
     // Future fix: this seems inefficient, maybe create a single command class instead having 4 different command classes
-    private final L1 levelOneCommand = new L1(intakeSubsystem, elevatorSubsystem);
-    private final L2 levelTwoCommand = new L2(intakeSubsystem, elevatorSubsystem);
-    private final L3 levelThreeCommand = new L3(intakeSubsystem, elevatorSubsystem);
-    private final L4 LevelFourCommand = new L4(intakeSubsystem, elevatorSubsystem);
+    // private final L1 levelOneCommand = new L1(intakeSubsystem, elevatorSubsystem);
+    // private final L2 levelTwoCommand = new L2(intakeSubsystem, elevatorSubsystem);
+    // private final L3 levelThreeCommand = new L3(intakeSubsystem, elevatorSubsystem);
+    // private final L4 LevelFourCommand = new L4(intakeSubsystem, elevatorSubsystem);
 
 
     // private final ElevatorScore elevatorScoreCommand = new ElevatorScore(intakeSubsystem, elevatorSubsystem); // create new cmd AT the trigger
@@ -80,12 +80,12 @@ public class RobotContainer {
     // private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
     // private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
-    private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
+    // private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
     private final LaserCANSubsystem laserCANSubsystem = new LaserCANSubsystem();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
+        // swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
         configureBindings();
     
         //autonChooser = AutoBuilder.buildAutoChooser();
@@ -105,9 +105,9 @@ public class RobotContainer {
         // driverController.getButton(DriverController.Button.RB).whileTrue(climbSubsystem.climbCommandTest());
         // driverController.getButton(DriverController.Button.LB).whileTrue(climbSubsystem.reverseClimbCommandTest());
 
-        driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
+        // driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
 
-        driverController.getButton(DriverController.Button.B).whileTrue(reefAlignCommand);
+        // driverController.getButton(DriverController.Button.B).whileTrue(reefAlignCommand);
         // Intake Testing
         // driverController.getButton(DriverController.Button.A).whileTrue(new WristCommand(intakeSubsystem)); WRIST ONE
         // driverController.getButton(DriverController.Button.RB).whileTrue(intakeSubsystem.runRollersTest());
@@ -123,9 +123,9 @@ public class RobotContainer {
         // driverController.getButton(DriverController.Button.X).onTrue(new InstantCommand(() -> climbSubsystem.setClimb()));
 
         // Drive
-        driverController.getButton(DriverController.Button.Start).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
+        // driverController.getButton(DriverController.Button.Start).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
 
-        driverController.getButton(DriverController.Button.RB).onTrue(new InstantCommand(laserCANSubsystem::getLaserCANDistance, laserCANSubsystem));
+        driverController.getButton(DriverController.Button.RB).onTrue(new InstantCommand(() -> laserCANSubsystem.getLaserCANDistance(), laserCANSubsystem));
     }
 
     public Command getAutonomousCommand() {
@@ -151,7 +151,7 @@ public class RobotContainer {
         //return autonChooser.getSelected();
 
 
-        return autoDriveCommand;
+        return new InstantCommand(() -> {});
         
     }
 }
