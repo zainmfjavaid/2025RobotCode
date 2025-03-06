@@ -22,7 +22,9 @@ public class IntakeSubsystem extends SubsystemBase {
     Encoder armEncoder = new Encoder(2, 3);
     Encoder wristEncoder = new Encoder(4, 5);
     
-    PIDController armPIDController = new PIDController(0.001, 0, 0);
+    PIDController armPIDController = new PIDController(0.06, 0, 0);
+    PIDController armPIDUpController = new PIDController(0.15, 0, 0);
+
     PIDController wristPIDController = new PIDController(0.001, 0, 0);
 
     IntakeState currentGoal = null;
@@ -34,8 +36,16 @@ public class IntakeSubsystem extends SubsystemBase {
         // TODO: Use the separate bore encoder if relevant
 	}
 
-    public void setArmPosition(double position) {
-        armMotor.set(armPIDController.calculate(armMotor.getPositionRotations(), position));
+    public void setArmPosition(double position, boolean isUp) {
+        if (!isUp) {
+            System.out.println(armPIDController.calculate(armMotor.getPositionRotations(), position));
+            System.out.println("Currently at: " + armMotor.getPositionRotations() + " whereas i am trying to go to: " + position);
+            armMotor.set(armPIDController.calculate(armMotor.getPositionRotations(), position));
+        } else {
+            System.out.println("MOVING UP " + armPIDController.calculate(armMotor.getPositionRotations(), position));
+            System.out.println("j");
+            // armMotor.set(armPIDUpController.calculate(armMotor.getPositionRotations(), position));
+        }
         // TODO: Still not using the armEncoder
     }
 
@@ -47,6 +57,10 @@ public class IntakeSubsystem extends SubsystemBase {
         rollerMotor.set(speed);
     }
 
+    public void resetArmEncoder() {
+        armMotor.setEncoderPosition(0);
+    }
+
     public boolean atSetpoint() {
         double currentWristGoal = currentGoal.getWristValue();
         double currentArmGoal = currentGoal.getArmPosition();
@@ -55,8 +69,8 @@ public class IntakeSubsystem extends SubsystemBase {
         double currentWristPosition = wristMotor.getPositionRotations();
         double currentArmPosition = armMotor.getPositionRotations();
     
-        double tolerance = 15.0;
-    
+        double tolerance = 1.0;
+        
         return Math.abs(currentWristPosition - currentWristGoal) <= tolerance &&
                Math.abs(currentArmPosition - currentArmGoal) <= tolerance;
     }    
@@ -75,11 +89,11 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public StartEndCommand runArmTest(){
-        return new StartEndCommand(() -> {armMotor.set(0.4); System.out.println(armEncoder.getDistance());}, () -> armMotor.set(0), this);
+        return new StartEndCommand(() -> {armMotor.set(0.4); System.out.println(armMotor.getPositionRotations());}, () -> armMotor.set(0), this);
     }
 
     public StartEndCommand reverseArmTest(){
-        return new StartEndCommand(() -> {armMotor.set(-0.4); System.out.println(armEncoder.getDistance());}, () -> armMotor.set(0), this);
+        return new StartEndCommand(() -> {armMotor.set(-0.4); System.out.println(armMotor.getPositionRotations());}, () -> armMotor.set(0), this);
     }
 
     public StartEndCommand runWristTest() {
@@ -98,9 +112,12 @@ public class IntakeSubsystem extends SubsystemBase {
     public void periodic() {
         // This method will be called once per scheduler run
         if (currentGoal != null) {
-            if (!atSetpoint()) { // UNCOMMENT THIS 
-                // setArmPosition(currentGoal.getArmPosition());
+            System.out.println(currentGoal);
+            if (!atSetpoint()) { // UNCOMMENT THIS
+                setArmPosition(currentGoal.getArmPosition(), false);
                 // setWristPosition(currentGoal.getWristValue());
+            } else {
+                resetArmEncoder();
             }
         }
     }

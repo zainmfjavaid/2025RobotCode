@@ -15,7 +15,7 @@ public final class Constants {
     public static final double kTau = Math.PI * 2;
 
     public static final double aprilTagHeightInches = 12.125;
-    public static final double cameraHeightInches = 6;
+    public static final double cameraHeightInches = 12.5;
 
     public static enum RobotMode {
         RUN, TEST;
@@ -33,14 +33,14 @@ public final class Constants {
 
     public static class DriveConstants {
         public static enum DriveType {
-			ARCADE, // doesn't exist
-			SWERVE, 
-			SPINDRIVE, // spins the drive motors // used to determine direction of drive motors
-			SPINANGLE, // spins the angle motors // used to determine direction of angle motors
-			SPIN, // set rotation speed
-			DRIVE, // set longitudinal speed
-			ALIGN, // doesn't do anything
-			TEST;
+            ARCADE, // doesn't exist
+            SWERVE, 
+            SPINDRIVE, // spins the drive motors // used to determine direction of drive motors
+            SPINANGLE, // spins the angle motors // used to determine direction of angle motors
+            SPIN, // set rotation speed
+            DRIVE, // set longitudinal speed
+            ALIGN, // doesn't do anything
+            TEST;
         } 
         public static final DriveType kDriveType = DriveType.SWERVE;
     }
@@ -157,8 +157,8 @@ public final class Constants {
     public static class IntakeConstants {
         public enum IntakeState {
             // ARM VALUES/WRIST ANGLES ARE TEMPORARY
-            STOW(10, 0, 0),
-            INTAKE(5, 0, 0),
+            STOW(-0.6, 0, 0),
+            INTAKE(-10, 0, 0),
             TROUGH(2, 0, -10500),
             L2(2, 0, -17000),
             L3(5, 0, -19000),

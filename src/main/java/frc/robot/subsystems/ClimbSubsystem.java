@@ -39,6 +39,14 @@ public class ClimbSubsystem extends SubsystemBase {
     public StartEndCommand reverseClimbCommandTest() {
         return new StartEndCommand(() -> climbMotor.set(-1), () -> climbMotor.set(0), this);
     }
+
+    public StartEndCommand climbCommandTest() {
+      return new StartEndCommand(() -> climbMotor.set(1), () -> climbMotor.set(0), this);
+    }
+
+    public StartEndCommand reverseClimbCommandTest() {
+      return new StartEndCommand(() -> climbMotor.set(-1), () -> climbMotor.set(0), this);
+    }
     
     @Override
     public void periodic() {
