@@ -29,14 +29,28 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 public class SwerveSubsystem extends SubsystemBase {
-    public final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
-    public final ShuffleboardLayout swerveCurrentAnglesLayout = swerveTab.getLayout("Current Module Angles");
-    public final ShuffleboardLayout swerveDesiredAnglesLayout = swerveTab.getLayout("Desired Module Angles");
+    // Shuffleboard
+    private final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
 
-    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, swerveCurrentAnglesLayout, swerveDesiredAnglesLayout);
-    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, swerveCurrentAnglesLayout, swerveDesiredAnglesLayout);
-    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, swerveCurrentAnglesLayout, swerveDesiredAnglesLayout);
-    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, swerveCurrentAnglesLayout, swerveDesiredAnglesLayout); 
+    private final ShuffleboardLayout currentAnglesLayout = swerveTab.getLayout("Current Module Angles");
+    private final ShuffleboardLayout desiredAnglesLayout = swerveTab.getLayout("Desired Module Angles");
+
+    private final ShuffleboardLayout speedsLayout = swerveTab.getLayout("Module Speeds");
+    private final ShuffleboardLayout driveSpeedsLayout = speedsLayout.getLayout("Drive Speeds");
+    private final ShuffleboardLayout angleSpeedsLayout = speedsLayout.getLayout("Angle Speeds");
+    
+    private final ShuffleboardLayout gyroAngleLayout = swerveTab.getLayout("Gyro");
+    private final GenericEntry gyroAngleEntry = gyroAngleLayout.add("Rotation", 0).withWidget(BuiltInWidgets.kGyro).getEntry();
+    
+    private final ShuffleboardLayout odometerLayout = swerveTab.getLayout("Odometer");
+    private final GenericEntry odometerXEntry = odometerLayout.add("X", 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
+    private final GenericEntry odometerYEntry = odometerLayout.add("Y", 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
+
+    // Modules
+    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, currentAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
+    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, currentAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
+    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, currentAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
+    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, currentAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout); 
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Module.FRONT_LEFT.getLocation(), Module.FRONT_RIGHT.getLocation(), Module.BACK_LEFT.getLocation(), Module.BACK_RIGHT.getLocation());
 
@@ -48,8 +62,6 @@ public class SwerveSubsystem extends SubsystemBase {
     private final ElevatorSubsystem elevatorSubsystem;
     private final double retractElevatorThresholdRadians = Rotation2d.fromDegrees(3).getRadians();
 
-    private final GenericEntry gyroAngleEntry = swerveTab.add("Gyro Angle", 0).withWidget(BuiltInWidgets.kGyro).getEntry();
-  
     private double speedConstant = 1.0;
 
     public SwerveSubsystem(ElevatorSubsystem elevatorSubsystem) {
@@ -169,8 +181,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void updateShuffleboard() {
         gyroAngleEntry.setDouble(getGyroAngle().getDegrees());
-    }
 
+        odometerXEntry.setDouble(getPose().getX());
+        odometerYEntry.setDouble(getPose().getY());
+    }
 
     public void spinDriveMotors(double speed) {
         frontLeftModule.setDriveMotorRelativeSpeed(speed);

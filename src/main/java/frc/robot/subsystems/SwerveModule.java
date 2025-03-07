@@ -37,7 +37,10 @@ public class SwerveModule {
     private final GenericEntry currentAngleEntry;
     private final GenericEntry desiredAngleEntry;
 
-    public SwerveModule(Module module, ShuffleboardLayout currentAnglesLayout, ShuffleboardLayout desiredAnglesLayout) {
+    private final GenericEntry driveSpeedEntry;
+    private final GenericEntry angleSpeedEntry;
+
+    public SwerveModule(Module module, ShuffleboardLayout currentAnglesLayout, ShuffleboardLayout desiredAnglesLayout, ShuffleboardLayout driveSpeedsLayout, ShuffleboardLayout angleSpeedsLayout) {
         driveMotor = new KrakenMotor(module.getDriveMotorDeviceId(), true, true);
 
         // reverse motor if needed to match direction of absolute encoder
@@ -51,8 +54,11 @@ public class SwerveModule {
 
         name = module.getName();
 
-        currentAngleEntry = currentAnglesLayout.add(name, 0).withWidget(BuiltInWidgets.kGyro).getEntry();;
-        desiredAngleEntry = desiredAnglesLayout.add(name, 0).withWidget(BuiltInWidgets.kGyro).getEntry();;
+        currentAngleEntry = currentAnglesLayout.add(name, 0).withWidget(BuiltInWidgets.kGyro).getEntry();
+        desiredAngleEntry = desiredAnglesLayout.add(name, 0).withWidget(BuiltInWidgets.kGyro).getEntry();
+        
+        driveSpeedEntry = driveSpeedsLayout.add(name, 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
+        angleSpeedEntry = angleSpeedsLayout.add(name, 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
 
         resetEncoders();
     }
@@ -111,10 +117,12 @@ public class SwerveModule {
     }
 
     public void setDriveMotorRelativeSpeed(double relativeSpeed) {
+        driveSpeedEntry.setDouble(relativeSpeed);
         driveMotor.setRelativeSpeed(relativeSpeed);
     }
 
     public void setAngleMotorRelativeSpeed(double relativeSpeed) {
+        angleSpeedEntry.setDouble(relativeSpeed);
         angleMotor.setRelativeSpeed(relativeSpeed);
     }
 
