@@ -24,7 +24,7 @@ public class TeleopDriveCommand extends Command {
 
     @Override
     public void execute() {
-        switch (DriveConstants.driveType) {
+        switch (DriveConstants.kDriveType) {
             case ARCADE:
                 break;
             case SWERVE:
@@ -48,6 +48,8 @@ public class TeleopDriveCommand extends Command {
                 break;
         }
         swerveSubsystem.updateOdometer();
+        swerveSubsystem.tipDetection();
+        swerveSubsystem.updateShuffleboard();
     } 
 
     @Override

@@ -3,7 +3,7 @@ package frc.robot.hardware;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import frc.robot.subsystems.DriveUtils;
+import frc.robot.subsystems.SwerveUtils;
 
 public class KrakenMotor {
     private final TalonFX motor;
@@ -25,7 +25,7 @@ public class KrakenMotor {
         return reverseEncoder ? -motor.getPosition().getValueAsDouble() : motor.getPosition().getValueAsDouble();
     }
     public double getPositionRadians() {
-        return DriveUtils.rotationsToRadians(getPositionRotations());
+        return SwerveUtils.rotationsToRadians(getPositionRotations());
     }
     
     public void setEncoderPosition(double position) {
@@ -40,6 +40,6 @@ public class KrakenMotor {
         return motor.getVelocity().getValueAsDouble();
     }
     public double getSpeedRadiansPerSecond() {
-        return DriveUtils.rotationsToRadians(getSpeedRotationsPerSecond());
+        return SwerveUtils.rotationsToRadians(getSpeedRotationsPerSecond());
     }
 } 
