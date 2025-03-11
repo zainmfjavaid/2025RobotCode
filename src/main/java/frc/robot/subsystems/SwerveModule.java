@@ -41,7 +41,7 @@ public class SwerveModule {
         driveMotor = new KrakenMotor(module.getDriveMotorDeviceId(), true, true);
 
         // reverse motor if needed to match direction of absolute encoder
-        // (reversing encoder doesn't matter because relative encoder is not used, but it would if it were)
+        // (matching encoder direction with motor only matters if relative encoder is used)
         angleMotor = new KrakenMotor(module.getAngleMotorDeviceId(), true, true);
 
         double unnormalizedTurnAngleRadians = SwerveUtils.getAngleRadiansFromComponents(module.getLocation().getX(), module.getLocation().getY()) + Math.PI / 2;
@@ -74,7 +74,7 @@ public class SwerveModule {
     }
 
     public void setState(double wheelDriveSpeedMetersPerSecond, double desiredWheelAngleRadians) {  
-        double currentWheelAngleRadians = wheelAngleAbsoluteEncoder.getPositionRadians();
+        double currentWheelAngleRadians = getCurrentWheelAngleRadians();
 
         currentAngleEntry.setDouble(Units.radiansToDegrees(currentWheelAngleRadians));
         desiredAngleEntry.setDouble(Units.radiansToDegrees(desiredWheelAngleRadians));
@@ -110,6 +110,17 @@ public class SwerveModule {
         return new SwerveModuleState(speedMetersPerSecond, angle);
     }
 
+    public double getCurrentWheelAngleRadians() {
+        switch (SwerveConstants.kEncoderType) {
+            case ABSOLUTE:
+                return wheelAngleAbsoluteEncoder.getPositionRadians();
+            case RELATIVE:
+                return SwerveUtils.angleMotorToWheel(angleMotor.getPositionRadians()); // untested
+            default:
+                return 0;
+        }
+    }
+
     public void setDriveMotorRelativeSpeed(double relativeSpeed) {
         driveMotor.setRelativeSpeed(relativeSpeed);
     }
@@ -120,7 +131,7 @@ public class SwerveModule {
 
     public void resetEncoders() {
         driveMotor.setEncoderPosition(0);
-        // angleMotor.setEncoderPosition(DriveUtils.angleWheelToMotor(wheelAngleAbsoluteEncoder.getPositionRotations()));
+        angleMotor.setEncoderPosition(SwerveUtils.angleWheelToMotor(wheelAngleAbsoluteEncoder.getPositionRotations()));
     }
 
     public SwerveModulePosition getPosition() {

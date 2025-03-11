@@ -82,6 +82,13 @@ public final class Constants {
                 return name;
             }
         }
+
+        public enum EncoderType {
+            RELATIVE, // may fix drift problem but not sure
+            ABSOLUTE;
+        }
+
+        public static final EncoderType kEncoderType = EncoderType.ABSOLUTE;
         
         public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5); // don't know if this is right
         public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
