@@ -10,36 +10,34 @@ import frc.robot.hardware.SparkMaxMotor;
 import edu.wpi.first.math.controller.PIDController;
 
 public class ClimbSubsystem extends SubsystemBase {
+    SparkMaxMotor climbMotor = new SparkMaxMotor(35); // TEMP
 
-  SparkMaxMotor climbMotor = new SparkMaxMotor(35); // TEMP
+    PIDController climbPIDController = new PIDController(0.1, 0, 0);
 
-  PIDController climbPIDController = new PIDController(0.1, 0, 0);
-
-  boolean climbToggle = false;
+    boolean climbToggle = false;
 
     /** Creates a new ClimbSubsystem. */
-    public ClimbSubsystem() {
-    }
+    public ClimbSubsystem() {}
 
     public void setClimbDown() {
-      climbMotor.set(climbPIDController.calculate(climbMotor.getPositionRotations(), 1.0));
+        climbMotor.set(climbPIDController.calculate(climbMotor.getPositionRotations(), 1.0));
     }
 
     public void setClimbUp() {
-      climbMotor.set(climbPIDController.calculate(climbMotor.getPositionRotations(), 1.0)); // TEMP POSITION
+        climbMotor.set(climbPIDController.calculate(climbMotor.getPositionRotations(), 1.0)); // TEMP POSITION
     }
 
     public void setClimb() {
-      if(climbToggle) setClimbDown(); else setClimbUp();
-      climbToggle = climbToggle ? true : false;
+        if(climbToggle) setClimbDown(); else setClimbUp();
+        climbToggle = climbToggle ? true : false;
     }
 
     public StartEndCommand climbCommandTest() {
-      return new StartEndCommand(() -> climbMotor.set(1), () -> climbMotor.set(0), this);
+        return new StartEndCommand(() -> climbMotor.set(1), () -> climbMotor.set(0), this);
     }
 
     public StartEndCommand reverseClimbCommandTest() {
-      return new StartEndCommand(() -> climbMotor.set(-1), () -> climbMotor.set(0), this);
+        return new StartEndCommand(() -> climbMotor.set(-1), () -> climbMotor.set(0), this);
     }
     
     @Override
