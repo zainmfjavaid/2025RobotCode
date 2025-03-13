@@ -34,10 +34,15 @@ public class SwerveModule {
 
     private final String name;
 
-    private final GenericEntry currentAngleEntry;
+    private final GenericEntry absoluteAngleEntry;
+    private final GenericEntry relativeAngleEntry;
+
     private final GenericEntry desiredAngleEntry;
 
-    public SwerveModule(Module module, ShuffleboardLayout currentAnglesLayout, ShuffleboardLayout desiredAnglesLayout) {
+    private final GenericEntry driveSpeedEntry;
+    private final GenericEntry angleSpeedEntry;
+
+    public SwerveModule(Module module, ShuffleboardLayout absoluteAnglesLayout, ShuffleboardLayout relativeAnglesLayout, ShuffleboardLayout desiredAnglesLayout, ShuffleboardLayout driveSpeedsLayout, ShuffleboardLayout angleSpeedsLayout) {
         driveMotor = new KrakenMotor(module.getDriveMotorDeviceId(), true, true);
 
         // reverse motor if needed to match direction of absolute encoder
@@ -51,8 +56,13 @@ public class SwerveModule {
 
         name = module.getName();
 
-        currentAngleEntry = currentAnglesLayout.add(name, 0).withWidget(BuiltInWidgets.kGyro).getEntry();;
-        desiredAngleEntry = desiredAnglesLayout.add(name, 0).withWidget(BuiltInWidgets.kGyro).getEntry();;
+        absoluteAngleEntry = absoluteAnglesLayout.add(name, 0).withWidget(BuiltInWidgets.kGyro).getEntry();
+        relativeAngleEntry = relativeAnglesLayout.add(name, 0).withWidget(BuiltInWidgets.kGyro).getEntry();
+        
+        desiredAngleEntry = desiredAnglesLayout.add(name, 0).withWidget(BuiltInWidgets.kGyro).getEntry();
+        
+        driveSpeedEntry = driveSpeedsLayout.add(name, 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
+        angleSpeedEntry = angleSpeedsLayout.add(name, 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
 
         resetEncoders();
     }
@@ -74,9 +84,11 @@ public class SwerveModule {
     }
 
     public void setState(double wheelDriveSpeedMetersPerSecond, double desiredWheelAngleRadians) {  
-        double currentWheelAngleRadians = getCurrentWheelAngleRadians();
+        double currentWheelAngleRadians = getAngleAbsoluteEncoderPositionRadians();
 
-        currentAngleEntry.setDouble(Units.radiansToDegrees(currentWheelAngleRadians));
+        absoluteAngleEntry.setDouble(Units.radiansToDegrees(currentWheelAngleRadians));
+        relativeAngleEntry.setDouble(Units.radiansToDegrees(getAngleRelativeEncoderPositionRadians()));
+        
         desiredAngleEntry.setDouble(Units.radiansToDegrees(desiredWheelAngleRadians));
 
         double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
@@ -97,6 +109,14 @@ public class SwerveModule {
         setDriveMotorRelativeSpeed(driveMotorRelativeSpeed);
 
         lastAngleRadians = desiredWheelAngleRadians;
+    }
+
+    public double getAngleAbsoluteEncoderPositionRadians() {
+        return wheelAngleAbsoluteEncoder.getPositionRadians();
+    }
+
+    public double getAngleRelativeEncoderPositionRadians() {
+        return SwerveUtils.angleMotorToWheel(angleMotor.getPositionRadians());
     }
 
     public void setState(SwerveModuleState desiredState) {
@@ -122,10 +142,12 @@ public class SwerveModule {
     }
 
     public void setDriveMotorRelativeSpeed(double relativeSpeed) {
+        driveSpeedEntry.setDouble(relativeSpeed);
         driveMotor.setRelativeSpeed(relativeSpeed);
     }
 
     public void setAngleMotorRelativeSpeed(double relativeSpeed) {
+        angleSpeedEntry.setDouble(relativeSpeed);
         angleMotor.setRelativeSpeed(relativeSpeed);
     }
 
