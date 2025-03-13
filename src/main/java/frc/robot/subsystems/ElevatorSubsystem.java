@@ -14,8 +14,8 @@ import frc.robot.hardware.SparkMaxMotor;
 import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
-	private final SparkMaxMotor leftElevatorMotor = new SparkMaxMotor(DeviceIds.kLeftElevatorMotor, false, false, true);
-	private final SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, false, true);
+	private final SparkMaxMotor leftElevatorMotor = new SparkMaxMotor(DeviceIds.kLeftElevatorMotor, false, true);
+	private final SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, true);
 
 	private final PIDController elevatorPIDController = new PIDController(.0001, 0, 0);
     private final Encoder elevatorEncoder = new Encoder(0, 1);

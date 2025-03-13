@@ -43,11 +43,8 @@ public class SwerveModule {
     private final GenericEntry angleSpeedEntry;
 
     public SwerveModule(Module module, ShuffleboardLayout absoluteAnglesLayout, ShuffleboardLayout relativeAnglesLayout, ShuffleboardLayout desiredAnglesLayout, ShuffleboardLayout driveSpeedsLayout, ShuffleboardLayout angleSpeedsLayout) {
-        driveMotor = new KrakenMotor(module.getDriveMotorDeviceId(), true, true);
-
-        // reverse motor if needed to match direction of absolute encoder
-        // (matching encoder direction with motor only matters if relative encoder is used)
-        angleMotor = new KrakenMotor(module.getAngleMotorDeviceId(), true, true);
+        driveMotor = new KrakenMotor(module.getDriveMotorDeviceId(), true);
+        angleMotor = new KrakenMotor(module.getAngleMotorDeviceId(), true);
 
         double unnormalizedTurnAngleRadians = SwerveUtils.getAngleRadiansFromComponents(module.getLocation().getX(), module.getLocation().getY()) + Math.PI / 2;
         turnAngleRadians = SwerveUtils.normalizeAngleRadiansSigned(unnormalizedTurnAngleRadians);

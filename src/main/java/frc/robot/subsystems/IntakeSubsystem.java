@@ -16,7 +16,7 @@ public class IntakeSubsystem extends SubsystemBase {
     /** Creates a new IntakeSubsystem. */
     SparkMaxMotor armMotor = new SparkMaxMotor(DeviceIds.kArmMotor);
     SparkMaxMotor wristMotor = new SparkMaxMotor(DeviceIds.kWristMotor);
-	SparkMaxMotor kickerMotor = new SparkMaxMotor(DeviceIds.kKickerMotor, false, false, true);
+	SparkMaxMotor kickerMotor = new SparkMaxMotor(DeviceIds.kKickerMotor, false, true);
     SparkMaxMotor rollerMotor = new SparkMaxMotor(DeviceIds.kRollerMotor);
 
     Encoder armEncoder = new Encoder(2, 3);
