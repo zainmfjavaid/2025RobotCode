@@ -32,17 +32,17 @@ public class SwerveSubsystem extends SubsystemBase {
     // Shuffleboard
     private final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
 
-    private final ShuffleboardLayout currentAnglesLayout = swerveTab.getLayout("Current Module Angles");
-    private final ShuffleboardLayout desiredAnglesLayout = swerveTab.getLayout("Desired Module Angles");
+    private final ShuffleboardLayout currentAnglesLayout = swerveTab.getLayout("Current Module Angles", "Grid Layout");
+    private final ShuffleboardLayout desiredAnglesLayout = swerveTab.getLayout("Desired Module Angles", "Grid Layout");
 
-    private final ShuffleboardLayout speedsLayout = swerveTab.getLayout("Module Speeds");
-    private final ShuffleboardLayout driveSpeedsLayout = speedsLayout.getLayout("Drive Speeds");
-    private final ShuffleboardLayout angleSpeedsLayout = speedsLayout.getLayout("Angle Speeds");
+    private final ShuffleboardLayout speedsLayout = swerveTab.getLayout("Module Speeds", "Grid Layout");
+    private final ShuffleboardLayout driveSpeedsLayout = speedsLayout.getLayout("Drive Speeds", "Grid Layout");
+    private final ShuffleboardLayout angleSpeedsLayout = speedsLayout.getLayout("Angle Speeds", "Grid Layout");
     
-    private final ShuffleboardLayout gyroAngleLayout = swerveTab.getLayout("Gyro");
+    private final ShuffleboardLayout gyroAngleLayout = swerveTab.getLayout("Gyro", "Grid Layout");
     private final GenericEntry gyroAngleEntry = gyroAngleLayout.add("Rotation", 0).withWidget(BuiltInWidgets.kGyro).getEntry();
     
-    private final ShuffleboardLayout odometerLayout = swerveTab.getLayout("Odometer");
+    private final ShuffleboardLayout odometerLayout = swerveTab.getLayout("Odometer", "Grid Layout");
     private final GenericEntry odometerXEntry = odometerLayout.add("X", 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
     private final GenericEntry odometerYEntry = odometerLayout.add("Y", 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
 
