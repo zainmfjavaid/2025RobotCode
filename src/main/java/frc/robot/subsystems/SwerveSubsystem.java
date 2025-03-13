@@ -33,6 +33,9 @@ public class SwerveSubsystem extends SubsystemBase {
     private final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
 
     private final ShuffleboardLayout currentAnglesLayout = swerveTab.getLayout("Current Module Angles", "Grid Layout");
+    private final ShuffleboardLayout absoluteAnglesLayout = currentAnglesLayout.getLayout("Absolute", "List Layout");
+    private final ShuffleboardLayout relativeAnglesLayout = currentAnglesLayout.getLayout("Relative", "List Layout");
+    
     private final ShuffleboardLayout desiredAnglesLayout = swerveTab.getLayout("Desired Module Angles", "Grid Layout");
 
     private final ShuffleboardLayout speedsLayout = swerveTab.getLayout("Module Speeds", "Grid Layout");
@@ -47,10 +50,10 @@ public class SwerveSubsystem extends SubsystemBase {
     private final GenericEntry odometerYEntry = odometerLayout.add("Y", 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
 
     // Modules
-    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, currentAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
-    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, currentAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
-    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, currentAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
-    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, currentAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout); 
+    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, absoluteAnglesLayout, relativeAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
+    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, absoluteAnglesLayout, relativeAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
+    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, absoluteAnglesLayout, relativeAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
+    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, absoluteAnglesLayout, relativeAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout); 
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Module.FRONT_LEFT.getLocation(), Module.FRONT_RIGHT.getLocation(), Module.BACK_LEFT.getLocation(), Module.BACK_RIGHT.getLocation());
 
