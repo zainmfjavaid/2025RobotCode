@@ -28,7 +28,7 @@ public class IntakeCommand extends Command {
     @Override
     public void initialize() {
         intakeSubsystem.setGoal(IntakeState.INTAKE);
-        intakeSubsystem.runRollerMotor(0.5);
+        //intakeSubsystem.runRollerMotor(0.5);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -39,7 +39,7 @@ public class IntakeCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         intakeSubsystem.setGoal(IntakeState.STOW);
-        intakeSubsystem.runRollerMotor(0);
+        //intakeSubsystem.runRollerMotor(0);
     }
 
     // Returns true when the command should end.

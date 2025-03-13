@@ -28,7 +28,7 @@ public class L2 extends Command {
     @Override
     public void initialize() {
         elevatorSubsystem.setGoal(IntakeState.L2);
-        intakeSubsystem.setGoal(IntakeState.L2);
+        //intakeSubsystem.setGoal(IntakeState.L2);
     }
 
     // Called every time the scheduler runs while the command is scheduled.

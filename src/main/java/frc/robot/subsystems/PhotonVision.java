@@ -44,16 +44,16 @@ public class PhotonVision {
         return target.getPitch();
     }
 
-    public double getSkew() {
-        return target.getSkew();
-    }
-
     public boolean hasResults() {
         return hasResults;
     }
 
     public boolean isTargetVisible() {
         return hasResults && target != null && target.getFiducialId() != 0;
+    }
+
+    public int getTargetID() {
+        return target.getFiducialId();
     }
     
     public double getTargetYaw() {

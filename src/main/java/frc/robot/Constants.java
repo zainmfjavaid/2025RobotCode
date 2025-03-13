@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
@@ -97,7 +99,7 @@ public final class Constants {
     }
 
     public static class AutoSwerveConstants {
-        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(18);
+        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(8);
         public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 6;
 
         public static final double kMaxAccelerationMetersPerSecondSquared = kMaxDriveSpeedMetersPerSecond / 6;
@@ -138,9 +140,8 @@ public final class Constants {
         public static final int kLeftElevatorMotor = 5;
         public static final int kRightElevatorMotor = 6;
         // Intake (SparkMax)
-        public static final int kArmMotor = 32;
-        public static final int kWristMotor = 33;
-        public static final int kKickerMotor = 31;
+        public static final int kArmMotor = 33;
+        public static final int kWristMotor = 14;
         public static final int kRollerMotor = 30;
     }
 
@@ -149,10 +150,10 @@ public final class Constants {
             // ARM VALUES/WRIST ANGLES ARE TEMPORARY
             STOW(-0.6, 0, 0),
             INTAKE(-10, 0, 0),
-            TROUGH(2, 0, -10500),
-            L2(2, 0, -17000),
-            L3(5, 0, -19000),
-            L4(8, 0, -25000),
+            TROUGH(2, 0, 0),
+            L2(2, 0, -6900),
+            L3(5, 0, -14837),
+            L4(8, 0, -31109),
             TORCH(0, 0, 0);
 
             private final double armValue;
@@ -180,5 +181,31 @@ public final class Constants {
 
         public static final double kickerWheelSpeed = 0.2;
         public static final double rollerMotorSpeed = 0.2;
+
+        public static final double[] apriltagAngles = {
+            0, // 0 (unused)
+            0, // 1
+            0, // 2
+            0, // 3
+            0, // 4
+            0, // 5
+            60, // 6
+            0, // 7
+            -60, // 8
+            -120, // 9
+            180, // 10
+            120, // 11
+            0, // 12
+            0, // 13
+            0, // 14
+            0, // 15
+            0, // 16
+            60, // 17
+            0, // 18
+            -60, // 19
+            -120, // 20
+            180, // 21
+            120 // 22
+        };
     }
 }

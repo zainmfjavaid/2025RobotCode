@@ -15,7 +15,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 	SparkMaxMotor leftElevatorMotor = new SparkMaxMotor(DeviceIds.kLeftElevatorMotor, false, false, true);
 	SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, false, true);
 
-	PIDController elevatorPIDController = new PIDController(.0001, 0, 0);
+	PIDController elevatorPIDController = new PIDController(0.01, 0, 0);
     Encoder elevatorEncoder = new Encoder(0, 1);
 
 	double currentPosition = 0;
@@ -29,32 +29,27 @@ public class ElevatorSubsystem extends SubsystemBase {
 		rightElevatorMotor.set(0);
 	}
 
-	public boolean atSetpoint(IntakeState intakeState) {
-		return Math.abs(currentPosition) >= Math.abs(intakeState.getElevatorValue());
+	public void goDown() {
+		leftElevatorMotor.set(-0.2);
+		rightElevatorMotor.set(-0.2);
+	}
+
+	public void goUp() {
+		leftElevatorMotor.set(0.4);
+		rightElevatorMotor.set(0.4);
 	}
 
 	public void setPosition(IntakeState intakeState) {
-		System.out.println("at setpoint??? " + atSetpoint(intakeState));
-		currentPosition = elevatorEncoder.getDistance();
+		double pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
+		System.out.println(pidOutput);
 
-		if (!atSetpoint(intakeState)) {
-			System.out.println("RUNNING THE MOTORS");
-			System.out.println("curr point: " + currentPosition + " whereas my desired position is: " + intakeState.getElevatorValue());
-			leftElevatorMotor.set(1);
-			rightElevatorMotor.set(1);
-		} else {
-			if (intakeState.getElevatorValue() != 0) {
-				stop();
-			} else {
-				resetElevatorPosition();
-			}
-		}
+		//leftElevatorMotor.set(pidOutput);
+		//rightElevatorMotor.set(pidOutput);
 	}
 
 	public void resetElevatorPosition() {
-		double setpoint = 0;
-        double pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), setpoint);
-		System.out.println(-pidOutput);
+        double pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), 0);
+
 		leftElevatorMotor.set(-pidOutput);
 		rightElevatorMotor.set(-pidOutput);
 	}
@@ -67,9 +62,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 	public void periodic() {
 		// This method will be called once per scheduler run
 		if (currentGoal != null) {
-			if (!atSetpoint(currentGoal)) {
-				setPosition(currentGoal);
-			}
+			setPosition(currentGoal);
 		}
 	}
 }

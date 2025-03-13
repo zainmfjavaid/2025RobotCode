@@ -31,9 +31,9 @@ public class ElevatorScore extends Command {
     public void initialize() {
         // TODO: NEED TO CHECK THIS STATE
         if (intakeState == IntakeState.TROUGH) {
-            intakeSubsystem.runRollerMotor(-0.5);
+            //intakeSubsystem.runRollerMotor(-0.5);
         } else {
-            intakeSubsystem.runKickerWheel(0.5);
+            //intakeSubsystem.runKickerWheel(0.5);
         }
     }
 
@@ -46,8 +46,8 @@ public class ElevatorScore extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        intakeSubsystem.runRollerMotor(0);
-        intakeSubsystem.runKickerWheel(0);
+        //intakeSubsystem.runRollerMotor(0);
+        //intakeSubsystem.runKickerWheel(0);
     }
 
     // Returns true when the command should end.

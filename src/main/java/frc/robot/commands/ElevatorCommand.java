@@ -40,14 +40,13 @@ public class ElevatorCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     if (intakeState.getElevatorValue() == 0) {
-      intakeSubsystem.runRollerMotor(0.5);
+      //intakeSubsystem.runRollerMotor(0.5);
     }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // WRONG
-    return elevatorSubsystem.atSetpoint(intakeState);
+    return false;
   }
 }

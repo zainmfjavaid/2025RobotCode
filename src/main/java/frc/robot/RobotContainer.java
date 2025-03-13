@@ -9,6 +9,7 @@ import java.util.List;
 import frc.robot.Constants.AutoSwerveConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.hardware.Controller.DriverController;
+import frc.robot.hardware.Controller.OperatorController;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -31,6 +32,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -54,6 +56,7 @@ public class RobotContainer {
 
     //private final SendableChooser<Command> autonChooser;
     private final DriverController driverController = new DriverController();
+    private final OperatorController operatorController = new OperatorController();
     
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
@@ -75,7 +78,7 @@ public class RobotContainer {
 
     // private final WristCommand wristCommand = new WristCommand(intakeSubsystem);
     
-    // private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
+    //private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
     // private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
     private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
@@ -94,17 +97,31 @@ public class RobotContainer {
 
     private void configureBindings() { 
         // Elevator Testing
-        // driverController.getButton(DriverController.Button.RB).onTrue(new ElevatorCommand(elevatorSubsystem, IntakeState.L4));
+        driverController.getButton(DriverController.Button.LB).whileTrue(new StartEndCommand(intakeSubsystem::runArm, intakeSubsystem::stopArm, intakeSubsystem));
+        driverController.getButton(DriverController.Button.RB).whileTrue(new StartEndCommand(intakeSubsystem::runArmBack, intakeSubsystem::stopArm, intakeSubsystem));
+        driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(intakeSubsystem::getArmPosition, intakeSubsystem));
 
-        // driverController.getButton(DriverController.Button.LB).whileTrue(elevatorTestingSubsystem.goDownCommand());
+        driverController.getButton(DriverController.Button.B).whileTrue(new StartEndCommand(intakeSubsystem::runIntakeRollers, intakeSubsystem::stopRollers, intakeSubsystem));
+        driverController.getButton(DriverController.Button.X).whileTrue(new StartEndCommand(intakeSubsystem::runOuttakeRollers, intakeSubsystem::stopRollers, intakeSubsystem));
+
+        operatorController.getButton(OperatorController.Button.RB).whileTrue(new StartEndCommand(elevatorSubsystem::goUp, elevatorSubsystem::stop, elevatorSubsystem));
+        operatorController.getButton(OperatorController.Button.LB).whileTrue(new StartEndCommand(elevatorSubsystem::goDown, elevatorSubsystem::stop, elevatorSubsystem));
+
+        operatorController.getButton(OperatorController.Button.A).onTrue(new ElevatorCommand(elevatorSubsystem, intakeSubsystem, IntakeState.TROUGH));
+        operatorController.getButton(OperatorController.Button.B).onTrue(new ElevatorCommand(elevatorSubsystem, intakeSubsystem, IntakeState.L2));
+        operatorController.getButton(OperatorController.Button.Y).onTrue(new ElevatorCommand(elevatorSubsystem, intakeSubsystem, IntakeState.L3));
+        operatorController.getButton(OperatorController.Button.X).onTrue(new ElevatorCommand(elevatorSubsystem, intakeSubsystem, IntakeState.L4));
+
+
+        //driverController.getButton(DriverController.Button.LB).whileTrue(elevatorTestingSubsystem.goDownCommand());
         // driverController.getButton(DriverController.Button.RB).whileTrue(elevatorTestingSubsystem.goUpCommand());
 
         // driverController.getButton(DriverController.Button.RB).whileTrue(climbSubsystem.climbCommandTest());
         // driverController.getButton(DriverController.Button.LB).whileTrue(climbSubsystem.reverseClimbCommandTest());
 
-        driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
+        //driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
 
-        driverController.getButton(DriverController.Button.B).whileTrue(reefAlignCommand);
+        driverController.getButton(DriverController.Button.A).whileTrue(reefAlignCommand);
         // Intake Testing
         // driverController.getButton(DriverController.Button.A).whileTrue(new WristCommand(intakeSubsystem)); WRIST ONE
         // driverController.getButton(DriverController.Button.RB).whileTrue(intakeSubsystem.runRollersTest());
