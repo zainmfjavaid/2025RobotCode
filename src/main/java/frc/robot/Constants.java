@@ -150,6 +150,7 @@ public final class Constants {
             // ARM VALUES/WRIST ANGLES ARE TEMPORARY
             STOW(1, 77, 0),
             INTAKE(21.2, 77, 0),
+            SOURCE(4, 77, 0),
             TROUGH(6, 77, 0),
             L2(12.8, 0, -6900),
             L3(12.8, 0, -14837),
