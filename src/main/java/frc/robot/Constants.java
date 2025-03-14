@@ -91,7 +91,7 @@ public final class Constants {
     }
 
     public static class TeleopSwerveConstants {
-        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(2.5);
+        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(18);
 
         public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
 
@@ -164,6 +164,7 @@ BR: RRot 0.456162109375, RRad 2.8661510633170475, ARot -0.199951171875, ARad -1.
             // ARM VALUES/WRIST ANGLES ARE TEMPORARY
             STOW(1.1, 77, 0),
             INTAKE(21.2, 77, 0),
+            SOURCE(2.2, 77, -6200),
             TROUGH(6, 77, 0),
             L2(12.8, 0, -6900),
             L3(12.8, 0, -14837),

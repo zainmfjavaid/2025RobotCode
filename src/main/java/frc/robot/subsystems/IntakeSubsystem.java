@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.config.AlternateEncoderConfig;
 
+import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -26,8 +27,13 @@ public class IntakeSubsystem extends SubsystemBase {
     PIDController wristPIDController = new PIDController(0.02, 0, 0);
 
     IntakeState currentGoal = null;
+    LaserCan lc = new LaserCan(22);
 
     public IntakeSubsystem() {}
+
+    public double getDistance() {
+        return lc.getMeasurement().distance_mm;
+    }
 
     public void setPosition(IntakeState intakeState) {
         double armPIDOutput = armPIDController.calculate(armMotor.getPositionRotations(), intakeState.getArmPosition());
@@ -53,7 +59,15 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void runRollerMotors(double speed) {
-        rollerMotor.set(speed);
+        if (getDistance() <= 45 && speed >= 0) {
+            rollerMotor.set(0);
+        } else {
+            rollerMotor.set(speed);
+        }
+    }
+
+    public void stopWristMotor() {
+        wristMotor.set(0);
     }
 
     @Override
