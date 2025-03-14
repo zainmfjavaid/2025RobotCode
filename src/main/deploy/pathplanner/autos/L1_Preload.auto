@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Middle_Coral"
+            "pathName": "Move_Forward_L1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TroughScore"
           }
         }
       ]

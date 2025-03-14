@@ -21,10 +21,10 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 public class SwerveSubsystem extends SubsystemBase {
-    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT);
-    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT);
-    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT);
-    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT); 
+    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, false);
+    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, true);
+    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, false);
+    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, true); 
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Module.FRONT_LEFT.getLocation(), Module.FRONT_RIGHT.getLocation(), Module.BACK_LEFT.getLocation(), Module.BACK_RIGHT.getLocation());
 
@@ -76,7 +76,7 @@ public class SwerveSubsystem extends SubsystemBase {
         setModuleSpeeds(
             longitudinalSpeedMetersPerSecond * Math.cos(offsetRadians) - lateralSpeedMetersPerSecond * Math.sin(offsetRadians), 
             longitudinalSpeedMetersPerSecond * Math.sin(offsetRadians) + lateralSpeedMetersPerSecond * Math.cos(offsetRadians), 
-            rotationSpeedRadiansPerSecond);
+            rotationSpeedRadiansPerSecond );
     }
 
     public void swerveDriveTeleop(DriverController driveController) {
@@ -135,6 +135,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void updateOdometer() {
         odometer.update(getGyroAngle(), getModulePositions());
+    }
+
+    public void resetEncoders() {
+        frontLeftModule.resetEncoders();
+        frontRightModule.resetEncoders();
+        backLeftModule.resetEncoders();
+        backRightModule.resetEncoders();
     }
 
     // OTHER
@@ -202,8 +209,8 @@ public class SwerveSubsystem extends SubsystemBase {
             this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             (speeds, feedforwards) -> setChassisSpeeds(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(0.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(0.0, 0.0, 0.0) // Rotation PID constants
             ),
             config, // The robot configuration
             () -> {

@@ -20,6 +20,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
  import frc.robot.commands.AutoDriveCommand;
  import frc.robot.commands.ReefAlignCommand;
 import frc.robot.commands.TeleopDriveCommand;
+import frc.robot.commands.autoncommands.ArmInitCommand;
+import frc.robot.commands.autoncommands.TorchIntakeCommand;
+import frc.robot.commands.autoncommands.TroughScoreCommand;
 import frc.robot.commands.elevator.ElevatorScore;
 import frc.robot.commands.elevator.L1;
 import frc.robot.commands.elevator.L2;
@@ -72,9 +75,18 @@ public class RobotContainer {
 
     private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
 
+    private final ArmInitCommand armInitCommand = new ArmInitCommand(intakeSubsystem);
+    private final TorchIntakeCommand torchIntakeCommand = new TorchIntakeCommand(intakeSubsystem);
+    private final TroughScoreCommand troughScoreCommand = new TroughScoreCommand(intakeSubsystem);
+
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
+        NamedCommands.registerCommand("InitializeArm", armInitCommand);
+        NamedCommands.registerCommand("TorchIntake", torchIntakeCommand);
+        NamedCommands.registerCommand("TroughScore", troughScoreCommand);
+
         swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
+    
         configureBindings();
     
         //autonChooser = AutoBuilder.buildAutoChooser();
@@ -90,7 +102,7 @@ public class RobotContainer {
     private void configureBindings() { 
         // driverController.getButton(DriverController.Button.RB).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.INTAKE), intakeSubsystem));
         // driverController.getButton(DriverController.Button.LB).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.STOW), intakeSubsystem));
-        driverController.getButton(DriverController.Button.RB).whileTrue(intakeCommand);
+        // driverController.getButton(DriverController.Button.RB).whileTrue(intakeCommand);
 
         driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.L4), intakeSubsystem));
         driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.TROUGH), intakeSubsystem));
@@ -133,6 +145,8 @@ public class RobotContainer {
 
         // Drive
         driverController.getButton(DriverController.Button.Start).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
+        driverController.getButton(DriverController.Button.LB).onTrue(new InstantCommand(() -> swerveSubsystem.printEncoderValues()));
+        driverController.getButton(DriverController.Button.RB).onTrue(new InstantCommand(() -> swerveSubsystem.printDriveEncoderValues()));
     }
 
     public Command getAutonomousCommand() {
