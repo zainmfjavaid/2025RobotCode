@@ -33,8 +33,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
 
     private final ShuffleboardLayout currentAnglesLayout = swerveTab.getLayout("Current Module Angles", "Grid Layout");
-    private final ShuffleboardLayout absoluteAnglesLayout = currentAnglesLayout.getLayout("Absolute", "List Layout");
-    private final ShuffleboardLayout relativeAnglesLayout = currentAnglesLayout.getLayout("Relative", "List Layout");
+    private final ShuffleboardLayout absoluteAnglesLayout = currentAnglesLayout.getLayout("Absolute", "Grid Layout");
+    private final ShuffleboardLayout relativeAnglesLayout = currentAnglesLayout.getLayout("Relative", "Grid Layout");
     
     private final ShuffleboardLayout desiredAnglesLayout = swerveTab.getLayout("Desired Module Angles", "Grid Layout");
 
