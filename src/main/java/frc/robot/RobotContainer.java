@@ -74,7 +74,7 @@ public class RobotContainer {
     private final L4 LevelFourCommand = new L4(intakeSubsystem, elevatorSubsystem);
 
 
-    // private final ElevatorScore elevatorScoreCommand = new ElevatorScore(intakeSubsystem, elevatorSubsystem); // create new cmd AT the trigger
+    private final ElevatorScore elevatorScoreCommand = new ElevatorScore(intakeSubsystem, elevatorSubsystem, IntakeState.L4); // create new cmd AT the trigger
 
     // private final WristCommand wristCommand = new WristCommand(intakeSubsystem);
     
@@ -96,32 +96,33 @@ public class RobotContainer {
     }
 
     private void configureBindings() { 
-        // Elevator Testing
-        driverController.getButton(DriverController.Button.LB).whileTrue(new StartEndCommand(intakeSubsystem::runArm, intakeSubsystem::stopArm, intakeSubsystem));
-        driverController.getButton(DriverController.Button.RB).whileTrue(new StartEndCommand(intakeSubsystem::runArmBack, intakeSubsystem::stopArm, intakeSubsystem));
-        driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(intakeSubsystem::getArmPosition, intakeSubsystem));
+        driverController.getButton(DriverController.Button.RB).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.INTAKE), intakeSubsystem));
+        driverController.getButton(DriverController.Button.LB).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.STOW), intakeSubsystem));
+        driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.L4), intakeSubsystem));
+        driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.TROUGH), intakeSubsystem));
 
-        driverController.getButton(DriverController.Button.B).whileTrue(new StartEndCommand(intakeSubsystem::runIntakeRollers, intakeSubsystem::stopRollers, intakeSubsystem));
-        driverController.getButton(DriverController.Button.X).whileTrue(new StartEndCommand(intakeSubsystem::runOuttakeRollers, intakeSubsystem::stopRollers, intakeSubsystem));
+        driverController.getButton(DriverController.Button.B).whileTrue(new StartEndCommand(() -> intakeSubsystem.runRollerMotors(0.8), () -> intakeSubsystem.runRollerMotors(0), intakeSubsystem));
+        driverController.getButton(DriverController.Button.X).whileTrue(new StartEndCommand(() -> intakeSubsystem.runRollerMotors(-0.3), () -> intakeSubsystem.runRollerMotors(0), intakeSubsystem));
 
-        operatorController.getButton(OperatorController.Button.RB).whileTrue(new StartEndCommand(elevatorSubsystem::goUp, elevatorSubsystem::stop, elevatorSubsystem));
-        operatorController.getButton(OperatorController.Button.LB).whileTrue(new StartEndCommand(elevatorSubsystem::goDown, elevatorSubsystem::stop, elevatorSubsystem));
+        //operatorController.getButton(OperatorController.Button.RB).whileTrue(new StartEndCommand(elevatorSubsystem::goUp, elevatorSubsystem::stop, elevatorSubsystem));
+        //operatorController.getButton(OperatorController.Button.LB).whileTrue(new StartEndCommand(elevatorSubsystem::goDown, elevatorSubsystem::stop, elevatorSubsystem));
 
-        operatorController.getButton(OperatorController.Button.A).onTrue(new ElevatorCommand(elevatorSubsystem, intakeSubsystem, IntakeState.TROUGH));
-        operatorController.getButton(OperatorController.Button.B).onTrue(new ElevatorCommand(elevatorSubsystem, intakeSubsystem, IntakeState.L2));
-        operatorController.getButton(OperatorController.Button.Y).onTrue(new ElevatorCommand(elevatorSubsystem, intakeSubsystem, IntakeState.L3));
-        operatorController.getButton(OperatorController.Button.X).onTrue(new ElevatorCommand(elevatorSubsystem, intakeSubsystem, IntakeState.L4));
+        operatorController.getButton(OperatorController.Button.A).onTrue(levelOneCommand);
+        operatorController.getButton(OperatorController.Button.B).onTrue(levelTwoCommand);
+        operatorController.getButton(OperatorController.Button.Y).onTrue(levelThreeCommand);
+        operatorController.getButton(OperatorController.Button.X).onTrue(LevelFourCommand);
+        operatorController.getButton(OperatorController.Button.RB).onTrue(elevatorScoreCommand);
 
 
         //driverController.getButton(DriverController.Button.LB).whileTrue(elevatorTestingSubsystem.goDownCommand());
         // driverController.getButton(DriverController.Button.RB).whileTrue(elevatorTestingSubsystem.goUpCommand());
 
-        // driverController.getButton(DriverController.Button.RB).whileTrue(climbSubsystem.climbCommandTest());
-        // driverController.getButton(DriverController.Button.LB).whileTrue(climbSubsystem.reverseClimbCommandTest());
+        // operatorController.getButton(OperatorController.Button.RB).whileTrue(climbSubsystem.climbCommandTest());
+        // operatorController.getButton(OperatorController.Button.LB).whileTrue(climbSubsystem.reverseClimbCommandTest());
 
         //driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
 
-        driverController.getButton(DriverController.Button.A).whileTrue(reefAlignCommand);
+        // driverController.getButton(DriverController.Button.A).whileTrue(reefAlignCommand);
         // Intake Testing
         // driverController.getButton(DriverController.Button.A).whileTrue(new WristCommand(intakeSubsystem)); WRIST ONE
         // driverController.getButton(DriverController.Button.RB).whileTrue(intakeSubsystem.runRollersTest());

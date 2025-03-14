@@ -5,6 +5,7 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -15,6 +16,8 @@ public class ElevatorScore extends Command {
     IntakeSubsystem intakeSubsystem;
     ElevatorSubsystem elevatorSubsystem;
     IntakeState intakeState;
+
+    int cycles = 0;
 
     public ElevatorScore(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem, IntakeState intakeState) {
         // Use addRequirements() here to declare subsystem dependencies.
@@ -29,25 +32,34 @@ public class ElevatorScore extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        cycles = 0;
         // TODO: NEED TO CHECK THIS STATE
         if (intakeState == IntakeState.TROUGH) {
-            //intakeSubsystem.runRollerMotor(-0.5);
+            intakeSubsystem.runRollerMotors(-0.3);
         } else {
-            //intakeSubsystem.runKickerWheel(0.5);
+            elevatorSubsystem.setOverride(true);
+            elevatorSubsystem.goDown();
         }
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        elevatorSubsystem.resetElevatorPosition();
+        cycles++;
+
+        if (cycles > 5 && cycles < 30) {
+            intakeSubsystem.runRollerMotors(-0.3);
+        } else if (cycles > 30) {
+            intakeSubsystem.runRollerMotors(0);
+
+            elevatorSubsystem.stop();
+        }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        //intakeSubsystem.runRollerMotor(0);
-        //intakeSubsystem.runKickerWheel(0);
+        
     }
 
     // Returns true when the command should end.

@@ -61,7 +61,7 @@ public final class Constants {
             FRONT_LEFT(DeviceIds.kFrontLeftDriveMotor, DeviceIds.kFrontLeftAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_LEFT),
             FRONT_RIGHT(DeviceIds.kFrontRightDriveMotor, DeviceIds.kFrontRightAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, -RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_RIGHT),
             BACK_LEFT(DeviceIds.kBackLeftDriveMotor, DeviceIds.kBackLeftAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_LEFT),
-            BACK_RIGHT(DeviceIds.kBackRightDriveMotor, DeviceIds.kBackRightAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_RIGHT);
+            BACK_RIGHT(DeviceIds.kBackRightDriveMotor, DeviceIds.kBackRightAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, -RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_RIGHT);
 
             private final int driveMotorDeviceId;
             private final int angleMotorDeviceId;
@@ -148,13 +148,13 @@ public final class Constants {
     public static class IntakeConstants {
         public enum IntakeState {
             // ARM VALUES/WRIST ANGLES ARE TEMPORARY
-            STOW(-0.6, 0, 0),
-            INTAKE(-10, 0, 0),
-            TROUGH(2, 0, 0),
-            L2(2, 0, -6900),
-            L3(5, 0, -14837),
-            L4(8, 0, -31109),
-            TORCH(0, 0, 0);
+            STOW(1, 77, 0),
+            INTAKE(21.2, 77, 0),
+            TROUGH(6, 77, 0),
+            L2(12.8, 0, -6900),
+            L3(12.8, 0, -14837),
+            L4(12.8, 0, -31109),
+            TORCH(20, 0, 0);
 
             private final double armValue;
             private final double wristValue;

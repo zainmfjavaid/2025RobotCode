@@ -27,13 +27,17 @@ public class L1 extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        intakeSubsystem.setGoal(IntakeState.TROUGH);
         elevatorSubsystem.setGoal(IntakeState.TROUGH);
+        elevatorSubsystem.setOverride(false);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
-    public void execute() {}
+    public void execute() {
+        if (elevatorSubsystem.atSetpoint()) {
+            intakeSubsystem.setGoal(IntakeState.TROUGH);
+        }
+    }
 
     // Called once the command ends or is interrupted.
     @Override

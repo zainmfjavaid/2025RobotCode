@@ -1,10 +1,13 @@
 package frc.robot.hardware;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkMaxAlternateEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.AbsoluteEncoderConfig;
+import com.revrobotics.spark.config.AlternateEncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -31,11 +34,39 @@ public class SparkMaxMotor {
         encoder = motor.getEncoder();
 
         config.idleMode(isBrake ? IdleMode.kBrake : IdleMode.kCoast);
+
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         this.reverseMotor = reverseMotor;
         this.reverseEncoder = reverseEncoder;
     }
+
+    public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder, Boolean isBrake, int currentLimit) {
+        motor = new SparkMax(deviceId, MotorType.kBrushless);
+        encoder = motor.getEncoder();
+
+        config.idleMode(isBrake ? IdleMode.kBrake : IdleMode.kCoast);
+        config.smartCurrentLimit(currentLimit);
+        config.limitSwitch.forwardLimitSwitchEnabled(false);
+        config.limitSwitch.reverseLimitSwitchEnabled(false);
+
+        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        this.reverseMotor = reverseMotor;
+        this.reverseEncoder = reverseEncoder;
+    }
+
+    // public RelativeEncoder getAlternateEncoder() {
+    //     SparkMaxConfig config = new SparkMaxConfig();
+    //     AbsoluteEncoderConfig encoderConfig = new AbsoluteEncoderConfig();
+    //     encoderConfig.setSparkMaxDataPortConfig()
+
+    //     config.apply(encoderConfig.setSparkMaxDataPortConfig());
+    //     config.idleMode(IdleMode.kBrake);
+
+    //     motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    //     return motor.getAlternateEncoder();
+    // }
 
     public double getPositionRotations() {
         return reverseEncoder ? -encoder.getPosition() : encoder.getPosition();

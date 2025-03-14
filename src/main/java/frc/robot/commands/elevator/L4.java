@@ -5,6 +5,8 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -27,13 +29,17 @@ public class L4 extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        elevatorSubsystem.setOverride(false);
         elevatorSubsystem.setGoal(IntakeState.L4);
-        intakeSubsystem.setGoal(IntakeState.L4);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
-    public void execute() {}
+    public void execute() {
+        if (elevatorSubsystem.atSetpoint()) {
+            intakeSubsystem.setGoal(IntakeState.L4);
+        }
+    }
 
     // Called once the command ends or is interrupted.
     @Override
