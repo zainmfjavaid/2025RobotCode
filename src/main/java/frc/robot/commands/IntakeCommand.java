@@ -33,13 +33,17 @@ public class IntakeCommand extends Command {
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
-    public void execute() {}
+    public void execute() {
+        if (intakeSubsystem.atSetpoint(IntakeState.INTAKE)) {
+            intakeSubsystem.runRollerMotors(0.8);
+        }
+    }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         intakeSubsystem.setGoal(IntakeState.STOW);
-        //intakeSubsystem.runRollerMotor(0);
+        intakeSubsystem.runRollerMotors(0);
     }
 
     // Returns true when the command should end.

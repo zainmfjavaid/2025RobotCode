@@ -40,6 +40,10 @@ public class IntakeSubsystem extends SubsystemBase {
         armMotor.set(armPIDOutput);
 	}
 
+    public boolean atSetpoint(IntakeState intakeState) {
+        return Math.abs(armMotor.getPositionRotations()) > (intakeState.getArmPosition() - 1) && Math.abs(armMotor.getPositionRotations()) < (intakeState.getArmPosition() + 1);
+    }
+
     public void setGoal(IntakeState intakeState) {
         currentGoal = intakeState;
     }

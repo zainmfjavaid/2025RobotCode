@@ -23,6 +23,7 @@ import frc.robot.commands.elevator.L3;
 import frc.robot.commands.elevator.L4;
 import frc.robot.commands.AutoDriveCommand;
 import frc.robot.commands.ElevatorCommand;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ReefAlignCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -76,7 +77,7 @@ public class RobotContainer {
 
     private final ElevatorScore elevatorScoreCommand = new ElevatorScore(intakeSubsystem, elevatorSubsystem, IntakeState.L4); // create new cmd AT the trigger
 
-    // private final WristCommand wristCommand = new WristCommand(intakeSubsystem);
+    private final IntakeCommand intakeCommand = new IntakeCommand(intakeSubsystem, elevatorSubsystem);
     
     //private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
     // private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
@@ -96,8 +97,10 @@ public class RobotContainer {
     }
 
     private void configureBindings() { 
-        driverController.getButton(DriverController.Button.RB).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.INTAKE), intakeSubsystem));
-        driverController.getButton(DriverController.Button.LB).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.STOW), intakeSubsystem));
+        // driverController.getButton(DriverController.Button.RB).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.INTAKE), intakeSubsystem));
+        // driverController.getButton(DriverController.Button.LB).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.STOW), intakeSubsystem));
+        driverController.getButton(DriverController.Button.RB).whileTrue(intakeCommand);
+
         driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.L4), intakeSubsystem));
         driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.TROUGH), intakeSubsystem));
 
