@@ -13,37 +13,24 @@ import frc.robot.hardware.Controller.OperatorController;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+ import edu.wpi.first.wpilibj2.command.Command;
+ import edu.wpi.first.wpilibj2.command.InstantCommand;
+ import frc.robot.commands.AutoDriveCommand;
+ import frc.robot.commands.ReefAlignCommand;
 import frc.robot.commands.TeleopDriveCommand;
-import frc.robot.commands.WristCommand;
 import frc.robot.commands.elevator.ElevatorScore;
 import frc.robot.commands.elevator.L1;
 import frc.robot.commands.elevator.L2;
 import frc.robot.commands.elevator.L3;
 import frc.robot.commands.elevator.L4;
-import frc.robot.commands.AutoDriveCommand;
-import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.ReefAlignCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.ElevatorTesting;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -66,6 +53,7 @@ public class RobotContainer {
 
     AutoDriveCommand autoDriveCommand = new AutoDriveCommand(swerveSubsystem);
 
+    private final SendableChooser<Command> autoChooser;
     // Elevator commands
 
     // Future fix: this seems inefficient, maybe create a single command class instead having 4 different command classes
@@ -94,6 +82,9 @@ public class RobotContainer {
         //NamedCommands.registerCommand("elevatorUp", elevatorTestingSubsystem.goUpCommand());
         //NamedCommands.registerCommand("elevatorDown", elevatorTestingSubsystem.goDownCommand());
         //configTab.add("Auton Selection", autonChooser).withSize(3, 1);
+
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     private void configureBindings() { 
@@ -166,8 +157,8 @@ public class RobotContainer {
         // );
         //return autonChooser.getSelected();
 
-
-        return autoDriveCommand;
+        return autoChooser.getSelected();
+        // return autoDriveCommand;
         
     }
 }
