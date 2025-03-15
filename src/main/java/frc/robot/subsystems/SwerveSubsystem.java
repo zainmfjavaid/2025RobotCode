@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -43,11 +44,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private final ShuffleboardLayout angleSpeedsLayout = speedsLayout.getLayout("Angle Speeds", "Grid Layout");
     
     private final ShuffleboardLayout gyroAngleLayout = swerveTab.getLayout("Gyro", "Grid Layout");
-    private final GenericEntry gyroAngleEntry = gyroAngleLayout.add("Rotation", 0).withWidget(BuiltInWidgets.kGyro).getEntry();
     
     private final ShuffleboardLayout odometerLayout = swerveTab.getLayout("Odometer", "Grid Layout");
-    private final GenericEntry odometerXEntry = odometerLayout.add("X", 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
-    private final GenericEntry odometerYEntry = odometerLayout.add("Y", 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
 
     // Modules
     private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, absoluteAnglesLayout, relativeAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
@@ -69,6 +67,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public SwerveSubsystem(ElevatorSubsystem elevatorSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
+
+        gyroAngleLayout.addDouble("Rotation", () -> getGyroAngle().getDegrees()).withWidget(BuiltInWidgets.kGyro);
+        odometerLayout.addDouble("X", () -> getPose().getX()).withWidget(BuiltInWidgets.kNumberBar);
+        odometerLayout.addDouble("Y", () -> getPose().getY()).withWidget(BuiltInWidgets.kNumberBar);
     }
 
     public void toggleSpeedConstant() {
@@ -180,13 +182,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void updateOdometer() {
         odometer.update(getGyroAngle(), getModulePositions());
-    }
-
-    public void updateShuffleboard() {
-        gyroAngleEntry.setDouble(getGyroAngle().getDegrees());
-
-        odometerXEntry.setDouble(getPose().getX());
-        odometerYEntry.setDouble(getPose().getY());
     }
 
     public void spinDriveMotors(double speed) {
