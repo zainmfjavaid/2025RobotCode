@@ -91,7 +91,7 @@ public final class Constants {
     }
 
     public static class TeleopSwerveConstants {
-        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(18);
+        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(16);
 
         public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
 
@@ -99,7 +99,7 @@ public final class Constants {
     }
 
     public static class AutoSwerveConstants {
-        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(8);
+        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(16);
         public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 6;
 
         public static final double kMaxAccelerationMetersPerSecondSquared = kMaxDriveSpeedMetersPerSecond / 6;

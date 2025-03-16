@@ -9,6 +9,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ElevatorScore extends Command {
@@ -34,7 +35,7 @@ public class ElevatorScore extends Command {
     public void initialize() {
         cycles = 0;
         // TODO: NEED TO CHECK THIS STATE
-        if (intakeState == IntakeState.TROUGH) {
+        if (intakeSubsystem.atSetpoint(IntakeState.TROUGH)) {
             intakeSubsystem.runRollerMotors(-0.3);
         } else {
             elevatorSubsystem.setOverride(true);
@@ -64,13 +65,11 @@ public class ElevatorScore extends Command {
 
     // Called once the command ends or is interrupted.
     @Override
-    public void end(boolean interrupted) {
-
-    }
+    public void end(boolean interrupted) {}
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return cycles > 61;
     }
 }

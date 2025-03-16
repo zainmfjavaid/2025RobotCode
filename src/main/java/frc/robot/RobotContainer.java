@@ -17,13 +17,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
  import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  import edu.wpi.first.wpilibj2.command.Command;
  import edu.wpi.first.wpilibj2.command.InstantCommand;
- import frc.robot.commands.AutoDriveCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.AutoDriveCommand;
  import frc.robot.commands.ReefAlignCommand;
- import frc.robot.commands.SourceIntakeCommand;
+import frc.robot.commands.ScoreMoveBack;
+import frc.robot.commands.SourceIntakeCommand;
 import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.commands.autoncommands.ArmInitCommand;
 import frc.robot.commands.autoncommands.TorchIntakeCommand;
-import frc.robot.commands.autoncommands.TroughScoreCommand;
+import frc.robot.commands.autoncommands.AutonTroughScoreCommand;
 import frc.robot.commands.elevator.ElevatorScore;
 import frc.robot.commands.elevator.L1;
 import frc.robot.commands.elevator.L2;
@@ -64,21 +66,16 @@ public class RobotContainer {
     private final L1 levelOneCommand = new L1(intakeSubsystem, elevatorSubsystem);
     private final L2 levelTwoCommand = new L2(intakeSubsystem, elevatorSubsystem);
     private final L3 levelThreeCommand = new L3(intakeSubsystem, elevatorSubsystem);
-    private final L4 LevelFourCommand = new L4(intakeSubsystem, elevatorSubsystem);
+    private final L4 levelFourCommand = new L4(intakeSubsystem, elevatorSubsystem);
     private final SourceIntakeCommand sourceIntakeCommand = new SourceIntakeCommand(intakeSubsystem, elevatorSubsystem);
+    private final ScoreMoveBack scoreMoveBack = new ScoreMoveBack(swerveSubsystem);
 
     private final ElevatorScore elevatorScoreCommand = new ElevatorScore(intakeSubsystem, elevatorSubsystem, IntakeState.L4); // create new cmd AT the trigger
 
     private final IntakeCommand intakeCommand = new IntakeCommand(intakeSubsystem, elevatorSubsystem);
-    
-    //private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
-    // private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
-
-    private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
-
     private final ArmInitCommand armInitCommand = new ArmInitCommand(intakeSubsystem);
     private final TorchIntakeCommand torchIntakeCommand = new TorchIntakeCommand(intakeSubsystem);
-    private final TroughScoreCommand troughScoreCommand = new TroughScoreCommand(intakeSubsystem);
+    private final AutonTroughScoreCommand troughScoreCommand = new AutonTroughScoreCommand(intakeSubsystem);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -110,20 +107,18 @@ public class RobotContainer {
         driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
 
         // Operator Controls
-        //operatorController.getButton(OperatorController.Button.RB).whileTrue(new StartEndCommand(elevatorSubsystem::goUp, elevatorSubsystem::stop, elevatorSubsystem));
-        //operatorController.getButton(OperatorController.Button.LB).whileTrue(new StartEndCommand(elevatorSubsystem::goDown, elevatorSubsystem::stop, elevatorSubsystem));
-
         operatorController.getButton(OperatorController.Button.A).onTrue(levelOneCommand);
         operatorController.getButton(OperatorController.Button.B).onTrue(levelTwoCommand);
         operatorController.getButton(OperatorController.Button.Y).onTrue(levelThreeCommand);
-        operatorController.getButton(OperatorController.Button.X).onTrue(LevelFourCommand);
+        operatorController.getButton(OperatorController.Button.X).onTrue(
+            new SequentialCommandGroup(scoreMoveBack, levelFourCommand)
+        );
 
+        operatorController.getButton(OperatorController.Button.RB).whileTrue(climbSubsystem.climbCommandTest());
+        operatorController.getButton(OperatorController.Button.LB).whileTrue(climbSubsystem.reverseClimbCommandTest());
 
-        //driverController.getButton(DriverController.Button.LB).whileTrue(elevatorTestingSubsystem.goDownCommand());
-        // driverController.getButton(DriverController.Button.RB).whileTrue(elevatorTestingSubsystem.goUpCommand());
-
-        // operatorController.getButton(OperatorController.Button.RB).whileTrue(climbSubsystem.climbCommandTest());
-        // operatorController.getButton(OperatorController.Button.LB).whileTrue(climbSubsystem.reverseClimbCommandTest());
+        //operatorController.getButton(OperatorController.Button.LT).onTrue(elevatorScoreCommand);
+        //operatorController.getButton(OperatorController.Button.RT).whileTrue(intakeCommand);
         //driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
     }
 

@@ -42,6 +42,8 @@ public class IntakeSubsystem extends SubsystemBase {
         if (armMotor.getPositionRotations() > 2) {
             wristMotor.set(wristPIDOutput);
             //System.out.println("running wrist PID from " + wristMotor.getPositionRotations() + " to setpoint " + intakeState.getWristValue() + " at speed " + wristPIDOutput);
+        } else {
+            wristMotor.set(0);
         }
 
         armMotor.set(armPIDOutput);
@@ -50,8 +52,8 @@ public class IntakeSubsystem extends SubsystemBase {
     public boolean atSetpoint(IntakeState intakeState) {
         return (Math.abs(armMotor.getPositionRotations()) > (intakeState.getArmPosition() - 1) 
         && Math.abs(armMotor.getPositionRotations()) < (intakeState.getArmPosition() + 1)) 
-        && (Math.abs(wristMotor.getPositionRotations()) > (intakeState.getWristValue() - 1) 
-        && Math.abs(wristMotor.getPositionRotations()) < (intakeState.getWristValue() + 1));
+        && (Math.abs(wristMotor.getPositionRotations()) > (intakeState.getWristValue() - 4) 
+        && Math.abs(wristMotor.getPositionRotations()) < (intakeState.getWristValue() + 4));
     }
 
     public void setGoal(IntakeState intakeState) {

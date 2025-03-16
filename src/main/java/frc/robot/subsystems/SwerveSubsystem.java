@@ -39,12 +39,8 @@ public class SwerveSubsystem extends SubsystemBase {
         initAuton();
     }
 
-    public void toggleSpeedConstant() {
-        if (speedConstant == 1.0) {
-            speedConstant = 0.25;
-        } else {
-            speedConstant = 1.0;
-        }
+    public void setSpeedConstant(double newSpeedConstant) {
+        speedConstant = newSpeedConstant;
     }
 
     public void setModuleSpeeds(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {

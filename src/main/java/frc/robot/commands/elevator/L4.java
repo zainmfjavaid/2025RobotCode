@@ -10,6 +10,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class L4 extends Command {
@@ -30,7 +31,7 @@ public class L4 extends Command {
     @Override
     public void initialize() {
         elevatorSubsystem.setOverride(false);
-        elevatorSubsystem.setGoal(IntakeState.L4);
+        elevatorSubsystem.setGoal(IntakeState.L4);;
     }
 
     // Called every time the scheduler runs while the command is scheduled.
