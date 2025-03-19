@@ -19,11 +19,12 @@ public class TeleopDriveCommand extends Command {
     @Override
     public void initialize() {
         System.out.println("Begin drive command");
+        swerveSubsystem.resetGyroAndOdometer();
     }
 
     @Override
     public void execute() {
-        switch (DriveConstants.driveType) {
+        switch (DriveConstants.kDriveType) {
             case ARCADE:
                 break;
             case SWERVE:
@@ -36,10 +37,10 @@ public class TeleopDriveCommand extends Command {
                 swerveSubsystem.spinAngleMotors(0.05);
                 break;
             case SPIN:
-                swerveSubsystem.spin(1);
+                swerveSubsystem.spin(0.05);
                 break;
             case DRIVE:
-                swerveSubsystem.drive(1);
+                swerveSubsystem.driveForward(0.05);
                 break;
             case ALIGN:
                 break;
@@ -47,6 +48,8 @@ public class TeleopDriveCommand extends Command {
                 break;
         }
         swerveSubsystem.updateOdometer();
+        swerveSubsystem.tipDetection();
+        swerveSubsystem.updateShuffleboard();
     } 
 
     @Override

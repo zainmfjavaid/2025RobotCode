@@ -12,18 +12,16 @@ public class Controller {
 
         public enum Button
         {
-            X(1),
-            A(2),
-            B(3),
+            A(1),
+            B(2),
+            X(3),
             Y(4),
             LB(5),
             RB(6),
-            LT(7),
-            RT(8),
-            Back(9),
-            Start(10),
-            LJ(11),
-            RJ(12);
+            Back(7),
+            Start(8),
+            LJ(9),
+            RJ(10);
 
             private int port;
 
@@ -41,6 +39,13 @@ public class Controller {
             return new JoystickButton(joystick, button.getPort());
         }
 
+        public double getLeftTrigger() {
+            return joystick.getRawAxis(2);
+        }
+        public double getRightTrigger() {
+            return joystick.getRawAxis(3);
+        }
+
         // Left is positive
         public double getLeftStickX() {
             return -joystick.getRawAxis(0);
@@ -51,19 +56,11 @@ public class Controller {
         }
         // Left is positive
         public double getRightStickX() {
-            return -joystick.getRawAxis(2);
+            return -joystick.getRawAxis(4);
         }
         // Up is positive
         public double getRightStickY() {
-            return -joystick.getRawAxis(3);
-        }
-
-        public void printJoystickAxes() {
-            System.out.println("Joystick Axes");
-            System.out.println("LX: " + getLeftStickX());
-            System.out.println("LY: " + getLeftStickY());
-            System.out.println("RX: " + getRightStickX());
-            System.out.println("RY: " + getRightStickY());
+            return -joystick.getRawAxis(5);
         }
     }
 

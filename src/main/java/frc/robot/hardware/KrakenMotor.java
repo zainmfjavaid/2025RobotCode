@@ -1,34 +1,45 @@
 package frc.robot.hardware;
 
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
-
-import frc.robot.subsystems.DriveUtils;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import frc.robot.subsystems.SwerveUtils;
 
 public class KrakenMotor {
     private final TalonFX motor;
-    private final boolean reverseMotor;
-    private final boolean reverseEncoder;
+    // private final boolean reverseEncoder; - MAY BE USED
 
-    public KrakenMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
-        motor = new TalonFX(deviceId);
-        this.reverseMotor = reverseMotor;
-        this.reverseEncoder = reverseEncoder;
+    public KrakenMotor(int deviceId, Boolean reverse) {
+        motor = new TalonFX(deviceId, "CANivore2158");
+
+        motor.setNeutralMode(NeutralModeValue.Brake);
+        
+        FeedbackConfigs feedbackConfigs = new FeedbackConfigs()
+            .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
+
+        motor.getConfigurator().apply(feedbackConfigs);
     }
 
     public double getPositionRotations() {
-        double positionRotations = motor.getPosition().getValueAsDouble();
-        return reverseEncoder ? -positionRotations : positionRotations;
+        return motor.getPosition().getValueAsDouble();
     }
-
     public double getPositionRadians() {
-        return DriveUtils.rotationsToRadians(getPositionRotations());
+        return SwerveUtils.rotationsToRadians(getPositionRotations());
     }
     
     public void setEncoderPosition(double position) {
-        motor.setPosition(reverseEncoder ? -position : position);
+        motor.setPosition(position);
     }
 
-    public void set(double relativeSpeed) {
-        motor.set(reverseMotor ? -relativeSpeed : relativeSpeed);
+    public void setRelativeSpeed(double relativeSpeed) {
+        motor.set(relativeSpeed);
     }
-}
+
+    public double getSpeedRotationsPerSecond() {
+        return motor.getVelocity().getValueAsDouble();
+    }
+    public double getSpeedRadiansPerSecond() {
+        return SwerveUtils.rotationsToRadians(getSpeedRotationsPerSecond());
+    }
+} 
