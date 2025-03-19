@@ -21,10 +21,15 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 public class SwerveSubsystem extends SubsystemBase {
-    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, false);
-    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, true);
-    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, false);
-    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, true); 
+    // does starting angle affect direction?
+    // does battery affect direction?
+
+    // front right doesn't work exactly
+
+    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, false, true, "FL");
+    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, true, true, "FR");
+    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, false, true, "BL");
+    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, true, true, "BR"); 
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Module.FRONT_LEFT.getLocation(), Module.FRONT_RIGHT.getLocation(), Module.BACK_LEFT.getLocation(), Module.BACK_RIGHT.getLocation());
 

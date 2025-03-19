@@ -14,12 +14,12 @@ import frc.robot.hardware.Controller.OperatorController;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
- import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
- import edu.wpi.first.wpilibj2.command.Command;
- import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AutoDriveCommand;
- import frc.robot.commands.ReefAlignCommand;
+import frc.robot.commands.ReefAlignCommand;
 import frc.robot.commands.ScoreMoveBack;
 import frc.robot.commands.SourceIntakeCommand;
 import frc.robot.commands.TeleopDriveCommand;
@@ -67,6 +67,7 @@ public class RobotContainer {
     private final L2 levelTwoCommand = new L2(intakeSubsystem, elevatorSubsystem);
     private final L3 levelThreeCommand = new L3(intakeSubsystem, elevatorSubsystem);
     private final L4 levelFourCommand = new L4(intakeSubsystem, elevatorSubsystem);
+
     private final SourceIntakeCommand sourceIntakeCommand = new SourceIntakeCommand(intakeSubsystem, elevatorSubsystem);
     private final ScoreMoveBack scoreMoveBack = new ScoreMoveBack(swerveSubsystem);
 
@@ -124,6 +125,8 @@ public class RobotContainer {
         operatorController.getButton(OperatorController.Button.LT).onTrue(elevatorScoreCommand);
         operatorController.getButton(OperatorController.Button.RT).whileTrue(intakeCommand);
         operatorController.getButton(OperatorController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
+    
+        driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(() -> swerveSubsystem.printEncoderValues()));
     }
 
     public Command getAutonomousCommand() {
