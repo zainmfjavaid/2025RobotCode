@@ -47,8 +47,8 @@ public final class Constants {
     public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5);
     public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
 
-    public static final double kDriveMotorGearRatio = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
-    public static final double kAngleMotorGearRatio = (14.0 / 50.0) * (10.0 / 60.0);
+        public static final double kDriveMotorGearRatio = 1.0 / 5.0; // (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
+        public static final double kAngleMotorGearRatio = 1.0 / 3.0; // (14.0 / 50.0) * (10.0 / 60.0);
 
     private static final double kMaxWheelDriveSpeedRadiansPerSecond = DriveUtils.driveMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
     public static final double kMaxWheelAngleSpeedRadiansPerSecond = DriveUtils.angleMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);

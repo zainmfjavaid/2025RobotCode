@@ -9,22 +9,34 @@ import java.util.List;
 import frc.robot.Constants.AutoSwerveConstants;
 
 import frc.robot.hardware.Controller.DriverController;
+import frc.robot.hardware.Controller.OperatorController;
 
-import frc.robot.commands.TeleopDriveCommand;
-import frc.robot.commands.AutoDriveCommand;
-
-import frc.robot.subsystems.SwerveSubsystem;
-
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import frc.robot.commands.AutoDriveCommand;
+import frc.robot.commands.ReefAlignCommand;
+import frc.robot.commands.ScoreMoveBack;
+import frc.robot.commands.SourceIntakeCommand;
+import frc.robot.commands.TeleopDriveCommand;
+import frc.robot.commands.autoncommands.ArmInitCommand;
+import frc.robot.commands.autoncommands.TorchIntakeCommand;
+import frc.robot.commands.autoncommands.AutonTroughScoreCommand;
+import frc.robot.commands.elevator.ElevatorScore;
+import frc.robot.commands.elevator.L1;
+import frc.robot.commands.elevator.L2;
+import frc.robot.commands.elevator.L3;
+import frc.robot.commands.elevator.L4;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.subsystems.ClimbSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -37,6 +49,36 @@ public class RobotContainer {
     private final DriverController driverController = new DriverController();
 
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
+    private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+    private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
+
+    AutoDriveCommand autoDriveCommand = new AutoDriveCommand(swerveSubsystem);
+
+    private final SendableChooser<Command> autoChooser;
+    // Elevator commands
+
+    // Future fix: this seems inefficient, maybe create a single command class instead having 4 different command classes
+    private final L1 levelOneCommand = new L1(intakeSubsystem, elevatorSubsystem);
+    private final L2 levelTwoCommand = new L2(intakeSubsystem, elevatorSubsystem);
+    private final L3 levelThreeCommand = new L3(intakeSubsystem, elevatorSubsystem);
+    private final L4 levelFourCommand = new L4(intakeSubsystem, elevatorSubsystem);
+
+    private final SourceIntakeCommand sourceIntakeCommand = new SourceIntakeCommand(intakeSubsystem, elevatorSubsystem);
+    private final ScoreMoveBack scoreMoveBack = new ScoreMoveBack(swerveSubsystem);
+
+    private final ElevatorScore elevatorScoreCommand = new ElevatorScore(intakeSubsystem, elevatorSubsystem, IntakeState.L4); // create new cmd AT the trigger
+
+    private final IntakeCommand intakeCommand = new IntakeCommand(intakeSubsystem, elevatorSubsystem);
+    
+    // private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
+    // private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
+
+    private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
+
+    private final ArmInitCommand armInitCommand = new ArmInitCommand(intakeSubsystem);
+    private final TorchIntakeCommand torchIntakeCommand = new TorchIntakeCommand(intakeSubsystem);
+    private final AutonTroughScoreCommand troughScoreCommand = new AutonTroughScoreCommand(intakeSubsystem);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -45,14 +87,28 @@ public class RobotContainer {
     }
 
     private void configureBindings() { 
-        // Test
-        driverController.getButton(DriverController.Button.X).onTrue(new InstantCommand(() -> swerveSubsystem.printEncoderValues()));
-        driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(() -> swerveSubsystem.printGyroValue()));
-        driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(() -> driverController.printJoystickAxes()));
-        driverController.getButton(DriverController.Button.B).onTrue(new InstantCommand(() -> swerveSubsystem.printOdometerPose()));
+        // Driver controls
+        driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
+        driverController.getButton(DriverController.Button.LB).whileTrue(intakeCommand);
+        driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
 
-        // Drive
-        driverController.getButton(DriverController.Button.Start).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
+        driverController.getButton(DriverController.Button.X).whileTrue(new StartEndCommand(() -> intakeSubsystem.runRollerMotors(-0.6), () -> intakeSubsystem.runRollerMotors(0), intakeSubsystem));
+        driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
+
+        // Operator Controls
+        operatorController.getButton(OperatorController.Button.A).onTrue(levelOneCommand);
+        //operatorController.getButton(OperatorController.Button.B).onTrue(levelTwoCommand);
+        //operatorController.getButton(OperatorController.Button.Y).onTrue(levelThreeCommand);
+        operatorController.getButton(OperatorController.Button.X).onTrue(new SequentialCommandGroup(scoreMoveBack, levelFourCommand));
+
+        operatorController.getButton(OperatorController.Button.RB).whileTrue(climbSubsystem.climbCommandTest());
+        operatorController.getButton(OperatorController.Button.LB).whileTrue(climbSubsystem.reverseClimbCommandTest());
+
+        operatorController.getButton(OperatorController.Button.LT).onTrue(elevatorScoreCommand);
+        operatorController.getButton(OperatorController.Button.RT).whileTrue(intakeCommand);
+        operatorController.getButton(OperatorController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
+    
+        driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(() -> swerveSubsystem.printEncoderValues()));
     }
 
     public Command getAutonomousCommand() {

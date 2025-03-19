@@ -18,15 +18,15 @@ import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 import com.kauailabs.navx.frc.AHRS;
 
 public class SwerveSubsystem extends SubsystemBase {
-    private static final Translation2d frontLeftLocation = new Translation2d(RobotConstants.kWidthMeters/2, RobotConstants.kLengthMeters/2);
-    private static final Translation2d frontRightLocation = new Translation2d(RobotConstants.kWidthMeters/2, -RobotConstants.kLengthMeters/2);
-    private static final Translation2d backLeftLocation = new Translation2d(-RobotConstants.kWidthMeters/2, RobotConstants.kLengthMeters/2);
-    private static final Translation2d backRightLocation = new Translation2d(-RobotConstants.kWidthMeters/2, -RobotConstants.kLengthMeters/2);
-            
-    private final SwerveModule frontLeftModule = new SwerveModule(MotorConstants.kFrontLeftDriveMotorDeviceId, MotorConstants.kFrontLeftAngleMotorDeviceId, frontLeftLocation, EncoderConfig.FRONT_LEFT);
-    private final SwerveModule frontRightModule = new SwerveModule(MotorConstants.kFrontRightDriveMotorDeviceId, MotorConstants.kFrontRightAngleMotorDeviceId, frontRightLocation, EncoderConfig.FRONT_RIGHT);
-    private final SwerveModule backLeftModule = new SwerveModule(MotorConstants.kBackLeftDriveMotorDeviceId, MotorConstants.kBackLeftAngleMotorDeviceId, backLeftLocation, EncoderConfig.BACK_LEFT);
-    private final SwerveModule backRightModule = new SwerveModule(MotorConstants.kBackRightDriveMotorDeviceId, MotorConstants.kBackRightAngleMotorDeviceId, backRightLocation, EncoderConfig.BACK_RIGHT); 
+    // does starting angle affect direction?
+    // does battery affect direction?
+
+    // front right doesn't work exactly
+
+    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, false, true, "FL");
+    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, true, true, "FR");
+    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, false, true, "BL");
+    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, true, true, "BR"); 
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
 
