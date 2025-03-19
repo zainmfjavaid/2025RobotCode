@@ -22,22 +22,26 @@ public class ScoreMoveBack extends Command {
   @Override
   public void initialize() {
     cycles = 0;
-    swerveSubsystem.driveForward(-0.1);
+    swerveSubsystem.driveForward(-0.75);
+    System.out.println("running");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    cycles++;
+  }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    swerveSubsystem.driveForward(0);
+    swerveSubsystem.stop();
+    // swerveSubsystem.setSpeedConstant(0.25);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return cycles > 10;
+    return cycles > 14;
   }
 }

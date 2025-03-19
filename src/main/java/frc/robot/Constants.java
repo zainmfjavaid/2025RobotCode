@@ -23,7 +23,7 @@ public final class Constants {
         public static final double kTrackWidth = Units.inchesToMeters(19.75); // don't know if this is right
         public static final double kWheelbase = Units.inchesToMeters(19.75); // don't know if this is right
 
-        public static final double kKrakenMotorMaxRotationsPerMinute = 6000;
+        public static final double kKrakenMotorMaxRotationsPerMinute = 8000;
         public static final double kKrakenMotorMaxRadiansPerSecond = kKrakenMotorMaxRotationsPerMinute / 60 * kTau;
     }
 
@@ -91,15 +91,15 @@ public final class Constants {
     }
 
     public static class TeleopSwerveConstants {
-        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(16);
+        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(18);
 
-        public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
+        public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 3;
 
         public static final PIDController kRotationController = new PIDController(1.5, 0, 0);
     }
 
     public static class AutoSwerveConstants {
-        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(16);
+        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(18);
         public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 6;
 
         public static final double kMaxAccelerationMetersPerSecondSquared = kMaxDriveSpeedMetersPerSecond / 6;

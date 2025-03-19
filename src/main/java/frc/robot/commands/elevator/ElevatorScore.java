@@ -36,7 +36,7 @@ public class ElevatorScore extends Command {
         cycles = 0;
         // TODO: NEED TO CHECK THIS STATE
         if (intakeSubsystem.atSetpoint(IntakeState.TROUGH)) {
-            intakeSubsystem.runRollerMotors(-0.3);
+            intakeSubsystem.runRollerMotors(-0.2);
         } else {
             elevatorSubsystem.setOverride(true);
             elevatorSubsystem.goDown();
@@ -48,8 +48,8 @@ public class ElevatorScore extends Command {
     public void execute() {
         cycles++;
 
-        if (cycles > 5 && cycles < 30) {
-            intakeSubsystem.runRollerMotors(-0.3);
+        if (cycles > 10 && cycles < 30) {
+            intakeSubsystem.runRollerMotors(-0.2);
         } else if (cycles > 30 && cycles < 60) {
             intakeSubsystem.runRollerMotors(0);
 

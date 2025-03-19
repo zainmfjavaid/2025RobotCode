@@ -43,6 +43,14 @@ public class SwerveSubsystem extends SubsystemBase {
         speedConstant = newSpeedConstant;
     }
 
+    public void toggleSpeedConstant() {
+        if (speedConstant == 1.0) {
+            speedConstant = 0.25;
+        } else {
+            speedConstant = 1;
+        }
+    }
+
     public void setModuleSpeeds(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
         frontLeftModule.setSpeeds(longitudinalSpeedMetersPerSecond * speedConstant, lateralSpeedMetersPerSecond * speedConstant, rotationSpeedRadiansPerSecond * speedConstant);
         frontRightModule.setSpeeds(longitudinalSpeedMetersPerSecond * speedConstant, lateralSpeedMetersPerSecond * speedConstant, rotationSpeedRadiansPerSecond * speedConstant);
@@ -165,6 +173,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void spin(double speedRadiansPerSecond) {
         setModuleSpeeds(0, 0, speedRadiansPerSecond);
+    }
+
+    public void stop() {
+        frontLeftModule.stop();
+        frontRightModule.stop();
+        backLeftModule.stop();
+        backRightModule.stop();
     }
 
     // print

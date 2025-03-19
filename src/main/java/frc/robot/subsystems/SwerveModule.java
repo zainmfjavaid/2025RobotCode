@@ -59,6 +59,11 @@ public class SwerveModule {
         setState(wheelDriveSpeedMetersPerSecond, desiredWheelAngleRadians);
     }
 
+    public void stop() {
+        setAngleMotorRelativeSpeed(0);
+        setDriveMotorRelativeSpeed(0);
+    }
+
     public void setState(double wheelDriveSpeedMetersPerSecond, double desiredWheelAngleRadians) {        
         double currentWheelAngleRadians = 
         //getRelativeAnglePositionRadians();
