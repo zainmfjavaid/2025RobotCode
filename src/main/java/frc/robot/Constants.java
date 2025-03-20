@@ -56,39 +56,39 @@ public final class Constants {
         public static final double kMaxRotationSpeedRadiansPerSecond = kMaxWheelDriveSpeedMetersPerSecond / kRotationRadiusMeters;
     }
 
-    public static class SwerveConstants {
-        public enum Module {
-            FRONT_LEFT(DeviceIds.kFrontLeftDriveMotor, DeviceIds.kFrontLeftAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_LEFT),
-            FRONT_RIGHT(DeviceIds.kFrontRightDriveMotor, DeviceIds.kFrontRightAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, -RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_RIGHT),
-            BACK_LEFT(DeviceIds.kBackLeftDriveMotor, DeviceIds.kBackLeftAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_LEFT),
-            BACK_RIGHT(DeviceIds.kBackRightDriveMotor, DeviceIds.kBackRightAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, -RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_RIGHT);
+    // public static class SwerveConstants {
+    //     public enum Module {
+    //         FRONT_LEFT(DeviceIds.kFrontLeftDriveMotor, DeviceIds.kFrontLeftAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_LEFT),
+    //         FRONT_RIGHT(DeviceIds.kFrontRightDriveMotor, DeviceIds.kFrontRightAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, -RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_RIGHT),
+    //         BACK_LEFT(DeviceIds.kBackLeftDriveMotor, DeviceIds.kBackLeftAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_LEFT),
+    //         BACK_RIGHT(DeviceIds.kBackRightDriveMotor, DeviceIds.kBackRightAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, -RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_RIGHT);
 
-            private final int driveMotorDeviceId;
-            private final int angleMotorDeviceId;
-            private final Translation2d location;
-            private final EncoderConfig encoderConfig;
+    //         private final int driveMotorDeviceId;
+    //         private final int angleMotorDeviceId;
+    //         private final Translation2d location;
+    //         private final EncoderConfig encoderConfig;
 
-            private Module(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig encoderConfig) {
-                this.driveMotorDeviceId = driveMotorDeviceId;
-                this.angleMotorDeviceId = angleMotorDeviceId;
-                this.location = location;
-                this.encoderConfig = encoderConfig;
-            }
+    //         private Module(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig encoderConfig) {
+    //             this.driveMotorDeviceId = driveMotorDeviceId;
+    //             this.angleMotorDeviceId = angleMotorDeviceId;
+    //             this.location = location;
+    //             this.encoderConfig = encoderConfig;
+    //         }
 
-            public int getDriveMotorDeviceId() {
-                return driveMotorDeviceId;
-            }
-            public int getAngleMotorDeviceId() {
-                return angleMotorDeviceId;
-            }
-            public Translation2d getLocation() {
-                return location;
-            }
-            public EncoderConfig getEncoderConfig() {
-                return encoderConfig;
-            }
-        }
-    }
+    //         public int getDriveMotorDeviceId() {
+    //             return driveMotorDeviceId;
+    //         }
+    //         public int getAngleMotorDeviceId() {
+    //             return angleMotorDeviceId;
+    //         }
+    //         public Translation2d getLocation() {
+    //             return location;
+    //         }
+    //         public EncoderConfig getEncoderConfig() {
+    //             return encoderConfig;
+    //         }
+    //     }
+    // }
 
     public static class TeleopSwerveConstants {
         public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(18);
@@ -118,20 +118,6 @@ public final class Constants {
     }
 
     public static class AbsoluteEncoderConstants {
-        // if swerve module reverse is (true, true)
-        // public static final double kFrontLeftOffset = -(0.29296875);
-        // public static final double kFrontRightOffset = -(0.46142578125);
-        // public static final double kBackLeftOffset = -(0.3974609375);
-        // public static final double kBackRightOffset = -(-0.19677734375);
-
-        /*
-FL: RRot -0.2338346354166667, RRad -1.4692263455596954, ARot 0.30224609375, ARad 1.8990682154024239
-FR: RRot -0.068359375, RRad -0.4295146206079795, ARot 0.462646484375, ARad 2.90689359304329
-BL: RRot -0.698359375, RRad -4.3879213641311186, ARot 0.41650390625, ARad 2.6169712241329037
-BR: RRot 0.456162109375, RRad 2.8661510633170475, ARot -0.199951171875, ARad -1.2563302652783401
-         */
-        
-        // if swerve module reverse is (false, false)
         public static final double kFrontLeftOffset = -(0.30224609375);
         public static final double kFrontRightOffset = -(0.462646484375);
         public static final double kBackLeftOffset = -(0.41650390625);
@@ -150,9 +136,17 @@ BR: RRot 0.456162109375, RRad 2.8661510633170475, ARot -0.199951171875, ARad -1.
         public static final int kBackLeftAngleMotor = 4;
         public static final int kBackRightDriveMotor = 5;
         public static final int kBackRightAngleMotor = 6;
+
+        // CANcoders
+        public static final int kFrontLeftCancoder = 1;
+        public static final int kFrontRightCancoder = 4;
+        public static final int kBackLeftCancoder = 3;
+        public static final int kBackRightCancoder = 2;
+
         // Elevator (SparkMax)
         public static final int kLeftElevatorMotor = 5;
         public static final int kRightElevatorMotor = 6;
+        
         // Intake (SparkMax)
         public static final int kArmMotor = 33;
         public static final int kWristMotor = 14;
@@ -161,7 +155,6 @@ BR: RRot 0.456162109375, RRad 2.8661510633170475, ARot -0.199951171875, ARad -1.
 
     public static class IntakeConstants {
         public enum IntakeState {
-            // ARM VALUES/WRIST ANGLES ARE TEMPORARY
             STOW(1.1, 77, 0),
             INTAKE(21.2, 77, 0),
             SOURCE(2.2, 77, -6200),

@@ -10,17 +10,22 @@ public class KrakenMotor {
     private final boolean reverseMotor;
     private final boolean reverseEncoder;
 
-    public KrakenMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
+    public KrakenMotor(int deviceId, boolean isBrake, boolean reverseMotor, boolean reverseEncoder) {
         motor = new TalonFX(deviceId, "CANivore2158");
-        motor.setNeutralMode(NeutralModeValue.Brake);
+        motor.setNeutralMode(isBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
         this.reverseMotor = reverseMotor;
         this.reverseEncoder = reverseEncoder;
+    }
+
+    public KrakenMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
+        this(deviceId, true, reverseMotor, reverseEncoder);
     }
 
     public KrakenMotor(int deviceId, Boolean reverse) {
         this(deviceId, reverse, reverse);
     }
 
+    // getters
     public double getPositionRotations() {
         double position = motor.getPosition().getValueAsDouble();
         return reverseEncoder ? -position : position;
@@ -29,7 +34,15 @@ public class KrakenMotor {
     public double getPositionRadians() {
         return DriveUtils.rotationsToRadians(getPositionRotations());
     }
-    
+
+    public double getSpeedRotationsPerSecond() {
+        return motor.getVelocity().getValueAsDouble();
+    }
+    public double getSpeedRadiansPerSecond() {
+        return DriveUtils.rotationsToRadians(getSpeedRotationsPerSecond());
+    }
+
+    // setters
     public void setEncoderPosition(double position) {
         motor.setPosition(reverseEncoder ? -position : position);
     }
@@ -38,10 +51,7 @@ public class KrakenMotor {
         motor.set(reverseMotor ? -relativeSpeed : relativeSpeed);
     }
 
-    public double getSpeedRotationsPerSecond() {
-        return motor.getVelocity().getValueAsDouble();
-    }
-    public double getSpeedRadiansPerSecond() {
-        return DriveUtils.rotationsToRadians(getSpeedRotationsPerSecond());
+    public void setIdleMode(boolean isBrake) {
+        motor.setNeutralMode(isBrake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
     }
 } 

@@ -5,57 +5,79 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import frc.robot.Constants.AbsoluteEncoderConstants;
-import frc.robot.subsystems.DriveUtils;
+import edu.wpi.first.math.util.Units;
+import frc.robot.Constants;
 
-// Copied from 2024 Robot Code
 public class AbsoluteEncoder {
     public enum EncoderConfig {
-        // Modify these values
-        FRONT_LEFT(1, AbsoluteEncoderConstants.kFrontLeftOffset),
-        FRONT_RIGHT(4, AbsoluteEncoderConstants.kFrontRightOffset),
-        BACK_LEFT(3, AbsoluteEncoderConstants.kBackLeftOffset),
-        BACK_RIGHT(2, AbsoluteEncoderConstants.kBackRightOffset);
+        //Swerve Modules (CAN)
+        //Offsets determined by manually turning all modules to 0 (forward) and recording their positions
+        FrontLeftModule(Constants.DeviceIds.kFrontLeftCancoder, false, -(0.30224609375)),
+        FrontRightModule(Constants.DeviceIds.kFrontRightCancoder, false, -(0.462646484375)),
+        BackLeftModule(Constants.DeviceIds.kBackLeftCancoder, false, -(0.41650390625)),
+        BackRightModule(Constants.DeviceIds.kBackRightCancoder, false, -(-0.199951171875));
 
-        private int deviceId;
-        private double offset; // in wheel rotations // positive is counterclockwise
-
-        private EncoderConfig(int deviceId, double offset) {
-            this.deviceId = deviceId;
+        private int ID;
+        private boolean reversed;
+        private double offset;
+    
+        EncoderConfig(int ID, boolean reversed, double offset){
+            this.ID = ID;
+            this.reversed = reversed;
             this.offset = offset;
         }
-
-        public int getDeviceId() {
-            return deviceId;
+    
+        EncoderConfig(int ID, boolean reversed){
+            this(ID, reversed, 0);
+        }
+    
+        EncoderConfig(int ID){
+            this(ID, false, 0);
+        }
+    
+        public int getID(){
+            return ID;
         }
 
-        public double getOffset() {
+        public boolean getReversed(){
+            return reversed;
+        }
+
+        public double getOffset(){
             return offset;
         }
     }
-    
-    private final CANcoder absoluteEncoder;
 
-    public AbsoluteEncoder(EncoderConfig config, SensorDirectionValue directionValue) {
-        absoluteEncoder = new CANcoder(config.getDeviceId(), "rio");
+    public static CANcoder constructCANCoder(EncoderConfig config) {
+        CANcoder encoder = new CANcoder(config.getID(), "rio");
 
-        CANcoderConfiguration CANcoderConfig = new CANcoderConfiguration();
-        MagnetSensorConfigs magnetSensorConfigs = new MagnetSensorConfigs();
+        CANcoderConfiguration canConfig = new CANcoderConfiguration();
+        MagnetSensorConfigs magConfig = new MagnetSensorConfigs();
 
-        magnetSensorConfigs.withAbsoluteSensorDiscontinuityPoint(AbsoluteEncoderConstants.kAbsoluteSensorDiscontinuityPoint);
-        magnetSensorConfigs.withSensorDirection(directionValue);
-        magnetSensorConfigs.withMagnetOffset(config.getOffset());
+        magConfig.withAbsoluteSensorDiscontinuityPoint(0.5);
+        if (config.getReversed()) 
+            magConfig.withSensorDirection(SensorDirectionValue.Clockwise_Positive);
+        else
+            magConfig.withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
 
-        CANcoderConfig.withMagnetSensor(magnetSensorConfigs);
+        magConfig.withMagnetOffset(Units.radiansToRotations(config.getOffset()));
 
-        absoluteEncoder.getConfigurator().apply(CANcoderConfig);
+        canConfig.withMagnetSensor(magConfig);
+        encoder.getConfigurator().apply(canConfig);
+
+        return encoder;
     }
 
-    public double getPositionRotations() {
-        return absoluteEncoder.getAbsolutePosition().getValueAsDouble();
+    public double getPositionRotations(CANcoder encoder) {
+        return encoder.getAbsolutePosition().getValueAsDouble();
     }
 
-    public double getPositionRadians() {
-        return DriveUtils.rotationsToRadians(getPositionRotations());
+    public static double getPositionRadians(CANcoder encoder) {
+        return Units.rotationsToRadians(encoder.getAbsolutePosition().getValueAsDouble());
+    }
+
+    public static double getPositionRadians(CANcoder encoder, int places){
+        //Truncates measure to places decimal points
+        return Math.round(getPositionRadians(encoder) * Math.pow(10, places)) / Math.pow(10, places);
     }
 }
