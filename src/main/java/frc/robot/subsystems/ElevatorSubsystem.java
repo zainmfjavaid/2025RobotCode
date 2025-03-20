@@ -23,7 +23,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 	private double currentPosition = 0;
 	private IntakeState currentGoal = null;
 
-	private DigitalInput limitSwitch = new DigitalInput(0);
+	private DigitalInput limitSwitch = new DigitalInput(10); // CHANGE THIS BACK THIS IS WRONG i changed it during swerve testing 
 
 	/** Creates a new ElevatorSubsystem. */
 	public ElevatorSubsystem() {}

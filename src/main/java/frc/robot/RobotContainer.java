@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.io.File;
 import java.util.List;
 
 import frc.robot.Constants.OperatorConstants;
@@ -19,12 +20,14 @@ import frc.robot.commands.ReefAlignCommand;
 import frc.robot.commands.ReefPositionCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import swervelib.SwerveInputStream;
 import frc.robot.subsystems.ClimbSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -47,15 +50,18 @@ import com.pathplanner.lib.auto.NamedCommands;
 public class RobotContainer {
     //private ShuffleboardTab configTab = Shuffleboard.getTab("config");
 
+      private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
+                                                                                "swerve"));
+
     //private final SendableChooser<Command> autonChooser;
     private final DriverController driverController = new DriverController();
     
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-    private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(elevatorSubsystem);
+    // private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(elevatorSubsystem);
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
-    AutoDriveCommand autoDriveCommand = new AutoDriveCommand(swerveSubsystem);
+    // AutoDriveCommand autoDriveCommand = new AutoDriveCommand(swerveSubsystem);
 
     // Elevator and intake commands
     private final ReefPositionCommand levelOneCommand = new ReefPositionCommand(intakeSubsystem, elevatorSubsystem, IntakeState.TROUGH);
@@ -70,12 +76,19 @@ public class RobotContainer {
     // private final ElevatorTesting elevatorTestingSubsystem = new ElevatorTesting();
     // private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
-    private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
+    // private final ReefAlignCommand reefAlignCommand = new ReefAlignCommand(swerveSubsystem);
+
+      SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
+                                                                () -> driverController.getLeftStickY() * -1,
+                                                                () -> driverController.getLeftStickX() * -1)
+                                                            .withControllerRotationAxis(driverController::getRightStickX)
+                                                            .deadband(0.1)
+                                                            .scaleTranslation(0.8)
+                                                            .allianceRelativeControl(true);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
-        
+        // swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
         configureBindings();
     
         //autonChooser = AutoBuilder.buildAutoChooser();
@@ -86,6 +99,8 @@ public class RobotContainer {
     }
     
     private void configureBindings() { 
+        Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+        drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
         // Elevator Testing
         // driverController.getButton(DriverController.Button.RB).onTrue(elevatorSubsystem.());
 
@@ -95,9 +110,9 @@ public class RobotContainer {
         // driverController.getButton(DriverController.Button.RB).whileTrue(climbSubsystem.climbCommandTest());
         // driverController.getButton(DriverController.Button.LB).whileTrue(climbSubsystem.reverseClimbCommandTest());
 
-        driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
+        // driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
 
-        driverController.getButton(DriverController.Button.B).whileTrue(reefAlignCommand);
+        // driverController.getButton(DriverController.Button.B).whileTrue(reefAlignCommand);
         // Intake Testing
         // driverController.getButton(DriverController.Button.A).whileTrue(new WristCommand(intakeSubsystem)); WRIST ONE
         // driverController.getButton(DriverController.Button.RB).whileTrue(intakeSubsystem.runRollersTest());
@@ -110,7 +125,7 @@ public class RobotContainer {
         // driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.STOW)));
 
         // Drive
-        driverController.getButton(DriverController.Button.Start).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
+        // driverController.getButton(DriverController.Button.Start).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
   
         // new JoystickButton(joystick, Button.B2.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(-1)));
         // new JoystickButton(joystick, Button.B3.getPort()).onTrue(new InstantCommand(() -> shooterSubsystem.runShooterAngleMotor(1)));
@@ -140,7 +155,9 @@ public class RobotContainer {
         //return autonChooser.getSelected();
 
 
-        return autoDriveCommand;
+        // return autoDriveCommand;
+
+        return new InstantCommand(() -> {}, elevatorSubsystem);
         
     }
 }

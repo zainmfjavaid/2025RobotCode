@@ -87,7 +87,7 @@ public class SwerveSubsystem extends SubsystemBase
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
     {
-      swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond, startingPose);
+      swerveDrive = new SwerveParser(directory).createSwerveDrive(20, startingPose);
       // Alternative method if you don't want to supply the conversion factor via JSON files.
       // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
     } catch (Exception e)
@@ -122,7 +122,7 @@ public class SwerveSubsystem extends SubsystemBase
   {
     swerveDrive = new SwerveDrive(driveCfg,
                                   controllerCfg,
-                                  Constants.TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond,
+                                  100,
                                   new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
                                              Rotation2d.fromDegrees(0)));
   }
@@ -413,6 +413,7 @@ public class SwerveSubsystem extends SubsystemBase
   {
     return run(() -> {
       // Make the robot move
+      System.out.println("hello");
       swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d(
                             translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
                             translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 0.8),
@@ -438,7 +439,7 @@ public class SwerveSubsystem extends SubsystemBase
     return run(() -> {
 
       Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),
-                                                                                 translationY.getAsDouble()), 0.8);
+                                                                                 translationY.getAsDouble()), 5);
 
       // Make the robot move
       driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(scaledInputs.getX(), scaledInputs.getY(),
@@ -500,6 +501,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void drive(ChassisSpeeds velocity)
   {
+    System.out.println("here");
     swerveDrive.drive(velocity);
   }
 
@@ -632,7 +634,7 @@ public class SwerveSubsystem extends SubsystemBase
                                                         headingX,
                                                         headingY,
                                                         getHeading().getRadians(),
-                                                        Constants.TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond);
+                                                        100);
   }
 
   /**
@@ -652,7 +654,7 @@ public class SwerveSubsystem extends SubsystemBase
                                                         scaledInputs.getY(),
                                                         angle.getRadians(),
                                                         getHeading().getRadians(),
-                                                        Constants.TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond);
+                                                        100);
   }
 
   /**

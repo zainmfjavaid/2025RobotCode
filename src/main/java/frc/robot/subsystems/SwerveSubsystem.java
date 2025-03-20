@@ -112,9 +112,21 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void swerveDriveTeleop(DriverController driveController) {
-        double longitudinalSpeedMetersPerSecond = driveController.getLeftStickY() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
-        double lateralSpeedMetersPerSecond = driveController.getLeftStickX() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
-        double rotationSpeedRadiansPerSecond = driveController.getRightStickX() * TeleopSwerveConstants.kMaxRotationSpeedRadiansPerSecond;
+        double longitudinalSpeedMetersPerSecond = 0;
+        double lateralSpeedMetersPerSecond = 0;
+        double rotationSpeedRadiansPerSecond = 0;
+
+        if (Math.abs(driveController.getLeftStickY()) > 0.1) {
+            longitudinalSpeedMetersPerSecond = driveController.getLeftStickY() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
+        }
+
+        if (Math.abs(driveController.getLeftStickX()) > 0.1) {
+            lateralSpeedMetersPerSecond = driveController.getLeftStickX() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
+        }
+
+        if (Math.abs(driveController.getRightStickX()) > 0.1) {
+            rotationSpeedRadiansPerSecond = driveController.getRightStickX() * TeleopSwerveConstants.kMaxRotationSpeedRadiansPerSecond;
+        }
         fieldCentricSwerve(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
     }
 
@@ -152,7 +164,6 @@ public class SwerveSubsystem extends SubsystemBase {
         double rollRadians = getGyroRotation3d().getX();
         double pitchRadians = getGyroRotation3d().getY();
         if (rollRadians > retractElevatorThresholdRadians || pitchRadians > retractElevatorThresholdRadians) {
-            System.out.println("tip");
             // elevator.setPosition(IntakeState.STOW);
         }
     }

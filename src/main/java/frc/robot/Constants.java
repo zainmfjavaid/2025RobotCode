@@ -105,9 +105,9 @@ public final class Constants {
         public static final double kMaxRotationSpeedRadiansPerSecond = kMaxWheelDriveSpeedMetersPerSecond / kRobotRotationRadiusMeters;
 
         public static class TeleopSwerveConstants {
-            public static final double kMaxDriveSpeedMetersPerSecond = kRobotMode == RobotMode.TEST ? Units.feetToMeters(0.5) : kMaxWheelDriveSpeedMetersPerSecond * 0.75;
+            public static final double kMaxDriveSpeedMetersPerSecond = 8;
 
-            public static final double kMaxRotationSpeedRadiansPerSecond = SwerveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
+            public static final double kMaxRotationSpeedRadiansPerSecond = SwerveConstants.kMaxRotationSpeedRadiansPerSecond / 2;
 
             public static final PIDController kRotationController = new PIDController(1.5, 0, 0);
         }
