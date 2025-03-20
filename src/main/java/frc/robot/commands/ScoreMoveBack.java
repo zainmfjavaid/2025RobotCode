@@ -5,24 +5,24 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.SwerveSubsystem;
+// import frc.robot.subsystems.SwerveSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ScoreMoveBack extends Command {
   /** Creates a new ScoreMoveBack. */
-  SwerveSubsystem swerveSubsystem;
+  // SwerveSubsystem swerveSubsystem;
   int cycles = 0;
-  public ScoreMoveBack(SwerveSubsystem swerveSubsystem) {
+  public ScoreMoveBack() {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.swerveSubsystem = swerveSubsystem;
-    addRequirements(swerveSubsystem);
+    // this.swerveSubsystem = swerveSubsystem;
+    // addRequirements(swerveSubsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     cycles = 0;
-    swerveSubsystem.driveForward(-0.75);
+    // swerveSubsystem.driveForward(-0.75);
     System.out.println("running");
   }
 
@@ -35,7 +35,7 @@ public class ScoreMoveBack extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    swerveSubsystem.stop();
+    // swerveSubsystem.stop();
     // swerveSubsystem.setSpeedConstant(0.25);
   }
 

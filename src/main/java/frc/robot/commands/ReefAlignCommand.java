@@ -8,10 +8,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.PhotonVision;
-import frc.robot.subsystems.SwerveSubsystem;
+// import frc.robot.subsystems.SwerveSubsystem;
 
 public class ReefAlignCommand extends Command {
-    private SwerveSubsystem swerveSubsystem;
+    // private SwerveSubsystem swerveSubsystem;
     private PhotonVision photonVision;
 
     private double maxDriveSpeedFeetPerSecond = Units.metersToFeet(Constants.DriveConstants.kMaxWheelDriveSpeedMetersPerSecond);
@@ -19,11 +19,11 @@ public class ReefAlignCommand extends Command {
     private int targetID;
 
 
-    public ReefAlignCommand(SwerveSubsystem swerveSubsystem) {
-        this.swerveSubsystem = swerveSubsystem;
+    public ReefAlignCommand() {
+        // this.swerveSubsystem = swerveSubsystem;
         photonVision = new PhotonVision();
 
-        addRequirements(swerveSubsystem);
+        // addRequirements(swerveSubsystem);
     }
 
     // Called when the command is initially scheduled.
@@ -37,19 +37,19 @@ public class ReefAlignCommand extends Command {
     public void execute() {
         double distance = photonVision.getDistanceInches();
         double xOffset = photonVision.getXOffsetInches();
-        double currentAngleDegrees = swerveSubsystem.getGyroAngle().getDegrees();
+        // double currentAngleDegrees = swerveSubsystem.getGyroAngle().getDegrees();
         // P only pid control loops to minimize skew (become parallel w apriltag)
         // swerveSubsystem.spin((skewAngleDegrees) * (Constants.DriveConstants.kMaxRotationSpeedRadiansPerSecond * 0.05));
         System.out.println("DISTANCE CALCULATED FROM TARGET: " + distance);
         System.out.println("angle of elevation to target " + photonVision.getPitch());
         System.out.println("xOff: " + xOffset);
-        System.out.println("ID & angle: " + targetID + " which is at " + Constants.IntakeConstants.apriltagAngles[targetID]);
-        System.out.println("my angle is " + currentAngleDegrees);
+        // System.out.println("ID & angle: " + targetID + " which is at " + Constants.IntakeConstants.apriltagAngles[targetID]);
+        // System.out.println("my angle is " + currentAngleDegrees);
         double xSpeed = (12 - distance) * (maxDriveSpeedFeetPerSecond * .001);
         double ySpeed = (12 - xOffset) * (maxDriveSpeedFeetPerSecond * .001);
-        double rotationalSpeed = (Constants.IntakeConstants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0001);
+        // double rotationalSpeed = (Constants.IntakeConstants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0001);
 
-        swerveSubsystem.setModuleSpeeds(0, 0, rotationalSpeed);
+        // swerveSubsystem.setModuleSpeeds(0, 0, rotationalSpeed);
 
         photonVision.updateCameraResults();
 }
@@ -57,7 +57,7 @@ public class ReefAlignCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.setModuleSpeeds(0, 0, 0);
+        // swerveSubsystem.setModuleSpeeds(0, 0, 0);
     }
 
     // Returns true when the command should end.

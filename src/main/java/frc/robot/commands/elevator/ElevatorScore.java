@@ -9,7 +9,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
+// import frc.robot.subsystems.SwerveSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ElevatorScore extends Command {
