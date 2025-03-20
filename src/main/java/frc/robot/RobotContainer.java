@@ -54,7 +54,7 @@ public class RobotContainer {
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
-    private final SendableChooser<Command> autoChooser;
+    // private final SendableChooser<Command> autoChooser;
     // Elevator commands
 
     // Future fix: this seems inefficient, maybe create a single command class instead having 4 different command classes
@@ -96,8 +96,8 @@ public class RobotContainer {
         //NamedCommands.registerCommand("elevatorDown", elevatorTestingSubsystem.goDownCommand());
         //configTab.add("Auton Selection", autonChooser).withSize(3, 1);
 
-        autoChooser = AutoBuilder.buildAutoChooser();
-        SmartDashboard.putData("Auto Chooser", autoChooser);
+        //autoChooser = AutoBuilder.buildAutoChooser();
+        //SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     private void configureBindings() { 
@@ -107,7 +107,7 @@ public class RobotContainer {
         driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
 
         driverController.getButton(DriverController.Button.X).whileTrue(new StartEndCommand(() -> intakeSubsystem.runRollerMotors(-0.6), () -> intakeSubsystem.runRollerMotors(0), intakeSubsystem));
-        driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
+        driverController.getButton(DriverController.Button.Start).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
 
         // Operator Controls
         operatorController.getButton(OperatorController.Button.A).onTrue(levelOneCommand);
@@ -120,7 +120,6 @@ public class RobotContainer {
 
         operatorController.getButton(OperatorController.Button.LT).onTrue(elevatorScoreCommand);
         operatorController.getButton(OperatorController.Button.RT).whileTrue(intakeCommand);
-    
     }
 
     public Command getAutonomousCommand() {
@@ -145,7 +144,8 @@ public class RobotContainer {
         // );
         //return autonChooser.getSelected();
 
-        return autoChooser.getSelected();
+        return null;
+        //return autoChooser.getSelected();
         // return autoDriveCommand;
         
     }

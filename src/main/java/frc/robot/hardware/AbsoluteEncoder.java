@@ -12,10 +12,10 @@ public class AbsoluteEncoder {
     public enum EncoderConfig {
         //Swerve Modules (CAN)
         //Offsets determined by manually turning all modules to 0 (forward) and recording their positions
-        FrontLeftModule(Constants.DeviceIds.kFrontLeftCancoder, false, -(0.30224609375)),
-        FrontRightModule(Constants.DeviceIds.kFrontRightCancoder, false, -(0.462646484375)),
-        BackLeftModule(Constants.DeviceIds.kBackLeftCancoder, false, -(0.41650390625)),
-        BackRightModule(Constants.DeviceIds.kBackRightCancoder, false, -(-0.199951171875));
+        FrontLeftModule(Constants.DeviceIds.kFrontLeftCancoder, false, -(1.9021)),
+        FrontRightModule(Constants.DeviceIds.kFrontRightCancoder, false, -(-0.2869)),
+        BackLeftModule(Constants.DeviceIds.kBackLeftCancoder, false, -(2.7872)),
+        BackRightModule(Constants.DeviceIds.kBackRightCancoder, false, -(1.8239));
 
         private int ID;
         private boolean reversed;

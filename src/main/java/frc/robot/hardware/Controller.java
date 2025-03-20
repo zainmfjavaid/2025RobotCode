@@ -82,7 +82,7 @@ public class Controller {
 
         public Supplier<Double> getRotationSupplier(){
             //This axis is inverted
-            return () -> kRotationCurve.calculate(-joystick.getRawAxis(2));
+            return () -> kRotationCurve.calculate(-joystick.getRawAxis(4));
         }
     }
 

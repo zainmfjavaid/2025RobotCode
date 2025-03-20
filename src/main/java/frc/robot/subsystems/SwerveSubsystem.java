@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -31,11 +32,11 @@ import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
 import frc.robot.hardware.MotorController.MotorConfig;
 
 public class SwerveSubsystem extends SubsystemBase {
-    public static final double kPhysicalMaxSpeed = Units.feetToMeters(16.9); //Max drivebase speed in meters per second
-    public static final double kPhysicalMaxAngularSpeed = 2 * Math.PI; //Max drivebase angular speed in radians per second
+    public static final double kPhysicalMaxSpeed = Units.feetToMeters(1.9); //Max drivebase speed in meters per second
+    public static final double kPhysicalMaxAngularSpeed = 2 * Math.PI / 15; //Max drivebase angular speed in radians per second
 
-    public static final double kTrackWidth = Units.inchesToMeters(19.75); //Distance between right and left wheels
-    public static final double kWheelBase = Units.inchesToMeters(19.75); //Distance between front and back wheels
+    public static final double kTrackWidth = Units.inchesToMeters(21.5); //Distance between right and left wheels
+    public static final double kWheelBase = Units.inchesToMeters(21.5); //Distance between front and back wheels
     public static final double driveBaseRadius = Math.sqrt(((kTrackWidth/2) * (kTrackWidth/2)) + ((kWheelBase/2) * (kWheelBase/2)));
 
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics( //Creates robot geometry using the locations of the 4 wheels
@@ -77,8 +78,7 @@ public class SwerveSubsystem extends SubsystemBase {
         EncoderConfig.BackRightModule,
         "BR");
     
-    //private AHRS gyro = new AHRS(SPI.Port.kMXP);
-    private AHRS gyro = new AHRS(SerialPort.Port.kUSB);
+    private Pigeon2 gyro = new Pigeon2(20, "CANivore2158");
     private double gyroOffset; //Offset in degrees
     private SwerveDriveOdometry odometer = new SwerveDriveOdometry(kDriveKinematics, getRotation2d(), getModulePositions());
 
@@ -103,7 +103,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         //Add coast mode command to shuffleboard
         configTab.add(new StartEndCommand(this::coastModules, this::brakeModules, this).ignoringDisable(true).withName("Coast Modules"));
-
+        this.coastModules();
         //Define PID controllers for tracking trajectory
         rotationController = new PIDController(kRotationP, kRotationI, kAutoRotationD);
         rotationController.enableContinuousInput(-Math.PI, Math.PI);
@@ -113,23 +113,21 @@ public class SwerveSubsystem extends SubsystemBase {
     }   
 
     public void zeroHeading() {
-        if (gyro.isCalibrating()){System.out.println("gyro failed to calibrate before zero");} 
         gyro.reset();
         gyroOffset = 0;
     }
 
     public void zeroHeading(Rotation2d rotation2d) {
-        if (gyro.isCalibrating()){System.out.println("gyro failed to calibrate before zero");} 
         gyro.reset();
         gyroOffset = rotation2d.getDegrees();
     }
 
     public double getHeading() {
-        return Math.IEEEremainder(-(gyro.getAngle() + gyroOffset), 360);
+        return Math.IEEEremainder(-(gyro.getYaw().getValueAsDouble() + gyroOffset), 360);
     }
 
     public double getPitch() {
-        return gyro.getPitch();
+        return gyro.getPitch().getValueAsDouble();
     }
 
     public Rotation2d getRotation2d() {
