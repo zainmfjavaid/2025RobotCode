@@ -29,31 +29,15 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 public class SwerveSubsystem extends SubsystemBase {
-    // Shuffleboard
-    private final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
+    // does starting angle affect direction?
+    // does battery affect direction?
 
-    private final ShuffleboardLayout currentAnglesLayout = swerveTab.getLayout("Current Module Angles", "Grid Layout");
-    private final ShuffleboardLayout absoluteAnglesLayout = currentAnglesLayout.getLayout("Absolute", "Grid Layout");
-    private final ShuffleboardLayout relativeAnglesLayout = currentAnglesLayout.getLayout("Relative", "Grid Layout");
-    
-    private final ShuffleboardLayout desiredAnglesLayout = swerveTab.getLayout("Desired Module Angles", "Grid Layout");
+    // front right doesn't work exactly
 
-    private final ShuffleboardLayout speedsLayout = swerveTab.getLayout("Module Speeds", "Grid Layout");
-    private final ShuffleboardLayout driveSpeedsLayout = speedsLayout.getLayout("Drive Speeds", "Grid Layout");
-    private final ShuffleboardLayout angleSpeedsLayout = speedsLayout.getLayout("Angle Speeds", "Grid Layout");
-    
-    private final ShuffleboardLayout gyroAngleLayout = swerveTab.getLayout("Gyro", "Grid Layout");
-    private final GenericEntry gyroAngleEntry = gyroAngleLayout.add("Rotation", 0).withWidget(BuiltInWidgets.kGyro).getEntry();
-    
-    private final ShuffleboardLayout odometerLayout = swerveTab.getLayout("Odometer", "Grid Layout");
-    private final GenericEntry odometerXEntry = odometerLayout.add("X", 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
-    private final GenericEntry odometerYEntry = odometerLayout.add("Y", 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
-
-    // Modules
-    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, absoluteAnglesLayout, relativeAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
-    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, absoluteAnglesLayout, relativeAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
-    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, absoluteAnglesLayout, relativeAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
-    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, absoluteAnglesLayout, relativeAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout); 
+    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, false, true, "FL");
+    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, true, true, "FR");
+    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, false, true, "BL");
+    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, true, true, "BR"); 
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Module.FRONT_LEFT.getLocation(), Module.FRONT_RIGHT.getLocation(), Module.BACK_LEFT.getLocation(), Module.BACK_RIGHT.getLocation());
 
@@ -62,20 +46,23 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private static RobotConfig config;
 
-    private final ElevatorSubsystem elevatorSubsystem;
     private final double retractElevatorThresholdRadians = Rotation2d.fromDegrees(3).getRadians();
 
     private double speedConstant = 1.0;
 
-    public SwerveSubsystem(ElevatorSubsystem elevatorSubsystem) {
-        this.elevatorSubsystem = elevatorSubsystem;
+    public SwerveSubsystem(){
+        initAuton();
+    }
+
+    public void setSpeedConstant(double newSpeedConstant) {
+        speedConstant = newSpeedConstant;
     }
 
     public void toggleSpeedConstant() {
         if (speedConstant == 1.0) {
             speedConstant = 0.25;
         } else {
-            speedConstant = 1.0;
+            speedConstant = 1;
         }
     }
 
@@ -108,7 +95,7 @@ public class SwerveSubsystem extends SubsystemBase {
         setModuleSpeeds(
             longitudinalSpeedMetersPerSecond * Math.cos(offsetRadians) - lateralSpeedMetersPerSecond * Math.sin(offsetRadians), 
             longitudinalSpeedMetersPerSecond * Math.sin(offsetRadians) + lateralSpeedMetersPerSecond * Math.cos(offsetRadians), 
-            rotationSpeedRadiansPerSecond);
+            rotationSpeedRadiansPerSecond );
     }
 
     public void swerveDriveTeleop(DriverController driveController) {
@@ -193,13 +180,14 @@ public class SwerveSubsystem extends SubsystemBase {
         odometer.update(getGyroAngle(), getModulePositions());
     }
 
-    public void updateShuffleboard() {
-        gyroAngleEntry.setDouble(getGyroAngle().getDegrees());
-
-        odometerXEntry.setDouble(getPose().getX());
-        odometerYEntry.setDouble(getPose().getY());
+    public void resetEncoders() {
+        frontLeftModule.resetEncoders();
+        frontRightModule.resetEncoders();
+        backLeftModule.resetEncoders();
+        backRightModule.resetEncoders();
     }
 
+    // OTHER
     public void spinDriveMotors(double speed) {
         frontLeftModule.setDriveMotorRelativeSpeed(speed);
         frontRightModule.setDriveMotorRelativeSpeed(speed);
@@ -227,7 +215,10 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void stop() {
-        setModuleSpeeds(0, 0, 0);
+        frontLeftModule.stop();
+        frontRightModule.stop();
+        backLeftModule.stop();
+        backRightModule.stop();
     }
 
     // print
@@ -268,8 +259,8 @@ public class SwerveSubsystem extends SubsystemBase {
             this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             (speeds, feedforwards) -> setChassisSpeeds(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(0.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(0.0, 0.0, 0.0) // Rotation PID constants
             ),
             config, // The robot configuration
             () -> {

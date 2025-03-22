@@ -4,8 +4,13 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.config.AlternateEncoderConfig;
+
+import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.hardware.SparkMaxMotor;
@@ -14,111 +19,75 @@ import frc.robot.Constants.DeviceIds;
 
 public class IntakeSubsystem extends SubsystemBase {
     /** Creates a new IntakeSubsystem. */
-    SparkMaxMotor armMotor = new SparkMaxMotor(DeviceIds.kArmMotor);
-    SparkMaxMotor wristMotor = new SparkMaxMotor(DeviceIds.kWristMotor);
-	SparkMaxMotor kickerMotor = new SparkMaxMotor(DeviceIds.kKickerMotor, false, true);
+    SparkMaxMotor armMotor = new SparkMaxMotor(DeviceIds.kArmMotor, false, false, true);
+    SparkMaxMotor wristMotor = new SparkMaxMotor(DeviceIds.kWristMotor, false, false, true, 100);
     SparkMaxMotor rollerMotor = new SparkMaxMotor(DeviceIds.kRollerMotor);
-
-    Encoder armEncoder = new Encoder(2, 3);
-    Encoder wristEncoder = new Encoder(4, 5);
     
-    PIDController armPIDController = new PIDController(0.06, 0, 0);
-    PIDController armPIDUpController = new PIDController(0.15, 0, 0);
-
-    PIDController wristPIDController = new PIDController(0.001, 0, 0);
+    PIDController armPIDController = new PIDController(0.035, 0, 0);
+    PIDController wristPIDController = new PIDController(0.02, 0, 0);
 
     IntakeState currentGoal = null;
+    LaserCan lc = new LaserCan(22);
 
     public IntakeSubsystem() {}
 
-	public void setWristPosition(double position) {
-		wristMotor.set(wristPIDController.calculate(wristMotor.getPositionRotations(), position));
-        // TODO: Use the separate bore encoder if relevant
+    public double getDistance() {
+        return lc.getMeasurement().distance_mm;
+    }
+
+    public void setPosition(IntakeState intakeState) {
+        double armPIDOutput = armPIDController.calculate(armMotor.getPositionRotations(), intakeState.getArmPosition());
+        double wristPIDOutput = wristPIDController.calculate(wristMotor.getPositionRotations(), intakeState.getWristValue());
+
+        if (armMotor.getPositionRotations() > 2) {
+            wristMotor.set(wristPIDOutput);
+            //System.out.println("running wrist PID from " + wristMotor.getPositionRotations() + " to setpoint " + intakeState.getWristValue() + " at speed " + wristPIDOutput);
+        } else {
+            wristMotor.set(0);
+        }
+
+        armMotor.set(armPIDOutput);
 	}
 
-    public void setArmPosition(double position, boolean isUp) {
-        if (!isUp) {
-            System.out.println(armPIDController.calculate(armMotor.getPositionRotations(), position));
-            System.out.println("Currently at: " + armMotor.getPositionRotations() + " whereas i am trying to go to: " + position);
-            armMotor.set(armPIDController.calculate(armMotor.getPositionRotations(), position));
-        } else {
-            System.out.println("MOVING UP " + armPIDController.calculate(armMotor.getPositionRotations(), position));
-            System.out.println("j");
-            // armMotor.set(armPIDUpController.calculate(armMotor.getPositionRotations(), position));
-        }
-        // TODO: Still not using the armEncoder
+    public boolean atSetpoint(IntakeState intakeState) {
+        return (Math.abs(armMotor.getPositionRotations()) > (intakeState.getArmPosition() - 1) 
+        && Math.abs(armMotor.getPositionRotations()) < (intakeState.getArmPosition() + 1)) 
+        && (Math.abs(wristMotor.getPositionRotations()) > (intakeState.getWristValue() - 4) 
+        && Math.abs(wristMotor.getPositionRotations()) < (intakeState.getWristValue() + 4));
     }
-
-    public void runKickerWheel(double speed) {
-        kickerMotor.set(speed);
-    }
-
-    public void runRollerMotor(double speed) {
-        rollerMotor.set(speed);
-    }
-
-    public void resetArmEncoder() {
-        armMotor.setEncoderPosition(0);
-    }
-
-    public boolean atSetpoint() {
-        double currentWristGoal = currentGoal.getWristValue();
-        double currentArmGoal = currentGoal.getArmPosition();
-    
-        // TODO: SWAP WITH ACTUAL ENCODERS
-        double currentWristPosition = wristMotor.getPositionRotations();
-        double currentArmPosition = armMotor.getPositionRotations();
-    
-        double tolerance = 1.0;
-        
-        return Math.abs(currentWristPosition - currentWristGoal) <= tolerance &&
-               Math.abs(currentArmPosition - currentArmGoal) <= tolerance;
-    }    
 
     public void setGoal(IntakeState intakeState) {
         currentGoal = intakeState;
     }
 
-    // Test commands
-    public StartEndCommand runRollersTest() {
-        return new StartEndCommand(() -> runRollerMotor(0.5), () -> runRollerMotor(0), this);
+    public void runRollerMotors(double speed) {
+        if (getDistance() <= 45 && speed >= 0) {
+            rollerMotor.set(0);
+        } else {
+            rollerMotor.set(speed);
+        }
     }
 
-    public StartEndCommand reverseRollersTest() {
-        return new StartEndCommand(() -> runRollerMotor(-0.3), () -> runRollerMotor(0), this);
+    public void stopWristMotor() {
+        wristMotor.set(0);
     }
 
-    public StartEndCommand runArmTest(){
-        return new StartEndCommand(() -> {armMotor.set(0.4); System.out.println(armMotor.getPositionRotations());}, () -> armMotor.set(0), this);
+    public void runWristMotor(double speed) {
+        IntakeState intakeState = IntakeState.INTAKE;
+        double wristPIDOutput = wristPIDController.calculate(wristMotor.getPositionRotations(), intakeState.getWristValue());
+
+        System.out.println(wristPIDOutput);
+        wristMotor.set(wristPIDOutput);
     }
 
-    public StartEndCommand reverseArmTest(){
-        return new StartEndCommand(() -> {armMotor.set(-0.4); System.out.println(armMotor.getPositionRotations());}, () -> armMotor.set(0), this);
-    }
-
-    public StartEndCommand runWristTest() {
-        return new StartEndCommand(() -> {wristMotor.set(0.1); System.out.println(wristEncoder.getDistance());}, () -> {wristMotor.set(0);}, this);
-    }
-
-    public StartEndCommand reverseWristTest() {
-        return new StartEndCommand(() -> {wristMotor.set(-0.1); System.out.println(wristEncoder.getDistance());}, () -> wristMotor.set(0), this);
-    }
-
-    public StartEndCommand runKickerTest() {
-        return new StartEndCommand(() -> runKickerWheel(0.5), () -> runKickerWheel(0), this);
+    public void printWristEncoder() {
+        System.out.println(wristMotor.getPositionRotations());
     }
 
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
         if (currentGoal != null) {
-            System.out.println(currentGoal);
-            if (!atSetpoint()) { // UNCOMMENT THIS
-                setArmPosition(currentGoal.getArmPosition(), false);
-                // setWristPosition(currentGoal.getWristValue());
-            } else {
-                resetArmEncoder();
-            }
+            setPosition(currentGoal);
         }
     }
 }

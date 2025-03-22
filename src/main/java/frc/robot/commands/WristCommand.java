@@ -34,7 +34,7 @@ public class WristCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intakeSubsystem.setWristPosition(0.5);
+    //intakeSubsystem.setWristPosition(0.5);
   }
 
   // Returns true when the command should end.

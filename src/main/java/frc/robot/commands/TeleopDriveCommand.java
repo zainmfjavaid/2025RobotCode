@@ -20,11 +20,13 @@ public class TeleopDriveCommand extends Command {
     public void initialize() {
         System.out.println("Begin drive command");
         swerveSubsystem.resetGyroAndOdometer();
+        swerveSubsystem.resetEncoders();
     }
 
     @Override
     public void execute() {
-        switch (DriveConstants.kDriveType) {
+        // swerveSubsystem.setSpeedConstant(1);
+        switch (DriveConstants.driveType) {
             case ARCADE:
                 break;
             case SWERVE:
@@ -48,8 +50,6 @@ public class TeleopDriveCommand extends Command {
                 break;
         }
         swerveSubsystem.updateOdometer();
-        swerveSubsystem.tipDetection();
-        swerveSubsystem.updateShuffleboard();
     } 
 
     @Override

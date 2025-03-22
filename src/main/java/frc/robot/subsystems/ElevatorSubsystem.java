@@ -10,77 +10,85 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.DeviceIds;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.hardware.SparkMaxMotor;
-import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
 	private final SparkMaxMotor leftElevatorMotor = new SparkMaxMotor(DeviceIds.kLeftElevatorMotor, false, true);
 	private final SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, true);
 
-	private final PIDController elevatorPIDController = new PIDController(.0001, 0, 0);
-    private final Encoder elevatorEncoder = new Encoder(0, 1);
+	PIDController elevatorPIDController = new PIDController(0.0003, 0, 0);
 
-	private double currentPosition = 0;
-	private IntakeState currentGoal = null;
+    Encoder elevatorEncoder = new Encoder(0, 1);
+	DigitalInput limitSwitch = new DigitalInput(9);
 
-	private DigitalInput limitSwitch = new DigitalInput(10); // CHANGE THIS BACK THIS IS WRONG i changed it during swerve testing 
+	double currentPosition = 0;
+	IntakeState currentGoal = null;
+	boolean isDown = false;
+	boolean isOverride = false;
 
 	/** Creates a new ElevatorSubsystem. */
 	public ElevatorSubsystem() {}
 
-	public void stop() {
-		leftElevatorMotor.set(0);
-		rightElevatorMotor.set(0);
+	public void setSpeed(double speed) {
+		leftElevatorMotor.set(speed);
+		rightElevatorMotor.set(speed);
 	}
 
-	public boolean atSetpoint(IntakeState intakeState) {
-		return Math.abs(currentPosition) >= Math.abs(intakeState.getElevatorValue());
+	public void stop() {
+		setSpeed(0);
+	}
+
+	public void goDown() {
+		setSpeed(-0.4);
+	}
+
+	public void goUp() {
+		setSpeed(0.4);
 	}
 
 	public void setPosition(IntakeState intakeState) {
-		System.out.println("at setpoint??? " + atSetpoint(intakeState));
-		currentPosition = elevatorEncoder.getDistance();
-
-		if (!atSetpoint(intakeState)) {
-			System.out.println("RUNNING THE MOTORS");
-			System.out.println("curr point: " + currentPosition + " whereas my desired position is: " + intakeState.getElevatorValue());
-			leftElevatorMotor.set(ElevatorConstants.elevatorSpeed);
-			rightElevatorMotor.set(ElevatorConstants.elevatorSpeed);
-		} else {
-			if (intakeState.getElevatorValue() != 0) {
-				stop();
+		double pidOutput;
+		if (isDown) {
+			if (limitSwitch.get()) {
+				goDown();
 			} else {
-				resetElevatorPosition();
+				stop();
 			}
+		} else {
+			pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
+			setSpeed(-pidOutput);
 		}
-	}
-
-	public void resetElevatorPosition() {
-		double setpoint = 0;
-        double pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), setpoint);
-		System.out.println(-pidOutput);
-		leftElevatorMotor.set(-pidOutput);
-		rightElevatorMotor.set(-pidOutput);
 	}
 
 	public void setGoal(IntakeState intakeState) {
+		if (currentGoal != null && currentGoal.getElevatorValue() < intakeState.getElevatorValue()) {
+			isDown = true;
+		} else {
+			isDown = false;
+		}
 		currentGoal = intakeState;
 	}
 
-	public void checkLimitSwtch() {
-		if(!limitSwitch.get()) // Returns false is circuit is closed (Switch pressed)
-		{
-			stop();
+	public boolean atSetpoint() {
+		System.out.println(elevatorEncoder.getDistance());
+		if (Math.abs(currentGoal.getElevatorValue() - elevatorEncoder.getDistance()) < 300) {
+			System.out.println("AT SETPOINT");
+			return true;
 		}
+
+		return false;
+	}
+
+	public void setOverride(boolean newOverrideValue) {
+		isOverride = newOverrideValue;
 	}
 
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		if (currentGoal != null) {
-			if (!atSetpoint(currentGoal)) {
-				setPosition(currentGoal);
-			}
+		if (currentGoal != null && !isOverride) {
+			setPosition(currentGoal);
 		}
 	}
 }

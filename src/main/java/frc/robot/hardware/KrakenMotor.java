@@ -10,7 +10,7 @@ public class KrakenMotor {
     private final TalonFX motor;
     // private final boolean reverseEncoder; - MAY BE USED
 
-    public KrakenMotor(int deviceId, Boolean reverse) {
+    public KrakenMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
         motor = new TalonFX(deviceId, "CANivore2158");
 
         motor.setNeutralMode(NeutralModeValue.Brake);
@@ -24,6 +24,7 @@ public class KrakenMotor {
     public double getPositionRotations() {
         return motor.getPosition().getValueAsDouble();
     }
+
     public double getPositionRadians() {
         return SwerveUtils.rotationsToRadians(getPositionRotations());
     }

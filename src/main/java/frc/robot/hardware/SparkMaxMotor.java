@@ -1,11 +1,13 @@
 package frc.robot.hardware;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkMaxAlternateEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.LimitSwitchConfig;
+import com.revrobotics.spark.config.AbsoluteEncoderConfig;
+import com.revrobotics.spark.config.AlternateEncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -15,43 +17,69 @@ import frc.robot.subsystems.SwerveUtils;
 public class SparkMaxMotor {
     private final SparkMax motor;
     private final RelativeEncoder encoder;
-    // private final boolean reverseEncoder;
+    private final boolean reverseMotor;
+    private final boolean reverseEncoder;
+    SparkBaseConfig config = new SparkMaxConfig();
 
     public SparkMaxMotor(int deviceId) {
-        this(deviceId, false, false);
+        this(deviceId, false, false, false);
     }
 
-    public SparkMaxMotor(int deviceId, Boolean reverseMotor) {
-        this(deviceId, reverseMotor, false);
+    public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
+        this(deviceId, reverseMotor, reverseEncoder, false);
     }
-
-    public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean isBrake) {
+    
+    public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder, Boolean isBrake) {
         motor = new SparkMax(deviceId, MotorType.kBrushless);
+        encoder = motor.getEncoder();
 
-        SparkBaseConfig config = new SparkMaxConfig();
         config.idleMode(isBrake ? IdleMode.kBrake : IdleMode.kCoast);
-        config.inverted(reverseMotor);
+
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        encoder = motor.getEncoder();
+        this.reverseMotor = reverseMotor;
+        this.reverseEncoder = reverseEncoder;
     }
 
+    public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder, Boolean isBrake, int currentLimit) {
+        motor = new SparkMax(deviceId, MotorType.kBrushless);
+        encoder = motor.getEncoder();
+
+        config.idleMode(isBrake ? IdleMode.kBrake : IdleMode.kCoast);
+        config.smartCurrentLimit(currentLimit);
+        config.limitSwitch.forwardLimitSwitchEnabled(false);
+        config.limitSwitch.reverseLimitSwitchEnabled(false);
+
+        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        this.reverseMotor = reverseMotor;
+        this.reverseEncoder = reverseEncoder;
+    }
+
+    // public RelativeEncoder getAlternateEncoder() {
+    //     SparkMaxConfig config = new SparkMaxConfig();
+    //     AbsoluteEncoderConfig encoderConfig = new AbsoluteEncoderConfig();
+    //     encoderConfig.setSparkMaxDataPortConfig()
+
+    //     config.apply(encoderConfig.setSparkMaxDataPortConfig());
+    //     config.idleMode(IdleMode.kBrake);
+
+    //     motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    //     return motor.getAlternateEncoder();
+    // }
+
     public double getPositionRotations() {
-        return encoder.getPosition();
+        return reverseEncoder ? -encoder.getPosition() : encoder.getPosition();
     }
     public double getPositionRadians() {
         return SwerveUtils.rotationsToRadians(getPositionRotations());
     }
     
     public void setEncoderPosition(double position) {
-        encoder.setPosition(position);
-    }
-
-    public void setVoltage(double voltage) {
-        motor.setVoltage(voltage);
+        encoder.setPosition(reverseEncoder ? -position : position);
     }
 
     public void set(double relativeSpeed) {
-        motor.set(relativeSpeed);
+        motor.set(reverseMotor ? -relativeSpeed : relativeSpeed);
     }
 }
