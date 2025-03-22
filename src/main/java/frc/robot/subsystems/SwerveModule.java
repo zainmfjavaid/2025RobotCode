@@ -4,7 +4,6 @@ import frc.robot.hardware.KrakenMotor;
 import frc.robot.hardware.AbsoluteEncoder;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.Constants.SwerveConstants.TeleopSwerveConstants;
 import frc.robot.Constants.SwerveConstants.Module;
 
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -43,6 +42,7 @@ public class SwerveModule {
         resetEncoders();
     }
 
+    @SuppressWarnings("unused")
     private double getAngleAbsoluteEncoderPositionRadians() {
         return wheelAngleAbsoluteEncoder.getPositionRadians();
     }

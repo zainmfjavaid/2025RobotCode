@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.Constants.SwerveConstants.TeleopSwerveConstants;
 
 public class SwerveUtils {
     public static double angleWheelToMotor(double value) {
@@ -78,7 +77,7 @@ public class SwerveUtils {
         double motorErrorRadians = angleWheelToMotor(wheelErrorRadians);
         double currentMotorAngleRadians = angleWheelToMotor(currentWheelAngleRadians);
         double desiredMotorAngleRadians = currentMotorAngleRadians + motorErrorRadians;
-        return TeleopSwerveConstants.kRotationController.calculate(motorErrorRadians, desiredMotorAngleRadians);
+        return SwerveConstants.kAngleController.calculate(motorErrorRadians, desiredMotorAngleRadians);
     }
 
     // Return the angle in radians formed by the x and y components
@@ -93,7 +92,7 @@ public class SwerveUtils {
 
     public static double toAngleRelativeSpeed(double wheelAngleErrorRadians) {
         double relativeSpeed = normalizeSpeed(wheelAngleErrorRadians / (Math.PI / 2)); // the max distance it can move is 90 deg
-        return TeleopSwerveConstants.kRotationController.calculate(0, relativeSpeed);
+        return SwerveConstants.kAngleController.calculate(0, relativeSpeed);
     }
 
     public static double toDriveRelativeSpeed(double driveSpeedMetersPerSecond) {

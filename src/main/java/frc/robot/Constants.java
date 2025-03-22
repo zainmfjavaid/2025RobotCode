@@ -95,13 +95,14 @@ public final class Constants {
         public static final double kRobotRotationRadiusMeters = Math.hypot(RobotConstants.kTrackWidth / 2, RobotConstants.kWheelbase / 2);
         public static final double kMaxRotationSpeedRadiansPerSecond = kMaxWheelDriveSpeedMetersPerSecond / kRobotRotationRadiusMeters;
 
+        // kP should be between 0 to 1
+        public static final PIDController kAngleController = new PIDController(0.5, 0, 0);
+
+        // YOU CAN CHANGE VALUES IN HERE
         public static class TeleopSwerveConstants {
             public static final double kMaxDriveSpeedMetersPerSecond = kRobotMode == RobotMode.TEST ? Units.feetToMeters(0.5) : kMaxWheelDriveSpeedMetersPerSecond * 0.75;
-
+            
             public static final double kMaxRotationSpeedRadiansPerSecond = SwerveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
-
-            // kP should be between 0 to 1
-            public static final PIDController kRotationController = new PIDController(0.5, 0, 0);
         }
 
         public static class AutoSwerveConstants {
@@ -113,9 +114,7 @@ public final class Constants {
 
             public static final PIDController kXController = new PIDController(0.1, 0, 0.1);
             public static final PIDController kYController = new PIDController(0.1, 0, 0.1);
-
-            public static final PIDController kThetaController = new PIDController(0.5 / Math.PI, 0, 0);
-            public static final Constraints kThetaConstraints = new Constraints(kMaxRotationSpeedRadiansPerSecond, kMaxRotationAccelerationRadiansPerSecondSquared);
+            public static final PIDController kThetaController = new PIDController(0.1, 0, 0);
         }
     }
 
