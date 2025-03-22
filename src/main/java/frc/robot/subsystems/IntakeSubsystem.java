@@ -72,6 +72,18 @@ public class IntakeSubsystem extends SubsystemBase {
         wristMotor.set(0);
     }
 
+    public void runWristMotor(double speed) {
+        IntakeState intakeState = IntakeState.INTAKE;
+        double wristPIDOutput = wristPIDController.calculate(wristMotor.getPositionRotations(), intakeState.getWristValue());
+
+        System.out.println(wristPIDOutput);
+        wristMotor.set(wristPIDOutput);
+    }
+
+    public void printWristEncoder() {
+        System.out.println(wristMotor.getPositionRotations());
+    }
+
     @Override
     public void periodic() {
         if (currentGoal != null) {

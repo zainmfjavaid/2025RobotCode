@@ -90,7 +90,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("TorchIntake", torchIntakeCommand);
         NamedCommands.registerCommand("TroughScore", troughScoreCommand);
 
-        swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
+        //swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
     
         configureBindings();
     
@@ -117,16 +117,14 @@ public class RobotContainer {
         operatorController.getButton(OperatorController.Button.A).onTrue(levelOneCommand);
         //operatorController.getButton(OperatorController.Button.B).onTrue(levelTwoCommand);
         //operatorController.getButton(OperatorController.Button.Y).onTrue(levelThreeCommand);
-        operatorController.getButton(OperatorController.Button.X).onTrue(new SequentialCommandGroup(scoreMoveBack, levelFourCommand));
+        operatorController.getButton(OperatorController.Button.X).onTrue(levelFourCommand);
 
         operatorController.getButton(OperatorController.Button.RB).whileTrue(climbSubsystem.climbCommandTest());
         operatorController.getButton(OperatorController.Button.LB).whileTrue(climbSubsystem.reverseClimbCommandTest());
 
-        operatorController.getButton(OperatorController.Button.LT).onTrue(elevatorScoreCommand);
-        operatorController.getButton(OperatorController.Button.RT).whileTrue(intakeCommand);
-        operatorController.getButton(OperatorController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
-    
-        driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(() -> swerveSubsystem.printEncoderValues()));
+        operatorController.getButton(OperatorController.Button.LT).whileTrue(new StartEndCommand(() -> intakeSubsystem.runWristMotor(0.1), () -> intakeSubsystem.stopWristMotor(), intakeSubsystem));
+        operatorController.getButton(OperatorController.Button.RT).whileTrue(new StartEndCommand(() -> intakeSubsystem.runWristMotor(-0.1), () -> intakeSubsystem.stopWristMotor(), intakeSubsystem));
+        operatorController.getButton(OperatorController.Button.Y).whileTrue(new InstantCommand(() -> intakeSubsystem.printWristEncoder(), intakeSubsystem));
     }
 
     public Command getAutonomousCommand() {
