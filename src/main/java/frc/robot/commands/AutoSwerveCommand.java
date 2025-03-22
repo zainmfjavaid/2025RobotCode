@@ -7,7 +7,6 @@ package frc.robot.commands;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants.AutoSwerveConstants;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.SwerveUtils;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
