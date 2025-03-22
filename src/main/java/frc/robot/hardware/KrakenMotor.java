@@ -1,18 +1,19 @@
 package frc.robot.hardware;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.robot.subsystems.SwerveUtils;
 
 public class KrakenMotor {
     private final TalonFX motor;
-    private final boolean reverseMotor;
-    private final boolean reverseEncoder;
-    // private final boolean reverseEncoder; - MAY BE USED
 
-    public KrakenMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
+    public KrakenMotor(int deviceId, InvertedValue invertedValue) {
         motor = new TalonFX(deviceId, "CANivore2158");
 
         motor.setNeutralMode(NeutralModeValue.Brake);
@@ -20,15 +21,16 @@ public class KrakenMotor {
         FeedbackConfigs feedbackConfigs = new FeedbackConfigs()
             .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
 
-        motor.getConfigurator().apply(feedbackConfigs);
+        MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive);
 
-        this.reverseMotor = reverseMotor;
-        this.reverseEncoder = reverseEncoder;
+        TalonFXConfigurator configurator = motor.getConfigurator();
+        configurator.apply(feedbackConfigs);
+        configurator.apply(motorOutputConfigs);
     }
 
     public double getPositionRotations() {
-        double positionRotations = motor.getPosition().getValueAsDouble();
-        return reverseEncoder ? -positionRotations : positionRotations;
+        return motor.getPosition().getValueAsDouble();
     }
     public double getPositionRadians() {
         return SwerveUtils.rotationsToRadians(getPositionRotations());
@@ -39,7 +41,7 @@ public class KrakenMotor {
     }
 
     public void setRelativeSpeed(double relativeSpeed) {
-        motor.set(reverseMotor ? -relativeSpeed : relativeSpeed);
+        motor.set(relativeSpeed);
     }
 
     public double getSpeedRotationsPerSecond() {

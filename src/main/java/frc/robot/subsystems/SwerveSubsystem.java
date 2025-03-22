@@ -17,6 +17,7 @@ import frc.robot.Constants.SwerveConstants.Module;
 import frc.robot.hardware.Controller.DriverController;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
@@ -24,10 +25,10 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 public class SwerveSubsystem extends SubsystemBase {
     // Modules
-    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, true, false);
-    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, true, false);
-    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, true, false);
-    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, true, false); 
+    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, InvertedValue.CounterClockwise_Positive, InvertedValue.CounterClockwise_Positive);
+    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, InvertedValue.CounterClockwise_Positive, InvertedValue.CounterClockwise_Positive);
+    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, InvertedValue.CounterClockwise_Positive, InvertedValue.CounterClockwise_Positive);
+    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, InvertedValue.CounterClockwise_Positive, InvertedValue.CounterClockwise_Positive); 
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Module.FRONT_LEFT.getLocation(), Module.FRONT_RIGHT.getLocation(), Module.BACK_LEFT.getLocation(), Module.BACK_RIGHT.getLocation());
 
