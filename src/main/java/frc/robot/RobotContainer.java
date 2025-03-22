@@ -100,7 +100,16 @@ public class RobotContainer {
     
     private void configureBindings() { 
         Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-        drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+        drivebase.setDefaultCommand(drivebase.getCustomDriveCommand(() -> driverController.getLeftStickY(), () -> driverController.getLeftStickX(), () -> driverController.getRightStickX()));
+
+        driverController.getButton(DriverController.Button.A).onTrue(drivebase.testAngleMotorsDirectly());
+        driverController.getButton(DriverController.Button.B).onTrue(drivebase.checkAngleMotors());
+        driverController.getButton(DriverController.Button.X).onTrue(drivebase.debugControllerToModule());
+        driverController.getButton(DriverController.Button.Y).onTrue(drivebase.increasePIDOutput());
+        driverController.getButton(DriverController.Button.RB).onTrue(drivebase.printRawEncoderValues());
+
+        driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(() -> drivebase.resetGyro()));
+
         // Elevator Testing
         // driverController.getButton(DriverController.Button.RB).onTrue(elevatorSubsystem.());
 
