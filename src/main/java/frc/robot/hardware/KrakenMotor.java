@@ -8,9 +8,11 @@ import frc.robot.subsystems.SwerveUtils;
 
 public class KrakenMotor {
     private final TalonFX motor;
+    private final boolean reverseMotor;
+    private final boolean reverseEncoder;
     // private final boolean reverseEncoder; - MAY BE USED
 
-    public KrakenMotor(int deviceId, Boolean reverse) {
+    public KrakenMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
         motor = new TalonFX(deviceId, "CANivore2158");
 
         motor.setNeutralMode(NeutralModeValue.Brake);
@@ -19,10 +21,14 @@ public class KrakenMotor {
             .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
 
         motor.getConfigurator().apply(feedbackConfigs);
+
+        this.reverseMotor = reverseMotor;
+        this.reverseEncoder = reverseEncoder;
     }
 
     public double getPositionRotations() {
-        return motor.getPosition().getValueAsDouble();
+        double positionRotations = motor.getPosition().getValueAsDouble();
+        return reverseEncoder ? -positionRotations : positionRotations;
     }
     public double getPositionRadians() {
         return SwerveUtils.rotationsToRadians(getPositionRotations());
@@ -33,7 +39,7 @@ public class KrakenMotor {
     }
 
     public void setRelativeSpeed(double relativeSpeed) {
-        motor.set(relativeSpeed);
+        motor.set(reverseMotor ? -relativeSpeed : relativeSpeed);
     }
 
     public double getSpeedRotationsPerSecond() {

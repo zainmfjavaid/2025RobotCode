@@ -51,7 +51,7 @@ public class RobotContainer {
     private final DriverController driverController = new DriverController();
     
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-    private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(elevatorSubsystem);
+    private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 

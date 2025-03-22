@@ -10,15 +10,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.networktables.GenericEntry;
 
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.SwerveConstants.TeleopSwerveConstants;
-import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.SwerveConstants.Module;
 import frc.robot.hardware.Controller.DriverController;
 
@@ -29,31 +23,11 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 public class SwerveSubsystem extends SubsystemBase {
-    // Shuffleboard
-    private final ShuffleboardTab swerveTab = Shuffleboard.getTab("Swerve");
-
-    private final ShuffleboardLayout currentAnglesLayout = swerveTab.getLayout("Current Module Angles", "Grid Layout");
-    private final ShuffleboardLayout absoluteAnglesLayout = currentAnglesLayout.getLayout("Absolute", "Grid Layout");
-    private final ShuffleboardLayout relativeAnglesLayout = currentAnglesLayout.getLayout("Relative", "Grid Layout");
-    
-    private final ShuffleboardLayout desiredAnglesLayout = swerveTab.getLayout("Desired Module Angles", "Grid Layout");
-
-    private final ShuffleboardLayout speedsLayout = swerveTab.getLayout("Module Speeds", "Grid Layout");
-    private final ShuffleboardLayout driveSpeedsLayout = speedsLayout.getLayout("Drive Speeds", "Grid Layout");
-    private final ShuffleboardLayout angleSpeedsLayout = speedsLayout.getLayout("Angle Speeds", "Grid Layout");
-    
-    private final ShuffleboardLayout gyroAngleLayout = swerveTab.getLayout("Gyro", "Grid Layout");
-    private final GenericEntry gyroAngleEntry = gyroAngleLayout.add("Rotation", 0).withWidget(BuiltInWidgets.kGyro).getEntry();
-    
-    private final ShuffleboardLayout odometerLayout = swerveTab.getLayout("Odometer", "Grid Layout");
-    private final GenericEntry odometerXEntry = odometerLayout.add("X", 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
-    private final GenericEntry odometerYEntry = odometerLayout.add("Y", 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
-
     // Modules
-    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, absoluteAnglesLayout, relativeAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
-    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, absoluteAnglesLayout, relativeAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
-    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, absoluteAnglesLayout, relativeAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout);
-    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, absoluteAnglesLayout, relativeAnglesLayout, desiredAnglesLayout, driveSpeedsLayout, angleSpeedsLayout); 
+    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, true, false);
+    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, true, false);
+    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, true, false);
+    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, true, false); 
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Module.FRONT_LEFT.getLocation(), Module.FRONT_RIGHT.getLocation(), Module.BACK_LEFT.getLocation(), Module.BACK_RIGHT.getLocation());
 
@@ -62,13 +36,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private static RobotConfig config;
 
-    private final ElevatorSubsystem elevatorSubsystem;
     private final double retractElevatorThresholdRadians = Rotation2d.fromDegrees(3).getRadians();
 
     private double speedConstant = 1.0;
 
-    public SwerveSubsystem(ElevatorSubsystem elevatorSubsystem) {
-        this.elevatorSubsystem = elevatorSubsystem;
+    public SwerveSubsystem() {
     }
 
     public void toggleSpeedConstant() {
@@ -79,20 +51,79 @@ public class SwerveSubsystem extends SubsystemBase {
         }
     }
 
-    public void setModuleSpeeds(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
-        frontLeftModule.setSpeeds(longitudinalSpeedMetersPerSecond * speedConstant, lateralSpeedMetersPerSecond * speedConstant, rotationSpeedRadiansPerSecond * speedConstant);
-        frontRightModule.setSpeeds(longitudinalSpeedMetersPerSecond * speedConstant, lateralSpeedMetersPerSecond * speedConstant, rotationSpeedRadiansPerSecond * speedConstant);
-        backLeftModule.setSpeeds(longitudinalSpeedMetersPerSecond * speedConstant, lateralSpeedMetersPerSecond * speedConstant, rotationSpeedRadiansPerSecond * speedConstant);
-        backRightModule.setSpeeds(longitudinalSpeedMetersPerSecond * speedConstant, lateralSpeedMetersPerSecond * speedConstant, rotationSpeedRadiansPerSecond * speedConstant);
+    public void setModuleStates(SwerveModuleState[] desiredModuleStates) {
+        SwerveUtils.normalizeModuleStates(desiredModuleStates);
+        frontLeftModule.setState(desiredModuleStates[0]);
+        frontRightModule.setState(desiredModuleStates[1]);
+        backLeftModule.setState(desiredModuleStates[2]);
+        backRightModule.setState(desiredModuleStates[3]);
     }
 
-    public void setModuleStates(SwerveModuleState[] desiredStates) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, SwerveConstants.kMaxWheelDriveSpeedMetersPerSecond); //TODO Replace with max speed
-        frontLeftModule.setState(desiredStates[0]);
-        frontRightModule.setState(desiredStates[1]);
-        backLeftModule.setState(desiredStates[2]);
-        backRightModule.setState(desiredStates[3]);
+    public SwerveModuleState[] calculateModuleStates(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
+        return new SwerveModuleState[] {
+            frontLeftModule.calculateDesiredState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond),
+            frontRightModule.calculateDesiredState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond),
+            backLeftModule.calculateDesiredState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond),
+            backRightModule.calculateDesiredState(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond)
+        };
     }
+
+    public void robotCentricSwerve(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
+        longitudinalSpeedMetersPerSecond *= speedConstant;
+        lateralSpeedMetersPerSecond *= speedConstant;
+        rotationSpeedRadiansPerSecond *= speedConstant;
+        
+        setModuleStates(calculateModuleStates(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond));
+    }
+
+    public void fieldCentricSwerve(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
+        longitudinalSpeedMetersPerSecond *= speedConstant;
+        lateralSpeedMetersPerSecond *= speedConstant;
+        rotationSpeedRadiansPerSecond *= speedConstant;
+        
+        SwerveModuleState[] moduleStates = new SwerveModuleState[4];
+        
+        double offsetRadians = -getGyroAngle().getRadians();
+
+        if (longitudinalSpeedMetersPerSecond == 0 && lateralSpeedMetersPerSecond == 0 && rotationSpeedRadiansPerSecond == 0) {
+            // Set module angles based on gyro
+            for (SwerveModuleState moduleState : moduleStates) {
+                moduleState.speedMetersPerSecond = 0;
+                moduleState.angle = Rotation2d.fromRadians(offsetRadians);
+            }
+        } else {
+            moduleStates = calculateModuleStates(
+                // Rotation matrix
+                longitudinalSpeedMetersPerSecond * Math.cos(offsetRadians) - lateralSpeedMetersPerSecond * Math.sin(offsetRadians),
+                longitudinalSpeedMetersPerSecond * Math.sin(offsetRadians) + lateralSpeedMetersPerSecond * Math.cos(offsetRadians),
+                rotationSpeedRadiansPerSecond
+            );
+        }
+
+        setModuleStates(moduleStates);
+    }
+
+    public void swerveDriveTeleop(DriverController driverController) {
+        double leftStickY = driverController.getLeftStickY();
+        double leftStickX = driverController.getLeftStickX();
+        double rightStickX = driverController.getRightStickX();
+
+        leftStickY = Math.abs(leftStickY) > 0.01 ? leftStickY : 0;
+        leftStickX = Math.abs(leftStickX) > 0.01 ? leftStickX : 0;
+        rightStickX = Math.abs(rightStickX) > 0.01 ? rightStickX : 0;
+
+        fieldCentricSwerve(
+            leftStickY * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond,
+            leftStickX * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond,
+            rightStickX * TeleopSwerveConstants.kMaxRotationSpeedRadiansPerSecond
+        );
+    }
+
+    public void setChassisSpeeds(ChassisSpeeds speeds) {
+        setModuleStates(kinematics.toSwerveModuleStates(speeds));
+    }
+
+    // Accessors
 
     public SwerveModuleState[] getModuleStates() {
         return new SwerveModuleState[] {
@@ -103,27 +134,8 @@ public class SwerveSubsystem extends SubsystemBase {
         };
     }
 
-    public void fieldCentricSwerve(double longitudinalSpeedMetersPerSecond, double lateralSpeedMetersPerSecond, double rotationSpeedRadiansPerSecond) {
-        double offsetRadians = -getGyroAngle().getRadians();
-        setModuleSpeeds(
-            longitudinalSpeedMetersPerSecond * Math.cos(offsetRadians) - lateralSpeedMetersPerSecond * Math.sin(offsetRadians), 
-            longitudinalSpeedMetersPerSecond * Math.sin(offsetRadians) + lateralSpeedMetersPerSecond * Math.cos(offsetRadians), 
-            rotationSpeedRadiansPerSecond);
-    }
-
-    public void swerveDriveTeleop(DriverController driveController) {
-        double longitudinalSpeedMetersPerSecond = driveController.getLeftStickY() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
-        double lateralSpeedMetersPerSecond = driveController.getLeftStickX() * TeleopSwerveConstants.kMaxDriveSpeedMetersPerSecond;
-        double rotationSpeedRadiansPerSecond = driveController.getRightStickX() * TeleopSwerveConstants.kMaxRotationSpeedRadiansPerSecond;
-        fieldCentricSwerve(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond, rotationSpeedRadiansPerSecond);
-    }
-
     public SwerveDriveKinematics getKinematics() {
         return kinematics;
-    }
-
-    public void setChassisSpeeds(ChassisSpeeds speeds) {
-        setModuleStates(kinematics.toSwerveModuleStates(speeds));
     }
 
     public ChassisSpeeds getChassisSpeeds() {
@@ -152,7 +164,7 @@ public class SwerveSubsystem extends SubsystemBase {
         double rollRadians = getGyroRotation3d().getX();
         double pitchRadians = getGyroRotation3d().getY();
         if (rollRadians > retractElevatorThresholdRadians || pitchRadians > retractElevatorThresholdRadians) {
-            System.out.println("tip");
+            // System.out.println("tip");
             // elevator.setPosition(IntakeState.STOW);
         }
     }
@@ -160,6 +172,8 @@ public class SwerveSubsystem extends SubsystemBase {
     public Pose2d getPose() {
         return odometer.getPoseMeters();
     }
+
+    // gyro and odometer
 
     public void resetGyro() {
         gyro.reset();
@@ -182,12 +196,7 @@ public class SwerveSubsystem extends SubsystemBase {
         odometer.update(getGyroAngle(), getModulePositions());
     }
 
-    public void updateShuffleboard() {
-        gyroAngleEntry.setDouble(getGyroAngle().getDegrees());
-
-        odometerXEntry.setDouble(getPose().getX());
-        odometerYEntry.setDouble(getPose().getY());
-    }
+    // set speed
 
     public void spinDriveMotors(double speed) {
         frontLeftModule.setDriveMotorRelativeSpeed(speed);
@@ -204,36 +213,37 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void driveForward(double longitudinalSpeed) {
-        setModuleSpeeds(longitudinalSpeed, 0, 0);
+        robotCentricSwerve(longitudinalSpeed, 0, 0);
     }
 
     public void driveLaterally(double lateralSpeed) {
-        setModuleSpeeds(0, lateralSpeed, 0);
+        robotCentricSwerve(0, lateralSpeed, 0);
     }
 
     public void spin(double speedRadiansPerSecond) {
-        setModuleSpeeds(0, 0, speedRadiansPerSecond);
+        robotCentricSwerve(0, 0, speedRadiansPerSecond);
     }
 
     public void stop() {
-        setModuleSpeeds(0, 0, 0);
+        robotCentricSwerve(0, 0, 0);
     }
 
     // print
+
     public void printEncoderValues() {
         System.out.println("Angle Encoder Positions");
-        frontLeftModule.printEncoderPositions("FL");
-        frontRightModule.printEncoderPositions("FR");
-        backLeftModule.printEncoderPositions("BL");
-        backRightModule.printEncoderPositions("BR");
+        frontLeftModule.printEncoderPositions();
+        frontRightModule.printEncoderPositions();
+        backLeftModule.printEncoderPositions();
+        backRightModule.printEncoderPositions();
     }
 
     public void printDriveEncoderValues() {
         System.out.println("Drive Encoder Positions");
-        frontLeftModule.printDriveEncoderValue("FL");
-        frontRightModule.printDriveEncoderValue("FR");
-        backLeftModule.printDriveEncoderValue("BL");
-        backRightModule.printDriveEncoderValue("BR");
+        frontLeftModule.printDriveEncoderValue();
+        frontRightModule.printDriveEncoderValue();
+        backLeftModule.printDriveEncoderValue();
+        backRightModule.printDriveEncoderValue();
     }
 
     public void printGyroValue() {
@@ -243,6 +253,8 @@ public class SwerveSubsystem extends SubsystemBase {
     public void printOdometerPose() {
         System.out.println("Odometer Pose: " + getPose());
     }
+    
+    // auton
 
     public void initAuton(){
         try{

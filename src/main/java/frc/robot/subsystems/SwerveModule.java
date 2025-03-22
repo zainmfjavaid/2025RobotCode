@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.hardware.KrakenMotor;
 import frc.robot.hardware.AbsoluteEncoder;
+import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.SwerveConstants.TeleopSwerveConstants;
 import frc.robot.Constants.SwerveConstants.Module;
@@ -12,17 +13,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-
-// USES ABSOLUTE ENCODER
-// don't use angle motor relative encoder
-
-// current issues: the robot doesn't go completely straight, it turns a bit
-// the issue is not with the gyro but with my code or the absolute encoder offsets
 
 public class SwerveModule {
+    private static final double noAngleThreshold = 1E-6;
+
     private final KrakenMotor driveMotor;
     private final KrakenMotor angleMotor;
 
@@ -30,21 +24,13 @@ public class SwerveModule {
 
     private final AbsoluteEncoder wheelAngleAbsoluteEncoder;
 
-    private double lastAngleRadians = 0;
+    private double lastDesiredWheelAngleRadians = 0;
 
     private final String name;
 
-    private final GenericEntry absoluteAngleEntry;
-    private final GenericEntry relativeAngleEntry;
-
-    private final GenericEntry desiredAngleEntry;
-
-    private final GenericEntry driveSpeedEntry;
-    private final GenericEntry angleSpeedEntry;
-
-    public SwerveModule(Module module, ShuffleboardLayout absoluteAnglesLayout, ShuffleboardLayout relativeAnglesLayout, ShuffleboardLayout desiredAnglesLayout, ShuffleboardLayout driveSpeedsLayout, ShuffleboardLayout angleSpeedsLayout) {
-        driveMotor = new KrakenMotor(module.getDriveMotorDeviceId(), true);
-        angleMotor = new KrakenMotor(module.getAngleMotorDeviceId(), true);
+    public SwerveModule(Module module, boolean reverseDrive, boolean reverseAngle) {
+        driveMotor = new KrakenMotor(module.getDriveMotorDeviceId(), reverseDrive, reverseDrive);
+        angleMotor = new KrakenMotor(module.getAngleMotorDeviceId(), reverseAngle, reverseAngle);
 
         double unnormalizedTurnAngleRadians = SwerveUtils.getAngleRadiansFromComponents(module.getLocation().getX(), module.getLocation().getY()) + Math.PI / 2;
         turnAngleRadians = SwerveUtils.normalizeAngleRadiansSigned(unnormalizedTurnAngleRadians);
@@ -53,104 +39,80 @@ public class SwerveModule {
 
         name = module.getName();
 
-        absoluteAngleEntry = absoluteAnglesLayout.add(name, 0).withWidget(BuiltInWidgets.kGyro).getEntry();
-        relativeAngleEntry = relativeAnglesLayout.add(name, 0).withWidget(BuiltInWidgets.kGyro).getEntry();
-        
-        desiredAngleEntry = desiredAnglesLayout.add(name, 0).withWidget(BuiltInWidgets.kGyro).getEntry();
-        
-        driveSpeedEntry = driveSpeedsLayout.add(name, 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
-        angleSpeedEntry = angleSpeedsLayout.add(name, 0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
-
         resetEncoders();
     }
 
-    public void setSpeeds(double robotLongitudinalSpeedMetersPerSecond, double robotLateralSpeedMetersPerSecond, double robotRotationSpeedRadiansPerSecond) {
-        double rotationSpeedMetersPerSecond = robotRotationSpeedRadiansPerSecond / SwerveConstants.kMaxRotationSpeedRadiansPerSecond * SwerveConstants.kMaxWheelDriveSpeedMetersPerSecond;
-        
-        double longitudinalSpeedMetersPerSecond = robotLongitudinalSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.cos(turnAngleRadians);
-        double lateralSpeedMetersPerSecond = robotLateralSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.sin(turnAngleRadians);
-        
-        double wheelDriveSpeedMetersPerSecond = Math.hypot(lateralSpeedMetersPerSecond, longitudinalSpeedMetersPerSecond);
-
-        double desiredWheelAngleRadians = lastAngleRadians;
-        if (SwerveUtils.toDriveRelativeSpeed(wheelDriveSpeedMetersPerSecond) > 1E-6) {
-            desiredWheelAngleRadians = SwerveUtils.normalizeAngleRadiansSigned(SwerveUtils.getAngleRadiansFromComponents(longitudinalSpeedMetersPerSecond, lateralSpeedMetersPerSecond));
-        } 
-
-        setState(wheelDriveSpeedMetersPerSecond, desiredWheelAngleRadians);
+    private double getAngleAbsoluteEncoderPositionRadians() {
+        return wheelAngleAbsoluteEncoder.getPositionRadians();
     }
 
-    public void setState(double wheelDriveSpeedMetersPerSecond, double desiredWheelAngleRadians) {  
-        double currentWheelAngleRadians = getAngleAbsoluteEncoderPositionRadians();
+    private double getAngleRelativeEncoderPositionRadians() {
+        return SwerveUtils.normalizeAngleRadiansSigned(SwerveUtils.angleMotorToWheel(angleMotor.getPositionRadians()));
+    }
 
-        absoluteAngleEntry.setDouble(Units.radiansToDegrees(currentWheelAngleRadians));
-        relativeAngleEntry.setDouble(Units.radiansToDegrees(getAngleRelativeEncoderPositionRadians()));
+    public void setState(double wheelDriveSpeedMetersPerSecond, double desiredWheelAngleRadians) {
+        lastDesiredWheelAngleRadians = desiredWheelAngleRadians;
         
-        desiredAngleEntry.setDouble(Units.radiansToDegrees(desiredWheelAngleRadians));
+        double currentWheelAngleRadians = 
+        // getAngleAbsoluteEncoderPositionRadians();
+        getAngleRelativeEncoderPositionRadians();
 
         double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
-
+        // If greater than 180 deg, go the other way
+        if (wheelAngleErrorRadians > Math.PI) {
+            wheelAngleErrorRadians = Constants.kTau - wheelAngleErrorRadians;
+        }
         // If greater than 90 deg, add 180 deg and flip drive motor direction
         if (Math.abs(wheelAngleErrorRadians) > Math.PI / 2) {
             wheelAngleErrorRadians = SwerveUtils.normalizeAngleRadiansSigned(wheelAngleErrorRadians + Math.PI);
             wheelDriveSpeedMetersPerSecond = -wheelDriveSpeedMetersPerSecond;
         }
 
-        desiredWheelAngleRadians = currentWheelAngleRadians + wheelAngleErrorRadians;
+        setAngleMotorRelativeSpeed(SwerveUtils.toAngleRelativeSpeed(wheelAngleErrorRadians));
         
-        double wheelAngleSpeedRadiansPerSecond = TeleopSwerveConstants.kRotationController.calculate(currentWheelAngleRadians, desiredWheelAngleRadians);        
-        double angleMotorRelativeSpeed = SwerveUtils.radiansToRotations(wheelAngleSpeedRadiansPerSecond);
-        setAngleMotorRelativeSpeed(angleMotorRelativeSpeed);
-        
-        double driveMotorRelativeSpeed = SwerveUtils.toDriveRelativeSpeed(wheelDriveSpeedMetersPerSecond);
-        setDriveMotorRelativeSpeed(driveMotorRelativeSpeed);
-
-        lastAngleRadians = desiredWheelAngleRadians;
-    }
-
-    public double getAngleAbsoluteEncoderPositionRadians() {
-        return wheelAngleAbsoluteEncoder.getPositionRadians();
-    }
-
-    public double getAngleRelativeEncoderPositionRadians() {
-        return SwerveUtils.angleMotorToWheel(angleMotor.getPositionRadians());
+        setDriveMotorRelativeSpeed(SwerveUtils.toDriveRelativeSpeed(wheelDriveSpeedMetersPerSecond));
     }
 
     public void setState(SwerveModuleState desiredState) {
         setState(desiredState.speedMetersPerSecond, desiredState.angle.getRadians());
     }
 
-    public SwerveModuleState getState() {
-        double speedRadiansPerSecond = SwerveUtils.driveMotorToWheel(driveMotor.getSpeedRadiansPerSecond());
-        double speedMetersPerSecond = SwerveUtils.getWheelLinearVelocity(speedRadiansPerSecond);
-        Rotation2d angle = Rotation2d.fromRadians(wheelAngleAbsoluteEncoder.getPositionRadians());
-        return new SwerveModuleState(speedMetersPerSecond, angle);
-    }
+    public SwerveModuleState calculateDesiredState(double rXSpeedMetersPerSecond, double rYSpeedMetersPerSecond, double rRotationSpeedRadiansPerSecond) {
+        double rotationSpeedMetersPerSecond = rRotationSpeedRadiansPerSecond / SwerveConstants.kMaxRotationSpeedRadiansPerSecond * SwerveConstants.kMaxWheelDriveSpeedMetersPerSecond;
+        
+        double xSpeedMetersPerSecond = rXSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.cos(turnAngleRadians);
+        double ySpeedMetersPerSecond = rYSpeedMetersPerSecond + rotationSpeedMetersPerSecond * Math.sin(turnAngleRadians);
+        
+        double driveSpeedMetersPerSecond = Math.hypot(xSpeedMetersPerSecond, ySpeedMetersPerSecond);
 
-    public double getCurrentWheelAngleRadians() {
-        switch (SwerveConstants.kEncoderType) {
-            case ABSOLUTE:
-                return wheelAngleAbsoluteEncoder.getPositionRadians();
-            case RELATIVE:
-                return SwerveUtils.angleMotorToWheel(angleMotor.getPositionRadians()); // untested
-            default:
-                return 0;
-        }
+        double desiredWheelAngleRadians = lastDesiredWheelAngleRadians;
+        if (SwerveUtils.toDriveRelativeSpeed(driveSpeedMetersPerSecond) > noAngleThreshold) {
+            desiredWheelAngleRadians = SwerveUtils.normalizeAngleRadiansSigned(SwerveUtils.getAngleRadiansFromComponents(xSpeedMetersPerSecond, ySpeedMetersPerSecond));
+        } 
+
+        return new SwerveModuleState(driveSpeedMetersPerSecond, Rotation2d.fromRadians(desiredWheelAngleRadians));
     }
 
     public void setDriveMotorRelativeSpeed(double relativeSpeed) {
-        driveSpeedEntry.setDouble(relativeSpeed);
         driveMotor.setRelativeSpeed(relativeSpeed);
     }
 
     public void setAngleMotorRelativeSpeed(double relativeSpeed) {
-        angleSpeedEntry.setDouble(relativeSpeed);
         angleMotor.setRelativeSpeed(relativeSpeed);
     }
 
     public void resetEncoders() {
         driveMotor.setEncoderPosition(0);
         angleMotor.setEncoderPosition(SwerveUtils.angleWheelToMotor(wheelAngleAbsoluteEncoder.getPositionRotations()));
+    }
+
+    // ACCESSORS
+
+    public SwerveModuleState getState() {
+        double speedRadiansPerSecond = SwerveUtils.driveMotorToWheel(driveMotor.getSpeedRadiansPerSecond());
+        double speedMetersPerSecond = SwerveUtils.getWheelLinearVelocity(speedRadiansPerSecond);
+        Rotation2d angle = Rotation2d.fromRadians(wheelAngleAbsoluteEncoder.getPositionRadians());
+        return new SwerveModuleState(speedMetersPerSecond, angle);
     }
 
     public SwerveModulePosition getPosition() {
@@ -163,10 +125,10 @@ public class SwerveModule {
         return Units.rotationsToDegrees(wheelAngleAbsoluteEncoder.getPositionRotations());
     }
 
-    // Print encoder values
+    // PRINT ENCODER VALUES
 
     // rotation of wheel
-    public void printEncoderPositions(String name) {
+    public void printEncoderPositions() {
         System.out.print(name + ": ");
         double rRot = SwerveUtils.angleMotorToWheel(angleMotor.getPositionRotations());
         double rRad = SwerveUtils.rotationsToRadians(rRot);
@@ -175,7 +137,7 @@ public class SwerveModule {
         System.out.println("RRot " + rRot + ", RRad " + rRad + ", ARot " + aRot + ", ARad " + aRad);    
     }
     
-    public void printDriveEncoderValue(String name) {
+    public void printDriveEncoderValue() {
         System.out.println(name + ": " + driveMotor.getPositionRotations());
     }
 }

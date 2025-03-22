@@ -82,24 +82,15 @@ public final class Constants {
                 return name;
             }
         }
-
-        public enum EncoderType {
-            RELATIVE, // may fix drift problem but not sure
-            ABSOLUTE;
-        }
-
-        public static final EncoderType kEncoderType = EncoderType.ABSOLUTE;
         
         public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5); // don't know if this is right
         public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
 
-        public static final double kDriveMotorGearRatio = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
-        public static final double kAngleMotorGearRatio = (14.0 / 50.0) * (10.0 / 60.0);
+        public static final double kDriveMotorGearRatio = 1.0 / 5.0;
+        public static final double kAngleMotorGearRatio = 1.0 / 3.0;
 
         public static final double kMaxWheelDriveSpeedRadiansPerSecond = SwerveUtils.driveMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
         public static final double kMaxWheelDriveSpeedMetersPerSecond = SwerveUtils.getLinearVelocity(kMaxWheelDriveSpeedRadiansPerSecond, kWheelRadiusMeters);
-
-        public static final double kMaxWheelAngleSpeedRadiansPerSecond = SwerveUtils.angleMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
 
         public static final double kRobotRotationRadiusMeters = Math.hypot(RobotConstants.kTrackWidth / 2, RobotConstants.kWheelbase / 2);
         public static final double kMaxRotationSpeedRadiansPerSecond = kMaxWheelDriveSpeedMetersPerSecond / kRobotRotationRadiusMeters;
@@ -109,7 +100,8 @@ public final class Constants {
 
             public static final double kMaxRotationSpeedRadiansPerSecond = SwerveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
 
-            public static final PIDController kRotationController = new PIDController(1.5, 0, 0);
+            // kP should be between 0 to 1
+            public static final PIDController kRotationController = new PIDController(0.5, 0, 0);
         }
 
         public static class AutoSwerveConstants {

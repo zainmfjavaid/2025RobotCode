@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.SwerveConstants.TeleopSwerveConstants;
@@ -25,6 +26,24 @@ public class SwerveUtils {
     public static double radiansToRotations(double radians) {
         return radians / Constants.kTau;
     }
+
+    // MODULE STATES
+
+    public static void normalizeModuleStates(SwerveModuleState[] moduleStates) {
+        double maxModuleSpeed = 0;  
+        for (SwerveModuleState moduleState : moduleStates) {
+            if (moduleState.speedMetersPerSecond > maxModuleSpeed) {
+                maxModuleSpeed = moduleState.speedMetersPerSecond;
+            }
+        }
+        if (maxModuleSpeed > SwerveConstants.kMaxWheelDriveSpeedMetersPerSecond) {
+            for (SwerveModuleState moduleState : moduleStates) {
+                moduleState.speedMetersPerSecond = moduleState.speedMetersPerSecond / maxModuleSpeed * SwerveConstants.kMaxWheelDriveSpeedMetersPerSecond;
+            }
+        }
+    }
+
+
 
     /**
      * Limit the speed to the range -maxSpeed to maxSpeed
@@ -68,12 +87,17 @@ public class SwerveUtils {
     public static double getAngleRadiansFromComponents(double x, double y) {
         return normalizeAngleRadiansSigned(Math.atan2(y, x));
     }
+    
+
+    // Speeds and Velocity
+
+    public static double toAngleRelativeSpeed(double wheelAngleErrorRadians) {
+        double relativeSpeed = normalizeSpeed(wheelAngleErrorRadians / (Math.PI / 2)); // the max distance it can move is 90 deg
+        return TeleopSwerveConstants.kRotationController.calculate(0, relativeSpeed);
+    }
 
     public static double toDriveRelativeSpeed(double driveSpeedMetersPerSecond) {
         return driveSpeedMetersPerSecond / SwerveConstants.kMaxWheelDriveSpeedMetersPerSecond;
-    }
-    public static double toAngleRelativeSpeed(double angleSpeedRadiansPerSecond) {
-        return angleSpeedRadiansPerSecond / SwerveConstants.kMaxWheelAngleSpeedRadiansPerSecond;
     }
 
     public static double getLinearVelocity(double radiansPerSecond, double radius) {
