@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.DeviceIds;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.hardware.SparkMaxMotor;
 
 public class ElevatorSubsystem extends SubsystemBase {

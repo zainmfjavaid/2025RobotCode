@@ -8,7 +8,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.PhotonVision;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class ReefAlignCommand extends Command {
     private SwerveSubsystem swerveSubsystem;
@@ -49,7 +49,7 @@ public class ReefAlignCommand extends Command {
         double ySpeed = (12 - xOffset) * (maxDriveSpeedFeetPerSecond * .001);
         double rotationalSpeed = (Constants.IntakeConstants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0001);
 
-        swerveSubsystem.setModuleSpeeds(0, 0, rotationalSpeed);
+        //swerveSubsystem.setModuleSpeeds(0, 0, rotationalSpeed);
 
         photonVision.updateCameraResults();
 }
@@ -57,7 +57,7 @@ public class ReefAlignCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.setModuleSpeeds(0, 0, 0);
+        // swerveSubsystem.setModuleSpeeds(0, 0, 0);
     }
 
     // Returns true when the command should end.

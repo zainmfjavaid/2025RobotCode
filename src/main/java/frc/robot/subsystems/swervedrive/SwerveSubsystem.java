@@ -37,7 +37,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
-import frc.robot.commands.CustomSwerveCommand;
+import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
 import java.io.IOException;
@@ -589,7 +589,7 @@ public class SwerveSubsystem extends SubsystemBase
 public Command getCustomDriveCommand(DoubleSupplier translationX, 
                                    DoubleSupplier translationY, 
                                    DoubleSupplier rotation) {
-    return new CustomSwerveCommand(this, translationX, translationY, rotation, true);
+    return new TeleopDriveCommand(this, translationX, translationY, rotation, true);
 }
 
   /**
