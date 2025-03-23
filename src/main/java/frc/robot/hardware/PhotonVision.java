@@ -43,4 +43,8 @@ public class PhotonVision {
 
         return Math.abs(Math.tan(getPitch()) * heightDifference);
     }
+
+    public boolean getHasResults() {
+        return hasResults;
+    }
 }

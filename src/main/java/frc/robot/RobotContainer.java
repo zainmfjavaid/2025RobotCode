@@ -21,11 +21,8 @@ import frc.robot.commands.SourceIntakeCommand;
 import frc.robot.commands.autoncommands.ArmInitCommand;
 import frc.robot.commands.autoncommands.TorchIntakeCommand;
 import frc.robot.commands.autoncommands.AutonTroughScoreCommand;
+import frc.robot.commands.elevator.ElevatorMove;
 import frc.robot.commands.elevator.ElevatorScore;
-import frc.robot.commands.elevator.L1;
-import frc.robot.commands.elevator.L2;
-import frc.robot.commands.elevator.L3;
-import frc.robot.commands.elevator.L4;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -42,25 +39,30 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 
 public class RobotContainer {
     private final SendableChooser<Command> autonChooser;
+
+    // Controllers
     private final DriverController driverController = new DriverController();
     private final OperatorController operatorController = new OperatorController();
     
+    // Subsystems
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
-    // Elevator commands
-    // Future fix: this seems inefficient, maybe create a single command class instead having 4 different command classes
-    private final L1 levelOneCommand = new L1(intakeSubsystem, elevatorSubsystem);
-    private final L2 levelTwoCommand = new L2(intakeSubsystem, elevatorSubsystem);
-    private final L3 levelThreeCommand = new L3(intakeSubsystem, elevatorSubsystem);
-    private final L4 levelFourCommand = new L4(intakeSubsystem, elevatorSubsystem);
+    // Elevator Commands
+    private final ElevatorMove levelOneCommand = new ElevatorMove(intakeSubsystem, elevatorSubsystem, IntakeState.TROUGH);
+    private final ElevatorMove levelTwoCommand = new ElevatorMove(intakeSubsystem, elevatorSubsystem, IntakeState.L2);
+    private final ElevatorMove levelThreeCommand = new ElevatorMove(intakeSubsystem, elevatorSubsystem, IntakeState.L3);
+    private final ElevatorMove levelFourCommand = new ElevatorMove(intakeSubsystem, elevatorSubsystem, IntakeState.L4);
 
-    private final SourceIntakeCommand sourceIntakeCommand = new SourceIntakeCommand(intakeSubsystem, elevatorSubsystem);
     private final ElevatorScore elevatorScoreCommand = new ElevatorScore(intakeSubsystem, elevatorSubsystem, IntakeState.L4); // create new cmd AT the trigger
-    private final IntakeCommand intakeCommand = new IntakeCommand(intakeSubsystem, elevatorSubsystem);
 
+    // Intake Commands
+    private final IntakeCommand intakeCommand = new IntakeCommand(intakeSubsystem, elevatorSubsystem);
+    private final SourceIntakeCommand sourceIntakeCommand = new SourceIntakeCommand(intakeSubsystem, elevatorSubsystem);
+
+    // Auton Named Commands
     private final ArmInitCommand armInitCommand = new ArmInitCommand(intakeSubsystem);
     private final TorchIntakeCommand torchIntakeCommand = new TorchIntakeCommand(intakeSubsystem);
     private final AutonTroughScoreCommand troughScoreCommand = new AutonTroughScoreCommand(intakeSubsystem);
@@ -80,12 +82,13 @@ public class RobotContainer {
     }
     
     private void configureBindings() { 
-        // Driver controls
-        driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
+        // Driver Controls
         driverController.getButton(DriverController.Button.LB).whileTrue(intakeCommand);
         driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
-
         driverController.getButton(DriverController.Button.X).whileTrue(new StartEndCommand(() -> intakeSubsystem.runRollerMotors(-0.6), () -> intakeSubsystem.runRollerMotors(0), intakeSubsystem));
+
+        driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
+
         driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyro()));
 
         // Operator Controls

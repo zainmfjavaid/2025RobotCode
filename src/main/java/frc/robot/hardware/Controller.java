@@ -3,12 +3,12 @@ package frc.robot.hardware;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
-import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants;
 
 public class Controller {
 
     public static class DriverController {
-        private final Joystick joystick = new Joystick(OperatorConstants.kDriverControllerPort);
+        private final Joystick joystick = new Joystick(Constants.kDriverControllerPort);
 
         public enum Button
         {
@@ -65,7 +65,7 @@ public class Controller {
     }
 
     public static class OperatorController {
-        private final Joystick joystick = new Joystick(OperatorConstants.kOperatorControllerPort);
+        private final Joystick joystick = new Joystick(Constants.kOperatorControllerPort);
 
         public static enum Button {
             X(1),

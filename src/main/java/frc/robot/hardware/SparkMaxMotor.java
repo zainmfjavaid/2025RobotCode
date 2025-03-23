@@ -9,8 +9,6 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import frc.robot.subsystems.SwerveUtils;
-
 public class SparkMaxMotor {
     private final SparkMax motor;
     private final RelativeEncoder encoder;
