@@ -5,6 +5,7 @@
 package frc.robot.commands.autoncommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.SystemSpeeds;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.subsystems.IntakeSubsystem;
 
@@ -33,7 +34,7 @@ public class AutonTroughScoreCommand extends Command {
 		cycles++;
         
         if (intakeSubsystem.atSetpoint(IntakeState.TROUGH)) {
-            intakeSubsystem.runRollerMotors(-0.2);
+            intakeSubsystem.runRollerMotors(SystemSpeeds.kScoreOuttakeRollerSpeed);
         }
 
         if (cycles >= 100) {

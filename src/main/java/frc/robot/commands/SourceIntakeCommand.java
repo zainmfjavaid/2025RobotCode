@@ -5,6 +5,7 @@
 package frc.robot.commands;
  
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.SystemSpeeds;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -36,7 +37,7 @@ public class SourceIntakeCommand extends Command {
     @Override
     public void execute() {
         if (intakeSubsystem.atSetpoint(IntakeState.SOURCE)) {
-            intakeSubsystem.runRollerMotors(0.8);
+            intakeSubsystem.runRollerMotors(SystemSpeeds.kIntakeRollerSpeed);
         }
     }
 

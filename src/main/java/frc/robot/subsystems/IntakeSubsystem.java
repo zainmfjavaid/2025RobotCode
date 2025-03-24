@@ -6,10 +6,12 @@ package frc.robot.subsystems;
 
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.hardware.SparkMaxMotor;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.DeviceIds;
+import frc.robot.Constants.SystemSpeeds;
 
 public class IntakeSubsystem extends SubsystemBase {
     /** Creates a new IntakeSubsystem. */
@@ -65,16 +67,8 @@ public class IntakeSubsystem extends SubsystemBase {
         wristMotor.set(0);
     }
 
-    public void runWristMotor(double speed) {
-        IntakeState intakeState = IntakeState.INTAKE;
-        double wristPIDOutput = wristPIDController.calculate(wristMotor.getPositionRotations(), intakeState.getWristValue());
-
-        System.out.println(wristPIDOutput);
-        wristMotor.set(wristPIDOutput);
-    }
-
-    public void printWristEncoder() {
-        System.out.println(wristMotor.getPositionRotations());
+    public StartEndCommand outtakeCommand() {
+        return new StartEndCommand(() -> runRollerMotors(SystemSpeeds.kOuttakeRollerSpeed), () -> runRollerMotors(0), this);
     }
 
     @Override

@@ -5,6 +5,7 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.SystemSpeeds;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -34,7 +35,7 @@ public class ElevatorScore extends Command {
         cycles = 0;
         // TODO: NEED TO CHECK THIS STATE
         if (intakeSubsystem.atSetpoint(IntakeState.TROUGH)) {
-            intakeSubsystem.runRollerMotors(-0.2);
+            intakeSubsystem.runRollerMotors(SystemSpeeds.kScoreOuttakeRollerSpeed);
         } else {
             elevatorSubsystem.setOverride(true);
             elevatorSubsystem.goDown();
@@ -47,7 +48,7 @@ public class ElevatorScore extends Command {
         cycles++;
 
         if (cycles > 10 && cycles < 30) {
-            intakeSubsystem.runRollerMotors(-0.2);
+            intakeSubsystem.runRollerMotors(SystemSpeeds.kScoreOuttakeRollerSpeed);
         } else if (cycles > 30 && cycles < 60) {
             intakeSubsystem.runRollerMotors(0);
 

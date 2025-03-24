@@ -18,6 +18,17 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
 
+    // Speed Constants
+    public static class SystemSpeeds {
+        public static final double kElevatorDownSpeed = 0.4;
+
+        public static final double kIntakeRollerSpeed = 0.8;
+        public static final double kOuttakeRollerSpeed = -0.6;
+        public static final double kScoreOuttakeRollerSpeed = -0.2;
+
+        public static final double kClimbSpeed = 1.0;
+    }
+
     public static class DeviceIds {
         // Swerve (TalonFX)
         public static final int kFrontLeftDriveMotor = 1;
