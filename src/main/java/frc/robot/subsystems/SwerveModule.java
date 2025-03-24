@@ -42,7 +42,6 @@ public class SwerveModule {
         resetEncoders();
     }
 
-    @SuppressWarnings("unused")
     private double getAngleAbsoluteEncoderPositionRadians() {
         return wheelAngleAbsoluteEncoder.getPositionRadians();
     }
@@ -55,8 +54,10 @@ public class SwerveModule {
         lastDesiredWheelAngleRadians = desiredWheelAngleRadians;
         
         double currentWheelAngleRadians = 
-        // getAngleAbsoluteEncoderPositionRadians();
-        getAngleRelativeEncoderPositionRadians();
+        getAngleAbsoluteEncoderPositionRadians();
+        // getAngleRelativeEncoderPositionRadians();
+
+        System.out.println(name + " " + getAngleRelativeEncoderPositionRadians() + " " + getAngleAbsoluteEncoderPositionRadians());
 
         double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
         // If greater than 180 deg, go the other way

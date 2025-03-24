@@ -8,7 +8,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.SwerveConstants.TeleopSwerveConstants;
@@ -17,10 +16,6 @@ import frc.robot.hardware.Controller.DriverController;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 public class SwerveSubsystem extends SubsystemBase {
     // Modules
@@ -34,9 +29,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final Pigeon2 gyro = new Pigeon2(20, "CANivore2158");
     private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(getKinematics(), new Rotation2d(0), getModulePositions());
 
-    private static RobotConfig config;
-
-    private final double retractElevatorThresholdRadians = Rotation2d.fromDegrees(3).getRadians();
+    private final double kRetractElevatorThresholdRadians = Rotation2d.fromDegrees(3).getRadians();
 
     private double speedConstant = 1.0;
 
@@ -163,7 +156,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public void tipDetection() {
         double rollRadians = getGyroRotation3d().getX();
         double pitchRadians = getGyroRotation3d().getY();
-        if (rollRadians > retractElevatorThresholdRadians || pitchRadians > retractElevatorThresholdRadians) {
+        if (rollRadians > kRetractElevatorThresholdRadians || pitchRadians > kRetractElevatorThresholdRadians) {
             // System.out.println("tip");
             // elevator.setPosition(IntakeState.STOW);
         }
@@ -252,39 +245,5 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void printOdometerPose() {
         System.out.println("Odometer Pose: " + getPose());
-    }
-    
-    // auton
-
-    public void initAuton(){
-        try{
-            config = RobotConfig.fromGUISettings();
-        } catch (Exception e) {
-            // Handle exception as needed
-            e.printStackTrace();
-        }
-        AutoBuilder.configure(
-            this::getPose, // Robot pose supplier
-            this::resetOdometer, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            (speeds, feedforwards) -> setChassisSpeeds(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
-            ),
-            config, // The robot configuration
-            () -> {
-              // Boolean supplier that controls when the path will be mirrored for the red alliance
-              // This will flip the path being followed to the red side of the field.
-              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-                var alliance = DriverStation.getAlliance();
-                if (alliance.isPresent()) {
-                    return alliance.get() == DriverStation.Alliance.Red;
-                }
-                return false;
-            },
-            this // Reference to this subsystem to set requirements
-        );
     }
 }

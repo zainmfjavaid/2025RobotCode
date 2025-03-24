@@ -49,13 +49,7 @@ public class AutoSwerveCommand extends Command {
 
         Pose2d currentPose = swerveSubsystem.getPose();
 
-        double xError = desiredPose.getX() - currentPose.getX();
-        double yError = desiredPose.getY() - currentPose.getY();
-        double angleErrorRadians = desiredPose.getRotation().getRadians() - currentPose.getRotation().getRadians();
-
-        SmartDashboard.putNumber("X Error", xError);
-        SmartDashboard.putNumber("Y Error", yError);
-        SmartDashboard.putNumber("Rotation Error", angleErrorRadians);
+        displayErrors(currentPose, desiredPose);
 
         double xSpeed = getXSpeed(currentPose.getX(), desiredPose.getX());
         double ySpeed = getYSpeed(currentPose.getY(), desiredPose.getY());
@@ -78,6 +72,20 @@ public class AutoSwerveCommand extends Command {
     public boolean isFinished() {
         return false;
     }
+
+    // Shuffleboard
+
+    public void displayErrors(Pose2d currentPose, Pose2d desiredPose) {
+        double xError = desiredPose.getX() - currentPose.getX();
+        double yError = desiredPose.getY() - currentPose.getY();
+        double angleErrorRadians = desiredPose.getRotation().getRadians() - currentPose.getRotation().getRadians();
+
+        SmartDashboard.putNumber("X Error", xError);
+        SmartDashboard.putNumber("Y Error", yError);
+        SmartDashboard.putNumber("Rotation Error", angleErrorRadians);
+    }
+
+    // Speeds
 
     public double getXSpeed(double currentX, double desiredX) {
         return AutoSwerveConstants.kXController.calculate(currentX, desiredX);
