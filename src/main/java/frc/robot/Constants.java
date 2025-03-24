@@ -59,10 +59,10 @@ public final class Constants {
 
     public static class IntakeConstants {
         public enum IntakeState {
-            STOW(1.1, 16.9, 0),
-            INTAKE(21.2, 16.9, 0),
-            SOURCE(2.2, 16.9, -6200),
-            TROUGH(6, 16.9, 0),
+            STOW(1.1, 15.9, 0),
+            INTAKE(20.6, 15.9, 0),
+            SOURCE(2.2, 15.9, -6200),
+            TROUGH(6, 16.1, 0),
             L2(12.8, 0, -6900),
             L3(12.8, 0, -14837),
             L4(12.8, 0, -31109),

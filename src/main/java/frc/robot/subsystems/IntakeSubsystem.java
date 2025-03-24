@@ -57,7 +57,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void runRollerMotors(double speed) {
         if (getDistance() <= 45 && speed >= 0) {
-            rollerMotor.set(0);
+            rollerMotor.set(speed);
         } else {
             rollerMotor.set(speed);
         }

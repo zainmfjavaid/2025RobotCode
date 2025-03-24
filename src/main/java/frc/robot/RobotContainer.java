@@ -70,7 +70,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("TorchIntake", torchIntakeCommand);
         NamedCommands.registerCommand("TroughScore", troughScoreCommand);
 
-        swerveSubsystem.setDefaultCommand(swerveSubsystem.getCustomDriveCommand(() -> driverController.getLeftStickY(), () -> driverController.getLeftStickX(), () -> driverController.getRightStickX()));
+        swerveSubsystem.setDefaultCommand(swerveSubsystem.getCustomDriveCommand(() -> driverController.getLeftStickY(), () -> driverController.getLeftStickX(), () -> driverController.getRightStickX(), true));
 
         configureBindings();
     

@@ -494,8 +494,8 @@ public class SwerveSubsystem extends SubsystemBase
  */
 public Command getCustomDriveCommand(DoubleSupplier translationX, 
                                    DoubleSupplier translationY, 
-                                   DoubleSupplier rotation) {
-    return new TeleopDriveCommand(this, translationX, translationY, rotation, true);
+                                   DoubleSupplier rotation, boolean fieldRelative) {
+    return new TeleopDriveCommand(this, translationX, translationY, rotation, fieldRelative);
 }
 
   /**
