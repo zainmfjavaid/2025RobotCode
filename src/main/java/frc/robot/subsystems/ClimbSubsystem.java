@@ -6,12 +6,13 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DeviceIds;
 import frc.robot.hardware.SparkMaxMotor;
 import edu.wpi.first.math.controller.PIDController;
 
 public class ClimbSubsystem extends SubsystemBase {
 
-  SparkMaxMotor climbMotor = new SparkMaxMotor(35, false, false, true); // TEMP
+  SparkMaxMotor climbMotor = new SparkMaxMotor(DeviceIds.kClimbMotor, true);
 
     PIDController climbPIDController = new PIDController(0.1, 0, 0);
 
@@ -34,11 +35,11 @@ public class ClimbSubsystem extends SubsystemBase {
     }
 
     public StartEndCommand climbCommandTest() {
-      return new StartEndCommand(() -> climbMotor.set(0.8), () -> climbMotor.set(0), this);
+      return new StartEndCommand(() -> climbMotor.set(1), () -> climbMotor.set(0), this);
     }
 
     public StartEndCommand reverseClimbCommandTest() {
-      return new StartEndCommand(() -> climbMotor.set(-0.8), () -> climbMotor.set(0), this);
+      return new StartEndCommand(() -> climbMotor.set(-1), () -> climbMotor.set(0), this);
     }
     
     @Override

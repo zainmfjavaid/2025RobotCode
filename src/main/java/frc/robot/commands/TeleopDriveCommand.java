@@ -1,15 +1,14 @@
 package frc.robot.commands;
 
-import com.ctre.phoenix6.hardware.TalonFX;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj2.command.Command;
-
 import java.util.function.DoubleSupplier;
-
+import frc.robot.Constants.DeviceIds;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveModule;
 
@@ -46,26 +45,26 @@ public class TeleopDriveCommand extends Command {
         driveMotors = new TalonFX[4];
         
         // Front Left
-        angleMotors[0] = new TalonFX(2, "CANivore2158");
-        driveMotors[0] = new TalonFX(1, "CANivore2158");
+        angleMotors[0] = new TalonFX(DeviceIds.kFrontLeftAngleMotor, "CANivore2158");
+        driveMotors[0] = new TalonFX(DeviceIds.kFrontLeftDriveMotor, "CANivore2158");
         angleMotors[0].setInverted(true);
         driveMotors[0].setInverted(true);
 
         // Front Right
-        angleMotors[1] = new TalonFX(7, "CANivore2158");
-        driveMotors[1] = new TalonFX(8, "CANivore2158");
+        angleMotors[1] = new TalonFX(DeviceIds.kFrontRightAngleMotor, "CANivore2158");
+        driveMotors[1] = new TalonFX(DeviceIds.kFrontRightDriveMotor, "CANivore2158");
         angleMotors[1].setInverted(true);
         driveMotors[1].setInverted(false);
 
         // Back Left
-        angleMotors[2] = new TalonFX(4, "CANivore2158");
-        driveMotors[2] = new TalonFX(3, "CANivore2158");
+        angleMotors[2] = new TalonFX(DeviceIds.kBackLeftAngleMotor, "CANivore2158");
+        driveMotors[2] = new TalonFX(DeviceIds.kBackLeftDriveMotor, "CANivore2158");
         angleMotors[2].setInverted(true);
         driveMotors[2].setInverted(true);
 
         // Back Right
-        angleMotors[3] = new TalonFX(6, "CANivore2158");
-        driveMotors[3] = new TalonFX(5, "CANivore2158");
+        angleMotors[3] = new TalonFX(DeviceIds.kBackRightAngleMotor, "CANivore2158");
+        driveMotors[3] = new TalonFX(DeviceIds.kBackRightDriveMotor, "CANivore2158");
         angleMotors[3].setInverted(true);
         driveMotors[3].setInverted(false);
     }

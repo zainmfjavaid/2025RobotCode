@@ -13,8 +13,8 @@ import frc.robot.Constants.DeviceIds;
 
 public class IntakeSubsystem extends SubsystemBase {
     /** Creates a new IntakeSubsystem. */
-    SparkMaxMotor armMotor = new SparkMaxMotor(DeviceIds.kArmMotor, false, false, true);
-    SparkMaxMotor wristMotor = new SparkMaxMotor(DeviceIds.kWristMotor, false, false, true, 100);
+    SparkMaxMotor armMotor = new SparkMaxMotor(DeviceIds.kArmMotor, true);
+    SparkMaxMotor wristMotor = new SparkMaxMotor(DeviceIds.kWristMotor, true);
     SparkMaxMotor rollerMotor = new SparkMaxMotor(DeviceIds.kRollerMotor);
     
     PIDController armPIDController = new PIDController(0.035, 0, 0);
@@ -35,7 +35,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
         if (armMotor.getPositionRotations() > 2) {
             wristMotor.set(wristPIDOutput);
-            //System.out.println("running wrist PID from " + wristMotor.getPositionRotations() + " to setpoint " + intakeState.getWristValue() + " at speed " + wristPIDOutput);
         } else {
             wristMotor.set(0);
         }

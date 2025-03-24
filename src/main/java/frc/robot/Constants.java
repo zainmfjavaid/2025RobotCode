@@ -37,6 +37,9 @@ public final class Constants {
         public static final int kArmMotor = 33;
         public static final int kWristMotor = 14;
         public static final int kRollerMotor = 30;
+
+        // Climb (SparkMax)
+        public static final int kClimbMotor = 35;
     }
 
     public static class IntakeConstants {

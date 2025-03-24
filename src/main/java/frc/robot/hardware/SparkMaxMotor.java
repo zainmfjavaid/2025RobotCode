@@ -20,11 +20,15 @@ public class SparkMaxMotor {
         this(deviceId, false, false, false);
     }
 
-    public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder) {
+    public SparkMaxMotor(int deviceId, boolean isBrake) {
+        this(deviceId, false, false, isBrake);
+    }
+
+    public SparkMaxMotor(int deviceId, boolean reverseMotor, boolean reverseEncoder) {
         this(deviceId, reverseMotor, reverseEncoder, false);
     }
     
-    public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder, Boolean isBrake) {
+    public SparkMaxMotor(int deviceId, boolean reverseMotor, boolean reverseEncoder, boolean isBrake) {
         motor = new SparkMax(deviceId, MotorType.kBrushless);
         encoder = motor.getEncoder();
 
@@ -36,7 +40,7 @@ public class SparkMaxMotor {
         this.reverseEncoder = reverseEncoder;
     }
 
-    public SparkMaxMotor(int deviceId, Boolean reverseMotor, Boolean reverseEncoder, Boolean isBrake, int currentLimit) {
+    public SparkMaxMotor(int deviceId, boolean reverseMotor, boolean reverseEncoder, boolean isBrake, int currentLimit) {
         motor = new SparkMax(deviceId, MotorType.kBrushless);
         encoder = motor.getEncoder();
 
