@@ -4,23 +4,19 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.config.AlternateEncoderConfig;
-
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.hardware.SparkMaxMotor;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.DeviceIds;
+import frc.robot.Constants.SystemSpeeds;
 
 public class IntakeSubsystem extends SubsystemBase {
     /** Creates a new IntakeSubsystem. */
-    SparkMaxMotor armMotor = new SparkMaxMotor(DeviceIds.kArmMotor, false, false, true);
-    SparkMaxMotor wristMotor = new SparkMaxMotor(DeviceIds.kWristMotor, false, false, true, 100);
+    SparkMaxMotor armMotor = new SparkMaxMotor(DeviceIds.kArmMotor, true);
+    SparkMaxMotor wristMotor = new SparkMaxMotor(DeviceIds.kWristMotor, true);
     SparkMaxMotor rollerMotor = new SparkMaxMotor(DeviceIds.kRollerMotor);
     
     PIDController armPIDController = new PIDController(0.035, 0, 0);
@@ -41,7 +37,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
         if (armMotor.getPositionRotations() > 2) {
             wristMotor.set(wristPIDOutput);
-            //System.out.println("running wrist PID from " + wristMotor.getPositionRotations() + " to setpoint " + intakeState.getWristValue() + " at speed " + wristPIDOutput);
         } else {
             wristMotor.set(0);
         }
@@ -72,16 +67,8 @@ public class IntakeSubsystem extends SubsystemBase {
         wristMotor.set(0);
     }
 
-    public void runWristMotor(double speed) {
-        IntakeState intakeState = IntakeState.INTAKE;
-        double wristPIDOutput = wristPIDController.calculate(wristMotor.getPositionRotations(), intakeState.getWristValue());
-
-        System.out.println(wristPIDOutput);
-        wristMotor.set(wristPIDOutput);
-    }
-
-    public void printWristEncoder() {
-        System.out.println(wristMotor.getPositionRotations());
+    public StartEndCommand outtakeCommand() {
+        return new StartEndCommand(() -> runRollerMotors(SystemSpeeds.kOuttakeRollerSpeed), () -> runRollerMotors(0), this);
     }
 
     @Override

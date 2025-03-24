@@ -8,14 +8,14 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.PhotonVision;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class ReefAlignCommand extends Command {
     private SwerveSubsystem swerveSubsystem;
     private PhotonVision photonVision;
 
-    private double maxDriveSpeedFeetPerSecond = Units.metersToFeet(Constants.DriveConstants.kMaxWheelDriveSpeedMetersPerSecond);
-    private double maxRotationalSpeedDegreesPerSecond = Units.radiansToDegrees(Constants.DriveConstants.kMaxRotationSpeedRadiansPerSecond);
+    private double maxDriveSpeedFeetPerSecond = Units.metersToFeet(4);
+    private double maxRotationalSpeedDegreesPerSecond = Units.radiansToDegrees(4);
     private int targetID;
 
 
@@ -43,13 +43,13 @@ public class ReefAlignCommand extends Command {
         System.out.println("DISTANCE CALCULATED FROM TARGET: " + distance);
         System.out.println("angle of elevation to target " + photonVision.getPitch());
         System.out.println("xOff: " + xOffset);
-        System.out.println("ID & angle: " + targetID + " which is at " + Constants.IntakeConstants.apriltagAngles[targetID]);
+        System.out.println("ID & angle: " + targetID + " which is at " + Constants.apriltagAngles[targetID]);
         System.out.println("my angle is " + currentAngleDegrees);
         double xSpeed = (12 - distance) * (maxDriveSpeedFeetPerSecond * .001);
         double ySpeed = (12 - xOffset) * (maxDriveSpeedFeetPerSecond * .001);
-        double rotationalSpeed = (Constants.IntakeConstants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0001);
+        double rotationalSpeed = (Constants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0001);
 
-        swerveSubsystem.setModuleSpeeds(0, 0, rotationalSpeed);
+        //swerveSubsystem.setModuleSpeeds(0, 0, rotationalSpeed);
 
         photonVision.updateCameraResults();
 }
@@ -57,7 +57,7 @@ public class ReefAlignCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        swerveSubsystem.setModuleSpeeds(0, 0, 0);
+        // swerveSubsystem.setModuleSpeeds(0, 0, 0);
     }
 
     // Returns true when the command should end.

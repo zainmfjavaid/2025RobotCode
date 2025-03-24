@@ -7,38 +7,36 @@ package frc.robot.commands.elevator;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.Constants.IntakeConstants.IntakeState;
-
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.IntakeConstants.IntakeState;
-import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class L1 extends Command {
-    /** Creates a new L1. */
+public class ElevatorMove extends Command {
+    /** Creates a new ElevatorMove. */
     IntakeSubsystem intakeSubsystem;
     ElevatorSubsystem elevatorSubsystem;
+    IntakeState intakeState;
 
-    public L1(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
-        // Use addRequirements() here to declare subsystem dependencies.
+    public ElevatorMove(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem, IntakeState intakeState) {
         this.intakeSubsystem = intakeSubsystem;
         this.elevatorSubsystem = elevatorSubsystem;
-        // Use addRequirements() here to declare subsystem dependencies.
+        this.intakeState = intakeState;
+
         addRequirements(intakeSubsystem, elevatorSubsystem);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        intakeSubsystem.setGoal(IntakeState.TROUGH);
-        elevatorSubsystem.setGoal(IntakeState.TROUGH);
+        intakeSubsystem.setGoal(intakeState);
+        elevatorSubsystem.setGoal(intakeState);
+        elevatorSubsystem.setOverride(false);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         if (elevatorSubsystem.atSetpoint()) {
-            intakeSubsystem.setGoal(IntakeState.TROUGH);
+            intakeSubsystem.setGoal(intakeState);
         }
     }
 

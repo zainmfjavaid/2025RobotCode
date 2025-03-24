@@ -6,9 +6,7 @@ package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
 
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -26,7 +24,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -36,8 +33,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
-import frc.robot.Constants;
-import frc.robot.commands.CustomSwerveCommand;
+import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
 import java.io.IOException;
@@ -488,96 +484,6 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.driveFieldOriented(velocity);
   }
 
-  public Command testAngleMotorsDirectly() {
-    return runOnce(() -> {
-      System.out.println("Directly commandng");
-      for (var module : swerveDrive.getModules()) {
-        module.setAngle(90);
-      }
-    });
-  }
-
-  public Command checkAngleMotors() {
-    return runOnce(() -> {
-      var modules = swerveDrive.getModules();
-      for (int i = 0; i < modules.length; i++) {
-        var currentAngle = modules[i].getState().angle.getDegrees();
-        var currentEncoder = modules[i].getAbsoluteEncoder();
-        System.out.println("Module " + i + " Current Angle: " + currentAngle + " Encoder: " + (currentEncoder != null ? "Connected" : "NULL"));
-        System.out.println("---------------------------------------");
-      }
-    });
-  }
-
-  public Command debugControllerToModule() {
-    return runOnce(() -> {
-      ChassisSpeeds speeds = new ChassisSpeeds(4, 4, 0);
-
-      var moduleStates = swerveDrive.kinematics.toSwerveModuleStates(speeds);
-
-      for (int i=0; i < moduleStates.length; i++) {
-        //System.out.println("Module " + i + " target angle: " + moduleStates[i].angle.getDegrees());
-      }
-
-      for (int i=0; i< moduleStates.length; i++) {
-        //System.out.println("Module " + i + " target angle: " + moduleStates[i].angle.getDegrees());
-      }
-
-      for (int i=0; i < swerveDrive.getModules().length; i++) {
-        var module = swerveDrive.getModules()[i];
-        //System.out.println("Module " + i + "current angle " + module.getState().angle.getDegrees());
-      }
-    });
-  }
-
-  public Command increasePIDOutput() {
-      return runOnce(() -> {
-          // Try a very high P value temporarily to see if anything moves
-          for (var module : swerveDrive.getModules()) {
-              // This is just for testing - check if YAGSL provides a way to 
-              // temporarily modify PID values at runtime
-              System.out.println("Testing high-authority command");
-              
-              // Try setting "raw" angle which might bypass some limits
-              // Check if this method exists in your YAGSL version
-              module.setAngle(45);
-          }
-      });
-  }
-
-  public Command testMotorDirectly() {
-      return runOnce(() -> {
-          try {
-              // Try a direct power command to the motor
-              TalonFX motor = new TalonFX(2, "CANivore2158"); // Front left angle motor
-              
-              // Set a moderate voltage directly
-              System.out.println("Sending direct command");
-              motor.set(0.3); // 30% output
-          } catch (Exception e) {
-              System.out.println("Motor direct access failed: " + e.getMessage());
-          }
-      });
-  }
-
-  public Command printRawEncoderValues() {
-    return runOnce(() -> {
-        var modules = swerveDrive.getModules();
-        
-        for (int i = 0; i < modules.length; i++) {
-            // Get the absolute encoder object
-            var encoder = modules[i].getAbsoluteEncoder();
-            
-            // Try to get raw values - the method names may vary based on YAGSL implementation
-            // Most common methods that might give raw values
-            double rawPosition = encoder.getAbsolutePosition();
-            
-            // Some encoders provide this in rotations (0-1)
-            System.out.println("Module " + i + " | Raw CANCoder: " + rawPosition);
-        }
-    });
-}
-
   /**
  * Create a custom swerve drive command that bypasses YAGSL's motor control.
  * 
@@ -589,7 +495,7 @@ public class SwerveSubsystem extends SubsystemBase
 public Command getCustomDriveCommand(DoubleSupplier translationX, 
                                    DoubleSupplier translationY, 
                                    DoubleSupplier rotation) {
-    return new CustomSwerveCommand(this, translationX, translationY, rotation, true);
+    return new TeleopDriveCommand(this, translationX, translationY, rotation, true);
 }
 
   /**

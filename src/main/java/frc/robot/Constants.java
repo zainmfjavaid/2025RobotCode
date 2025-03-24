@@ -4,167 +4,33 @@
 
 package frc.robot;
 
-import java.util.ArrayList;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.math.geometry.Translation2d;
-import frc.robot.hardware.AbsoluteEncoder.EncoderConfig;
-import frc.robot.subsystems.SwerveUtils;
 
 public final class Constants {
+    // Swerve Constants
     public static final double kTau = Math.PI * 2;
+    public static final double kDriveMotorGearRatio = 1.0 / 5.0;
+    public static final double kAngleMotorGearRatio = 1.0 / 3.0;
 
+    // Vision Constants
     public static final double aprilTagHeightInches = 12.125;
     public static final double cameraHeightInches = 12.5;
 
-    public static enum RobotMode {
-        RUN, TEST;
-    }
+    // Controller Constants
+    public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
 
-    public static final RobotMode kRobotMode = RobotMode.TEST;
+    public static class SystemSpeeds {
+        public static final double kElevatorDownSpeed = 0.4;
 
-    public static class RobotConstants {
-        public static final double kTrackWidth = Units.inchesToMeters(19.75); // don't know if this is right
-        public static final double kWheelbase = Units.inchesToMeters(19.75); // don't know if this is right
+        public static final double kIntakeRollerSpeed = 0.8;
+        public static final double kOuttakeRollerSpeed = -0.6;
+        public static final double kScoreOuttakeRollerSpeed = -0.2;
 
-        public static final double kKrakenMotorMaxRotationsPerMinute = 8000;
-        public static final double kKrakenMotorMaxRadiansPerSecond = kKrakenMotorMaxRotationsPerMinute / 60 * kTau;
-    }
+        public static final double kClimbSpeed = 1.0;
 
-    public static class DriveConstants {
-        public static enum DriveType {
-            ARCADE, // doesn't exist
-            SWERVE, 
-            SPINDRIVE, // spins the drive motors // used to determine direction of drive motors
-            SPINANGLE, // spins the angle motors // used to determine direction of angle motors
-            SPIN, // set rotation speed
-            DRIVE, // set longitudinal speed
-            ALIGN, // doesn't do anything
-            TEST;
-        } 
-
-        public static final DriveType driveType = DriveType.SWERVE;
-        
-        public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5); // don't know if this is right
-        public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
-
-        public static final double kDriveMotorGearRatio = 1.0 / 5.0; // (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
-        public static final double kAngleMotorGearRatio = 1.0 / 3.0; // (14.0 / 50.0) * (10.0 / 60.0);
-
-        private static final double kMaxWheelDriveSpeedRadiansPerSecond = SwerveUtils.driveMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
-        public static final double kMaxWheelDriveSpeedMetersPerSecond = SwerveUtils.getLinearVelocity(kMaxWheelDriveSpeedRadiansPerSecond, kWheelRadiusMeters);
-
-        public static final double kMaxWheelAngleSpeedRadiansPerSecond = SwerveUtils.angleMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
-
-        private static final double kRotationRadiusMeters = Math.hypot(RobotConstants.kTrackWidth / 2, RobotConstants.kWheelbase / 2);
-        public static final double kMaxRotationSpeedRadiansPerSecond = kMaxWheelDriveSpeedMetersPerSecond / kRotationRadiusMeters;
-    }
-
-    public static class SwerveConstants {
-        public enum Module {
-            FRONT_LEFT(DeviceIds.kFrontLeftDriveMotor, DeviceIds.kFrontLeftAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_LEFT),
-            FRONT_RIGHT(DeviceIds.kFrontRightDriveMotor, DeviceIds.kFrontRightAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, -RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_RIGHT),
-            BACK_LEFT(DeviceIds.kBackLeftDriveMotor, DeviceIds.kBackLeftAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_LEFT),
-            BACK_RIGHT(DeviceIds.kBackRightDriveMotor, DeviceIds.kBackRightAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, -RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_RIGHT);
-
-            private final int driveMotorDeviceId;
-            private final int angleMotorDeviceId;
-            private final Translation2d location;
-            private final EncoderConfig encoderConfig;
-
-            private Module(int driveMotorDeviceId, int angleMotorDeviceId, Translation2d location, EncoderConfig encoderConfig) {
-                this.driveMotorDeviceId = driveMotorDeviceId;
-                this.angleMotorDeviceId = angleMotorDeviceId;
-                this.location = location;
-                this.encoderConfig = encoderConfig;
-            }
-
-            public int getDriveMotorDeviceId() {
-                return driveMotorDeviceId;
-            }
-            public int getAngleMotorDeviceId() {
-                return angleMotorDeviceId;
-            }
-            public Translation2d getLocation() {
-                return location;
-            }
-            public EncoderConfig getEncoderConfig() {
-                return encoderConfig;
-            }
-        }
-
-        public enum EncoderType {
-            RELATIVE, // may fix drift problem but not sure
-            ABSOLUTE;
-        }
-
-        public static final EncoderType kEncoderType = EncoderType.ABSOLUTE;
-        
-        public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5); // don't know if this is right
-        public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
-
-        public static final double kDriveMotorGearRatio = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
-        public static final double kAngleMotorGearRatio = (14.0 / 50.0) * (10.0 / 60.0);
-
-        public static final double kMaxWheelDriveSpeedRadiansPerSecond = SwerveUtils.driveMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
-        public static final double kMaxWheelDriveSpeedMetersPerSecond = SwerveUtils.getLinearVelocity(kMaxWheelDriveSpeedRadiansPerSecond, kWheelRadiusMeters);
-
-        public static final double kMaxWheelAngleSpeedRadiansPerSecond = SwerveUtils.angleMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
-
-        public static final double kRobotRotationRadiusMeters = Math.hypot(RobotConstants.kTrackWidth / 2, RobotConstants.kWheelbase / 2);
-        public static final double kMaxRotationSpeedRadiansPerSecond = kMaxWheelDriveSpeedMetersPerSecond / kRobotRotationRadiusMeters;
-
-        public static class TeleopSwerveConstants {
-            public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(18);
-
-            public static final double kMaxRotationSpeedRadiansPerSecond = DriveConstants.kMaxRotationSpeedRadiansPerSecond / 3;
-
-            public static final PIDController kRotationController = new PIDController(1.5, 0, 0);
-        }
-
-        public static class AutoSwerveConstants {
-            public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(2);
-            public static final double kMaxRotationSpeedRadiansPerSecond = Math.PI / 6;
-
-            public static final double kMaxAccelerationMetersPerSecondSquared = kMaxDriveSpeedMetersPerSecond / 6;
-            public static final double kMaxRotationAccelerationRadiansPerSecondSquared = kMaxRotationSpeedRadiansPerSecond / 6;
-
-            public static final PIDController kXController = new PIDController(0.1, 0, 0.1);
-            public static final PIDController kYController = new PIDController(0.1, 0, 0.1);
-
-            public static final PIDController kThetaController = new PIDController(0.5 / Math.PI, 0, 0);
-            public static final Constraints kThetaConstraints = new Constraints(kMaxRotationSpeedRadiansPerSecond, kMaxRotationAccelerationRadiansPerSecondSquared);
-        }
-    }
-
-    public static class OperatorConstants {
-        public static final int kDriverControllerPort = 0;
-        public static final int kOperatorControllerPort = 1;
-    }
-
-    public static class AbsoluteEncoderConstants {
-        // if swerve module reverse is (true, true)
-        // public static final double kFrontLeftOffset = -(0.29296875);
-        // public static final double kFrontRightOffset = -(0.46142578125);
-        // public static final double kBackLeftOffset = -(0.3974609375);
-        // public static final double kBackRightOffset = -(-0.19677734375);
-
-        /*
-FL: RRot -0.2338346354166667, RRad -1.4692263455596954, ARot 0.30224609375, ARad 1.8990682154024239
-FR: RRot -0.068359375, RRad -0.4295146206079795, ARot 0.462646484375, ARad 2.90689359304329
-BL: RRot -0.698359375, RRad -4.3879213641311186, ARot 0.41650390625, ARad 2.6169712241329037
-BR: RRot 0.456162109375, RRad 2.8661510633170475, ARot -0.199951171875, ARad -1.2563302652783401
-         */
-        
-        // if swerve module reverse is (false, false)
-        public static final double kFrontLeftOffset = -(0.30224609375);
-        public static final double kFrontRightOffset = -(0.462646484375);
-        public static final double kBackLeftOffset = -(0.41650390625);
-        public static final double kBackRightOffset = -(-0.199951171875);
-
-        public static final double kAbsoluteSensorDiscontinuityPoint = 0.5;
+        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(18);
+        public static final double kMaxRotationSpeedRadiansPerSecond = 4.0;
     }
 
     public static class DeviceIds {
@@ -177,18 +43,22 @@ BR: RRot 0.456162109375, RRad 2.8661510633170475, ARot -0.199951171875, ARad -1.
         public static final int kBackLeftAngleMotor = 4;
         public static final int kBackRightDriveMotor = 5;
         public static final int kBackRightAngleMotor = 6;
+        
         // Elevator (SparkMax)
         public static final int kLeftElevatorMotor = 5;
         public static final int kRightElevatorMotor = 6;
+
         // Intake (SparkMax)
         public static final int kArmMotor = 33;
         public static final int kWristMotor = 14;
         public static final int kRollerMotor = 30;
+
+        // Climb (SparkMax)
+        public static final int kClimbMotor = 35;
     }
 
     public static class IntakeConstants {
         public enum IntakeState {
-            // ARM VALUES/WRIST ANGLES ARE TEMPORARY
             STOW(1.1, 16.9, 0),
             INTAKE(21.2, 16.9, 0),
             SOURCE(2.2, 16.9, -6200),
@@ -220,34 +90,31 @@ BR: RRot 0.456162109375, RRad 2.8661510633170475, ARot -0.199951171875, ARad -1.
                 return elevatorValue;
             }
         }
-
-        public static final double kickerWheelSpeed = 0.2;
-        public static final double rollerMotorSpeed = 0.2;
-
-        public static final double[] apriltagAngles = {
-            0, // 0 (unused)
-            0, // 1
-            0, // 2
-            0, // 3
-            0, // 4
-            0, // 5
-            60, // 6
-            0, // 7
-            -60, // 8
-            -120, // 9
-            180, // 10
-            120, // 11
-            0, // 12
-            0, // 13
-            0, // 14
-            0, // 15
-            0, // 16
-            60, // 17
-            0, // 18
-            -60, // 19
-            -120, // 20
-            180, // 21
-            120 // 22
-        };
     }
+
+    public static final double[] apriltagAngles = {
+        0, // 0 (unused)
+        0, // 1
+        0, // 2
+        0, // 3
+        0, // 4
+        0, // 5
+        60, // 6
+        0, // 7
+        -60, // 8
+        -120, // 9
+        180, // 10
+        120, // 11
+        0, // 12
+        0, // 13
+        0, // 14
+        0, // 15
+        0, // 16
+        60, // 17
+        0, // 18
+        -60, // 19
+        -120, // 20
+        180, // 21
+        120 // 22
+    };
 }

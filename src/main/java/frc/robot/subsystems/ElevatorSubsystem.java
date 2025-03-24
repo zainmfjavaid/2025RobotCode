@@ -10,12 +10,11 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.DeviceIds;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.hardware.SparkMaxMotor;
 
 public class ElevatorSubsystem extends SubsystemBase {
-	private final SparkMaxMotor leftElevatorMotor = new SparkMaxMotor(DeviceIds.kLeftElevatorMotor, false, true);
-	private final SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, true);
+	private final SparkMaxMotor leftElevatorMotor = new SparkMaxMotor(DeviceIds.kLeftElevatorMotor, false, true, true);
+	private final SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, true, true);
 
 	PIDController elevatorPIDController = new PIDController(0.0003, 0, 0);
 
@@ -41,10 +40,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 	public void goDown() {
 		setSpeed(-0.4);
-	}
-
-	public void goUp() {
-		setSpeed(0.4);
 	}
 
 	public void setPosition(IntakeState intakeState) {
@@ -73,7 +68,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 	public boolean atSetpoint() {
 		System.out.println(elevatorEncoder.getDistance());
 		if (Math.abs(currentGoal.getElevatorValue() - elevatorEncoder.getDistance()) < 300) {
-			System.out.println("AT SETPOINT");
 			return true;
 		}
 

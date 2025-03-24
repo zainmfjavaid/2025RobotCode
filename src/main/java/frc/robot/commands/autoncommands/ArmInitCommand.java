@@ -41,7 +41,6 @@ public class ArmInitCommand extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		System.out.println("stop the command");
 		return intakeSubsystem.atSetpoint(IntakeState.STOW);
 	}
 }
