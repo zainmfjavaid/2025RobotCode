@@ -98,8 +98,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("TorchIntake", torchIntakeCommand);
         NamedCommands.registerCommand("TroughScore", troughScoreCommand);
 
-        //swerveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveSubsystem, driverController));
-    
+        drivebase.setDefaultCommand(drivebase.getCustomDriveCommand(() -> driverController.getLeftStickY(), () -> driverController.getLeftStickX(), () -> driverController.getRightStickX()));
+        
         configureBindings();
     
         //autonChooser = AutoBuilder.buildAutoChooser();
