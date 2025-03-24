@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+
 public final class Constants {
     // Swerve Constants
     public static final double kTau = Math.PI * 2;
@@ -18,7 +20,6 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
 
-    // Speed Constants
     public static class SystemSpeeds {
         public static final double kElevatorDownSpeed = 0.4;
 
@@ -27,6 +28,9 @@ public final class Constants {
         public static final double kScoreOuttakeRollerSpeed = -0.2;
 
         public static final double kClimbSpeed = 1.0;
+
+        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(18);
+        public static final double kMaxRotationSpeedRadiansPerSecond = 4.0;
     }
 
     public static class DeviceIds {

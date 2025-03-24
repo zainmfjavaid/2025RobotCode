@@ -5,10 +5,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.util.function.DoubleSupplier;
 import frc.robot.Constants.DeviceIds;
+import frc.robot.Constants.SystemSpeeds;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveModule;
 
@@ -72,14 +74,14 @@ public class TeleopDriveCommand extends Command {
     @Override
     public void execute() {
         // Get joystick inputs with deadband
-        double xInput = applyDeadband(translationX.getAsDouble());
-        double yInput = applyDeadband(translationY.getAsDouble());
-        double rotInput = applyDeadband(rotation.getAsDouble());
+        double xInput = Math.pow(applyDeadband(translationX.getAsDouble()), 3);
+        double yInput = Math.pow(applyDeadband(translationY.getAsDouble()), 3);
+        double rotInput = Math.pow(applyDeadband(rotation.getAsDouble()), 3);
         
         // Scale inputs to correct speeds
-        double xSpeed = xInput * 4;
-        double ySpeed = yInput * 4;
-        double rot = rotInput * 4;
+        double xSpeed = xInput * SystemSpeeds.kMaxDriveSpeedMetersPerSecond;
+        double ySpeed = yInput * SystemSpeeds.kMaxDriveSpeedMetersPerSecond;
+        double rot = rotInput * SystemSpeeds.kMaxRotationSpeedRadiansPerSecond;
         
         // Create chassis speeds (field or robot relative)
         ChassisSpeeds speeds;
@@ -93,7 +95,7 @@ public class TeleopDriveCommand extends Command {
         SwerveModuleState[] moduleStates = swerve.getKinematics().toSwerveModuleStates(speeds);
         
         // Optional: Desaturate module states to respect max speed
-        SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, 4);
+        SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, SystemSpeeds.kMaxDriveSpeedMetersPerSecond);
         
         // Control each module
         SwerveModule[] modules = swerve.getSwerveDrive().getModules();
@@ -118,7 +120,7 @@ public class TeleopDriveCommand extends Command {
             angleOutput = Math.max(-maxOutput, Math.min(maxOutput, angleOutput));
             
             // Calculate drive output normalized to [-1, 1]
-            double driveOutput = moduleStates[i].speedMetersPerSecond / 4;
+            double driveOutput = moduleStates[i].speedMetersPerSecond / SystemSpeeds.kMaxDriveSpeedMetersPerSecond;
             
             // Send commands to motors
             angleMotors[i].set(angleOutput);
