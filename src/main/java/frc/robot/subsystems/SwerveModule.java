@@ -62,7 +62,7 @@ public class SwerveModule {
         double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
         // If greater than 180 deg, go the other way
         if (wheelAngleErrorRadians > Math.PI) {
-            wheelAngleErrorRadians = Constants.kTau - wheelAngleErrorRadians;
+            wheelAngleErrorRadians -= Constants.kTau;
         }
         // If greater than 90 deg, add 180 deg and flip drive motor direction
         if (Math.abs(wheelAngleErrorRadians) > Math.PI / 2) {

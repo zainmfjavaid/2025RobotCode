@@ -41,7 +41,7 @@ public final class Constants {
             ALIGN, // doesn't do anything
             TEST;
         } 
-        public static final DriveType kDriveType = DriveType.SPINANGLE;
+        public static final DriveType kDriveType = DriveType.SWERVE;
     }
 
     public static class SwerveConstants {

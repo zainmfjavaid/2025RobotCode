@@ -20,12 +20,14 @@ public class KrakenMotor {
         FeedbackConfigs feedbackConfigs = new FeedbackConfigs()
             .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
 
-        MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs()
-            .withInverted(InvertedValue.CounterClockwise_Positive);
+        motor.setInverted(true);
+
+        // MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs()
+        //     .withInverted(InvertedValue.CounterClockwise_Positive);
 
         TalonFXConfigurator configurator = motor.getConfigurator();
         configurator.apply(feedbackConfigs);
-        configurator.apply(motorOutputConfigs);
+        // configurator.apply(motorOutputConfigs);
     }
 
     public double getPositionRotations() {

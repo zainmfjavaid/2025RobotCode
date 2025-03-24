@@ -19,6 +19,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 
 public class SwerveSubsystem extends SubsystemBase {
     // Modules
+    
+    // clockwise positive is counterclockwise positive for some reason
     private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, InvertedValue.CounterClockwise_Positive, InvertedValue.CounterClockwise_Positive);
     private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, InvertedValue.CounterClockwise_Positive, InvertedValue.CounterClockwise_Positive);
     private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, InvertedValue.CounterClockwise_Positive, InvertedValue.CounterClockwise_Positive);
@@ -80,9 +82,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
         if (longitudinalSpeedMetersPerSecond == 0 && lateralSpeedMetersPerSecond == 0 && rotationSpeedRadiansPerSecond == 0) {
             // Set module angles based on gyro
-            for (SwerveModuleState moduleState : moduleStates) {
-                moduleState.speedMetersPerSecond = 0;
-                moduleState.angle = Rotation2d.fromRadians(offsetRadians);
+            for (int i = 0; i < 4; i++) {
+                moduleStates[i] = new SwerveModuleState(0, Rotation2d.fromRadians(offsetRadians));
             }
         } else {
             moduleStates = calculateModuleStates(
