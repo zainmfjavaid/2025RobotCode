@@ -70,7 +70,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("TorchIntake", torchIntakeCommand);
         NamedCommands.registerCommand("TroughScore", troughScoreCommand);
 
-        swerveSubsystem.setDefaultCommand(swerveSubsystem.getCustomDriveCommand(() -> driverController.getLeftStickY(), () -> driverController.getLeftStickX(), () -> driverController.getRightStickX(), true));
+        swerveSubsystem.setDefaultCommand(swerveSubsystem.getCustomDriveCommand(driverController::getLeftStickY, driverController::getLeftStickX, driverController::getRightStickX));
 
         configureBindings();
     
@@ -86,7 +86,7 @@ public class RobotContainer {
 
         driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
 
-        driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyro()));
+        driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(swerveSubsystem::resetGyro));
 
         // Operator Controls
         operatorController.getButton(OperatorController.Button.A).onTrue(levelOneCommand);

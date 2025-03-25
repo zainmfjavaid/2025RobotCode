@@ -17,7 +17,6 @@ import swervelib.SwerveModule;
 public class TeleopDriveCommand extends Command {
     private final SwerveSubsystem swerve;
     private final DoubleSupplier translationX, translationY, rotation;
-    private final boolean fieldRelative;
     
     private TalonFX[] angleMotors;
     private TalonFX[] driveMotors;
@@ -26,16 +25,11 @@ public class TeleopDriveCommand extends Command {
     private final double kP = 0.01;
     private final double maxOutput = 0.5;
     
-    public TeleopDriveCommand(SwerveSubsystem swerve, 
-                              DoubleSupplier translationX, 
-                              DoubleSupplier translationY, 
-                              DoubleSupplier rotation,
-                              boolean fieldRelative) {
+    public TeleopDriveCommand(SwerveSubsystem swerve, DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotation) {
         this.swerve = swerve;
         this.translationX = translationX;
         this.translationY = translationY;
         this.rotation = rotation;
-        this.fieldRelative = fieldRelative;
         
         addRequirements(swerve);
     }
@@ -85,7 +79,7 @@ public class TeleopDriveCommand extends Command {
         
         // Create chassis speeds (field or robot relative)
         ChassisSpeeds speeds;
-        if (fieldRelative) {
+        if (SwerveSubsystem.isFieldRelative) {
             speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, swerve.getGyroAngle());
         } else {
             speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);

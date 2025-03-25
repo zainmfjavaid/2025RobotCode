@@ -64,13 +64,16 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Enable vision odometry updates while driving.
    */
-  private final boolean     visionDriveTest = false;
+  private final boolean visionDriveTest = false;
   /**
    * PhotonVision class to keep an accurate odometry.
    */
-  private       Vision      vision;
+  private Vision vision;
 
   private Pigeon2 gyro = new Pigeon2(20, "CANivore2158");
+
+  public static boolean isFieldRelative = true;
+
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -483,7 +486,7 @@ public class SwerveSubsystem extends SubsystemBase
   {
     swerveDrive.driveFieldOriented(velocity);
   }
-
+  
   /**
  * Create a custom swerve drive command that bypasses YAGSL's motor control.
  * 
@@ -492,11 +495,9 @@ public class SwerveSubsystem extends SubsystemBase
  * @param rotation Rotation input supplier (-1 to 1)
  * @return A command that drives the swerve modules directly
  */
-public Command getCustomDriveCommand(DoubleSupplier translationX, 
-                                   DoubleSupplier translationY, 
-                                   DoubleSupplier rotation, boolean fieldRelative) {
-    return new TeleopDriveCommand(this, translationX, translationY, rotation, fieldRelative);
-}
+  public Command getCustomDriveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotation) {
+    return new TeleopDriveCommand(this, translationX, translationY, rotation);
+  }
 
   /**
    * Drive the robot given a chassis field oriented velocity.

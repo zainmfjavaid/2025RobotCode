@@ -9,6 +9,7 @@ import frc.robot.Constants.SystemSpeeds;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class IntakeCommand extends Command {
@@ -20,9 +21,7 @@ public class IntakeCommand extends Command {
         // Use addRequirements() here to declare subsystem dependencies.
         this.intakeSubsystem = intakeSubsystem;
         this.elevatorSubsystem = elevatorSubsystem;
-
-        addRequirements(intakeSubsystem);
-        addRequirements(elevatorSubsystem);
+        addRequirements(intakeSubsystem, elevatorSubsystem);
     }
 
     // Called when the command is initially scheduled.
@@ -31,6 +30,7 @@ public class IntakeCommand extends Command {
         intakeSubsystem.setGoal(IntakeState.INTAKE);
         elevatorSubsystem.setGoal(IntakeState.INTAKE);
         elevatorSubsystem.setOverride(false);
+        SwerveSubsystem.isFieldRelative = false;
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -46,6 +46,7 @@ public class IntakeCommand extends Command {
     public void end(boolean interrupted) {
         intakeSubsystem.setGoal(IntakeState.STOW);
         intakeSubsystem.runRollerMotors(0);
+        SwerveSubsystem.isFieldRelative = true;
     }
 
     // Returns true when the command should end.
