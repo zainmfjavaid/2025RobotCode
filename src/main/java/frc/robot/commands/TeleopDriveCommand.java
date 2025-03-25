@@ -36,13 +36,7 @@ public class TeleopDriveCommand extends Command {
         this.translationY = translationY;
         this.rotation = rotation;
         this.fieldRelative = fieldRelative;
-        
-        addRequirements(swerve);
-    }
-    
-    @Override
-    public void initialize() {
-        // Initialize motors
+
         angleMotors = new TalonFX[4];
         driveMotors = new TalonFX[4];
         
@@ -69,6 +63,12 @@ public class TeleopDriveCommand extends Command {
         driveMotors[3] = new TalonFX(DeviceIds.kBackRightDriveMotor, "CANivore2158");
         angleMotors[3].setInverted(true);
         driveMotors[3].setInverted(false);
+        
+        addRequirements(swerve);
+    }
+    
+    @Override
+    public void initialize() {
     }
     
     @Override
