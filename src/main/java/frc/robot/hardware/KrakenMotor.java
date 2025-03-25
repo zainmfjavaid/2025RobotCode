@@ -12,7 +12,7 @@ import frc.robot.subsystems.SwerveUtils;
 public class KrakenMotor {
     private final TalonFX motor;
 
-    public KrakenMotor(int deviceId, InvertedValue invertedValue) {
+    public KrakenMotor(int deviceId, boolean inverted) {
         motor = new TalonFX(deviceId, "CANivore2158");
 
         motor.setNeutralMode(NeutralModeValue.Brake);
@@ -20,7 +20,7 @@ public class KrakenMotor {
         FeedbackConfigs feedbackConfigs = new FeedbackConfigs()
             .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
 
-        motor.setInverted(true);
+        motor.setInverted(inverted);
 
         // MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs()
         //     .withInverted(InvertedValue.CounterClockwise_Positive);

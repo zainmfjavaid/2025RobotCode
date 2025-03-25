@@ -28,9 +28,9 @@ public class SwerveModule {
 
     private final String name;
 
-    public SwerveModule(Module module, InvertedValue driveInvertedValue, InvertedValue angleInvertedValue) {
-        driveMotor = new KrakenMotor(module.getDriveMotorDeviceId(), driveInvertedValue);
-        angleMotor = new KrakenMotor(module.getAngleMotorDeviceId(), angleInvertedValue);
+    public SwerveModule(Module module, boolean driveInverted, boolean angleInverted) {
+        driveMotor = new KrakenMotor(module.getDriveMotorDeviceId(), driveInverted);
+        angleMotor = new KrakenMotor(module.getAngleMotorDeviceId(), angleInverted);
 
         double unnormalizedTurnAngleRadians = SwerveUtils.getAngleRadiansFromComponents(module.getLocation().getX(), module.getLocation().getY()) + Math.PI / 2;
         turnAngleRadians = SwerveUtils.normalizeAngleRadiansSigned(unnormalizedTurnAngleRadians);
@@ -57,7 +57,7 @@ public class SwerveModule {
         getAngleAbsoluteEncoderPositionRadians();
         // getAngleRelativeEncoderPositionRadians();
 
-        System.out.println(name + " " + getAngleRelativeEncoderPositionRadians() + " " + getAngleAbsoluteEncoderPositionRadians());
+        System.out.println(name + " " + desiredWheelAngleRadians + " " + getAngleRelativeEncoderPositionRadians() + " " + getAngleAbsoluteEncoderPositionRadians());
 
         double wheelAngleErrorRadians = desiredWheelAngleRadians - currentWheelAngleRadians;
         // If greater than 180 deg, go the other way

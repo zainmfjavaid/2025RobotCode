@@ -20,11 +20,10 @@ import com.ctre.phoenix6.signals.InvertedValue;
 public class SwerveSubsystem extends SubsystemBase {
     // Modules
     
-    // clockwise positive is counterclockwise positive for some reason
-    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, InvertedValue.CounterClockwise_Positive, InvertedValue.CounterClockwise_Positive);
-    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, InvertedValue.CounterClockwise_Positive, InvertedValue.CounterClockwise_Positive);
-    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, InvertedValue.CounterClockwise_Positive, InvertedValue.CounterClockwise_Positive);
-    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, InvertedValue.CounterClockwise_Positive, InvertedValue.CounterClockwise_Positive); 
+    private final SwerveModule frontLeftModule = new SwerveModule(Module.FRONT_LEFT, true, true);
+    private final SwerveModule frontRightModule = new SwerveModule(Module.FRONT_RIGHT, false, true);
+    private final SwerveModule backLeftModule = new SwerveModule(Module.BACK_LEFT, true, true);
+    private final SwerveModule backRightModule = new SwerveModule(Module.BACK_RIGHT, false, true); 
 
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Module.FRONT_LEFT.getLocation(), Module.FRONT_RIGHT.getLocation(), Module.BACK_LEFT.getLocation(), Module.BACK_RIGHT.getLocation());
 
@@ -184,6 +183,13 @@ public class SwerveSubsystem extends SubsystemBase {
     public void resetGyroAndOdometer() {
         resetGyro();
         resetOdometer();
+    }
+
+    public void resetEncoders() {
+        frontLeftModule.resetEncoders();
+        frontRightModule.resetEncoders();
+        backLeftModule.resetEncoders();
+        backRightModule.resetEncoders();
     }
 
     public void updateOdometer() {

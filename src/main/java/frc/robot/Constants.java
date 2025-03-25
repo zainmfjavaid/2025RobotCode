@@ -41,7 +41,7 @@ public final class Constants {
             ALIGN, // doesn't do anything
             TEST;
         } 
-        public static final DriveType kDriveType = DriveType.SWERVE;
+        public static final DriveType kDriveType = DriveType.SPINDRIVE;
     }
 
     public static class SwerveConstants {
@@ -49,7 +49,7 @@ public final class Constants {
             FRONT_LEFT(DeviceIds.kFrontLeftDriveMotor, DeviceIds.kFrontLeftAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_LEFT, "Front Left"),
             FRONT_RIGHT(DeviceIds.kFrontRightDriveMotor, DeviceIds.kFrontRightAngleMotor, new Translation2d(RobotConstants.kWheelbase / 2, -RobotConstants.kTrackWidth / 2), EncoderConfig.FRONT_RIGHT, "Front Right"),
             BACK_LEFT(DeviceIds.kBackLeftDriveMotor, DeviceIds.kBackLeftAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_LEFT, "Back Left"),
-            BACK_RIGHT(DeviceIds.kBackRightDriveMotor, DeviceIds.kBackRightAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_RIGHT, "Back Right");
+            BACK_RIGHT(DeviceIds.kBackRightDriveMotor, DeviceIds.kBackRightAngleMotor, new Translation2d(-RobotConstants.kWheelbase / 2, -RobotConstants.kTrackWidth / 2), EncoderConfig.BACK_RIGHT, "Back Right");
 
             private final int driveMotorDeviceId;
             private final int angleMotorDeviceId;
@@ -85,8 +85,8 @@ public final class Constants {
         public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5); // don't know if this is right
         public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;
 
-        public static final double kDriveMotorGearRatio = 1.0 / 5.0;
-        public static final double kAngleMotorGearRatio = 1.0 / 3.0;
+        public static final double kDriveMotorGearRatio = 1.0 / 5.0; // I don't know if this is right
+        public static final double kAngleMotorGearRatio = 1.0 / 3.0 / 4.0;
 
         public static final double kMaxWheelDriveSpeedRadiansPerSecond = SwerveUtils.driveMotorToWheel(RobotConstants.kKrakenMotorMaxRadiansPerSecond);
         public static final double kMaxWheelDriveSpeedMetersPerSecond = SwerveUtils.getLinearVelocity(kMaxWheelDriveSpeedRadiansPerSecond, kWheelRadiusMeters);
@@ -99,7 +99,7 @@ public final class Constants {
 
         // YOU CAN CHANGE VALUES IN HERE
         public static class TeleopSwerveConstants {
-            public static final double kMaxDriveSpeedMetersPerSecond = kRobotMode == RobotMode.TEST ? Units.feetToMeters(0.5) : kMaxWheelDriveSpeedMetersPerSecond * 0.75;
+            public static final double kMaxDriveSpeedMetersPerSecond = kRobotMode == RobotMode.TEST ? Units.feetToMeters(2) : kMaxWheelDriveSpeedMetersPerSecond * 0.75;
             
             public static final double kMaxRotationSpeedRadiansPerSecond = SwerveConstants.kMaxRotationSpeedRadiansPerSecond / 6;
         }
