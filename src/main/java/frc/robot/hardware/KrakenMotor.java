@@ -41,8 +41,19 @@ public class KrakenMotor {
         motor.setPosition(position);
     }
 
+    // Duty Cycle
     public void setRelativeSpeed(double relativeSpeed) {
         motor.set(relativeSpeed);
+    }
+    public void setVoltage(double volts) {
+        motor.setVoltage(volts);
+    }
+
+    public double getMotorVoltage() {
+        return motor.getMotorVoltage().getValueAsDouble();
+    }
+    public double getSupplyVoltage() {
+        return motor.getSupplyVoltage().getValueAsDouble();
     }
 
     public double getSpeedRotationsPerSecond() {

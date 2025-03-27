@@ -83,6 +83,10 @@ public class SwerveModule {
         driveMotor.setRelativeSpeed(relativeSpeed);
     }
 
+    public void setDriveVoltage(double volts) {
+        driveMotor.setVoltage(volts);
+    }
+
     public void setAngleMotorRelativeSpeed(double relativeSpeed) {
         angleMotor.setRelativeSpeed(relativeSpeed);
     }
@@ -145,5 +149,9 @@ public class SwerveModule {
 
     public void printState() {
         System.out.println(getState());   
+    }
+
+    public void printDriveVoltage() {
+        System.out.println(name + " " + driveMotor.getMotorVoltage() + " " + driveMotor.getSupplyVoltage());
     }
 }

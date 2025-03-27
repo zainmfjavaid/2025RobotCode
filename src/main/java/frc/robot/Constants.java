@@ -28,6 +28,8 @@ public final class Constants {
 
         public static final double kKrakenMotorMaxRotationsPerMinute = 6000;
         public static final double kKrakenMotorMaxRadiansPerSecond = kKrakenMotorMaxRotationsPerMinute / 60 * kTau;
+
+        public static final double kKrakenMotorMaxVoltage = 24;
     }
 
     public static class DriveConstants {
@@ -35,6 +37,7 @@ public final class Constants {
             ARCADE, // doesn't exist
             SWERVE, 
             SPINDRIVE, // spins the drive motors // used to determine direction of drive motors
+            VOLTAGEDRIVE,
             SPINANGLE, // spins the angle motors // used to determine direction of angle motors
             SPIN, // set rotation speed
             DRIVE, // set longitudinal speed
@@ -81,6 +84,9 @@ public final class Constants {
                 return name;
             }
         }
+
+        public static final double kMaxVoltage = 12;
+        
         
         public static final double kWheelDiameterMeters = Units.inchesToMeters(3.5); // don't know if this is right
         public static final double kWheelRadiusMeters = kWheelDiameterMeters / 2;

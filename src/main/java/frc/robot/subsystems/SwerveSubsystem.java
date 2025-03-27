@@ -224,6 +224,13 @@ public class SwerveSubsystem extends SubsystemBase {
         robotCentricSwerve(0, 0, speedRadiansPerSecond);
     }
 
+    public void setDriveVoltage(double volts) {
+        frontLeftModule.setDriveVoltage(volts);
+        frontRightModule.setDriveVoltage(volts);
+        backLeftModule.setDriveVoltage(volts);
+        backRightModule.setDriveVoltage(volts);
+    }
+
     public void stop() {
         robotCentricSwerve(0, 0, 0);
     }
@@ -259,5 +266,12 @@ public class SwerveSubsystem extends SubsystemBase {
         frontRightModule.printState();
         backLeftModule.printState();
         backRightModule.printState();
+    }
+
+    public void printVoltages() {
+        frontLeftModule.printDriveVoltage();
+        frontRightModule.printDriveVoltage();
+        backLeftModule.printDriveVoltage();
+        backRightModule.printDriveVoltage();
     }
 }
