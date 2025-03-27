@@ -41,7 +41,7 @@ public class RobotContainer {
     }
     
     private void configureBindings() { 
-        driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
+        // driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
         
         driverController.getButton(DriverController.Button.Start).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
 
@@ -49,6 +49,7 @@ public class RobotContainer {
         driverController.getButton(DriverController.Button.X).onTrue(new InstantCommand(swerveSubsystem::printEncoderValues));
         driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(swerveSubsystem::printGyroValue));
         driverController.getButton(DriverController.Button.B).onTrue(new InstantCommand(swerveSubsystem::printOdometerPose));
+        driverController.getButton(DriverController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::printStates));
     }
 
     public Command getAutonomousCommand() {

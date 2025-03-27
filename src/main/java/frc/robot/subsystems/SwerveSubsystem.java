@@ -253,4 +253,11 @@ public class SwerveSubsystem extends SubsystemBase {
     public void printOdometerPose() {
         System.out.println("Odometer Pose: " + getPose());
     }
+
+    public void printStates() {
+        frontLeftModule.printState();
+        frontRightModule.printState();
+        backLeftModule.printState();
+        backRightModule.printState();
+    }
 }

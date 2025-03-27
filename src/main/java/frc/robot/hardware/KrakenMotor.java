@@ -31,7 +31,7 @@ public class KrakenMotor {
     }
 
     public double getPositionRotations() {
-        return motor.getPosition().getValueAsDouble();
+        return motor.getRotorPosition().getValueAsDouble();
     }
     public double getPositionRadians() {
         return SwerveUtils.rotationsToRadians(getPositionRotations());

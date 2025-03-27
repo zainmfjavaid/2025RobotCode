@@ -142,4 +142,8 @@ public class SwerveModule {
     public void printDriveEncoderValue() {
         System.out.println(name + ": " + driveMotor.getPositionRotations());
     }
+
+    public void printState() {
+        System.out.println(getState());   
+    }
 }
