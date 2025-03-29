@@ -41,7 +41,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 	}
 
 	public void goDown() {
-		setSpeed(0.4);
+		setSpeed(0.2);
 	}
 
 	public void setPosition(IntakeState intakeState) {
@@ -59,7 +59,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 	}
 
 	public void setGoal(IntakeState intakeState) {
-		if (currentGoal != null && currentGoal.getElevatorValue() < intakeState.getElevatorValue()) {
+		if ((currentGoal != null && currentGoal.getElevatorValue() < intakeState.getElevatorValue()) || intakeState == IntakeState.SCORESTOW) {
 			isDown = true;
 		} else {
 			isDown = false;

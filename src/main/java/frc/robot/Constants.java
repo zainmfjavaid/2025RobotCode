@@ -68,13 +68,14 @@ public final class Constants {
     public static class IntakeConstants {
         public enum IntakeState {
             STOW(2.9, 7.7, 0),
+            SCORESTOW(2.9, 0, 0),
             INTAKE(19.4, 7.7, 0),   
             SOURCE(2.9, 7.7, -6200),
             TROUGH(6, 7.7, 0),
             L2(6.4, 0, -6900),
             L3(6.4, 0, -14837),
             L4(6.4, 0, -31109), // todo: change wrist position to 0
-            TORCH(12, 0, 0);
+            TORCH(14, 0, 0);
 
             private final double armValue;
             private final double wristValue;

@@ -51,12 +51,11 @@ public class ElevatorScore extends Command {
         } else if (cycles > 30 && cycles < 60) {
             intakeSubsystem.runRollerMotors(0);
 
-            intakeSubsystem.setGoal(IntakeState.STOW);
-            
+            intakeSubsystem.setGoal(IntakeState.SCORESTOW);
             
             elevatorSubsystem.stop();
         } else if (cycles > 60) {
-            elevatorSubsystem.setGoal(IntakeState.STOW);
+            elevatorSubsystem.setGoal(IntakeState.SCORESTOW);
             elevatorSubsystem.setOverride(false);
         }
     }

@@ -85,7 +85,7 @@ public class RobotContainer {
         // driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
         driverController.getButton(DriverController.Button.X).whileTrue(intakeSubsystem.outtakeCommand());
 
-        // driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
+        driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
         driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(swerveSubsystem::resetGyro));
 
         // some testing cmds
@@ -100,6 +100,9 @@ public class RobotContainer {
 
         operatorController.getButton(OperatorController.Button.RB).whileTrue(climbSubsystem.climbCommandTest());
         operatorController.getButton(OperatorController.Button.LB).whileTrue(climbSubsystem.reverseClimbCommandTest());
+
+        operatorController.getButton(OperatorController.Button.Back).onTrue(armInitCommand);
+        operatorController.getButton(OperatorController.Button.Start).onTrue(torchIntakeCommand);
     }
 
     public Command getAutonomousCommand() {

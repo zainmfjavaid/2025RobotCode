@@ -36,7 +36,7 @@ public class TorchIntakeCommand extends Command {
 
         if (cycles > 5 && cycles < 50) {
             intakeSubsystem.runRollerMotors(SystemSpeeds.kIntakeRollerSpeed);
-        } else if (cycles >= 50) {
+        } else if (cycles >= 100) {
             intakeSubsystem.runRollerMotors(0);
             intakeSubsystem.setGoal(IntakeState.STOW);
         }
