@@ -1,6 +1,7 @@
 package frc.robot.hardware;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -16,7 +17,12 @@ public class KrakenMotor {
         FeedbackConfigs feedbackConfigs = new FeedbackConfigs()
             .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
 
-        motor.getConfigurator().apply(feedbackConfigs);
+        // CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs()
+        //     .withSupplyCurrentLimit(Constants.kAngleCurrentLimit);
+
+        TalonFXConfigurator configurator = motor.getConfigurator();
+        configurator.apply(feedbackConfigs);
+        // configurator.apply(currentLimitsConfigs);
     }
 
     public double getPositionRotations() {

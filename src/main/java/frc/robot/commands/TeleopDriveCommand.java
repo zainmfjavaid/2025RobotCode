@@ -1,7 +1,13 @@
 package frc.robot.commands;
 
 
+import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -9,6 +15,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.util.function.DoubleSupplier;
+
+import frc.robot.Constants;
 import frc.robot.Constants.DeviceIds;
 import frc.robot.Constants.SystemSpeeds;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -39,6 +47,9 @@ public class TeleopDriveCommand extends Command {
         // Initialize motors
         angleMotors = new TalonFX[4];
         driveMotors = new TalonFX[4];
+
+        // MotorOutputConfigs clockwise = new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
+        // MotorOutputConfigs counterclockwise new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
         
         // Front Left
         angleMotors[0] = new TalonFX(DeviceIds.kFrontLeftAngleMotor, "CANivore2158");
@@ -46,11 +57,17 @@ public class TeleopDriveCommand extends Command {
         angleMotors[0].setInverted(true);
         driveMotors[0].setInverted(true);
 
+        // angleMotors[0].getConfigurator().apply(clockwise);
+        // angleMotors[0].getConfigurator().apply(clockwise);
+
         // Front Right
         angleMotors[1] = new TalonFX(DeviceIds.kFrontRightAngleMotor, "CANivore2158");
         driveMotors[1] = new TalonFX(DeviceIds.kFrontRightDriveMotor, "CANivore2158");
         angleMotors[1].setInverted(true);
         driveMotors[1].setInverted(false);
+
+        // angleMotors[1].getConfigurator().apply(clockwise);
+        // driveMotors[1].getConfigurator().apply(counterclockwise);
 
         // Back Left
         angleMotors[2] = new TalonFX(DeviceIds.kBackLeftAngleMotor, "CANivore2158");
@@ -58,11 +75,22 @@ public class TeleopDriveCommand extends Command {
         angleMotors[2].setInverted(true);
         driveMotors[2].setInverted(true);
 
+        // angleMotors[2].getConfigurator().apply(clockwise);
+        // driveMotors[2].getConfigurator().apply(clockwise);
+
         // Back Right
         angleMotors[3] = new TalonFX(DeviceIds.kBackRightAngleMotor, "CANivore2158");
         driveMotors[3] = new TalonFX(DeviceIds.kBackRightDriveMotor, "CANivore2158");
         angleMotors[3].setInverted(true);
         driveMotors[3].setInverted(false);
+
+        // angleMotors[3].getConfigurator().apply(clockwise);
+        // driveMotors[3].getConfigurator().apply(counterclockwise);
+
+        for (int i = 0; i < 4; i++) {
+            driveMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kDriveCurrentLimit));
+            angleMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kAngleCurrentLimit));
+        }
     }
     
     @Override
@@ -119,6 +147,11 @@ public class TeleopDriveCommand extends Command {
             // Send commands to motors
             angleMotors[i].set(angleOutput);
             driveMotors[i].set(driveOutput);
+            
+            // Test prints
+
+            double velocity = driveMotors[i].getRotorVelocity().getValueAsDouble();
+            // System.out.println((i + 1) + ": " + velocity);
         }
     }
     

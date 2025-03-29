@@ -20,12 +20,16 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
 
+    // Current Limits
+    public static final double kDriveCurrentLimit = 70;
+    public static final double kAngleCurrentLimit = 50;
+
     public static class SystemSpeeds {
         public static final double kElevatorDownSpeed = 0.4;
 
         public static final double kIntakeRollerSpeed = 0.8;
         public static final double kOuttakeRollerSpeed = -0.6;
-        public static final double kScoreOuttakeRollerSpeed = -0.2;
+        public static final double kScoreOuttakeRollerSpeed = -0.5;
 
         public static final double kClimbSpeed = 1.0;
 
@@ -44,16 +48,16 @@ public final class Constants {
         public static final int kBackRightDriveMotor = 5;
         public static final int kBackRightAngleMotor = 6;
         
-        // Elevator (SparkMax)
-        public static final int kLeftElevatorMotor = 5;
-        public static final int kRightElevatorMotor = 6;
+        // Elevator (Rev) (these are reversed but it's okay we accounted for it)
+        public static final int kLeftElevatorMotor = 6;
+        public static final int kRightElevatorMotor = 5;
 
-        // Intake (SparkMax)
+        // Intake (Rev)
         public static final int kArmMotor = 33;
         public static final int kWristMotor = 14;
         public static final int kRollerMotor = 30;
 
-        // Climb (SparkMax)
+        // Climb (Rev)
         public static final int kClimbMotor = 35;
     }
 

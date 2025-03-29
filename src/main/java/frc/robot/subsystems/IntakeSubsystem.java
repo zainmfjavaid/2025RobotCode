@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import au.grapplerobotics.LaserCan;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.hardware.SparkMaxMotor;
@@ -69,6 +70,30 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public StartEndCommand outtakeCommand() {
         return new StartEndCommand(() -> runRollerMotors(SystemSpeeds.kOuttakeRollerSpeed), () -> runRollerMotors(0), this);
+    }
+
+    public StartEndCommand intakeCommand() {
+        return new StartEndCommand(() -> runRollerMotors(0.6), () -> runRollerMotors(0), this);
+    }
+
+    public StartEndCommand runWristForward() {
+        return new StartEndCommand(() -> wristMotor.set(0.6), () -> stopWristMotor(), this);
+    }
+
+    public StartEndCommand runWristBackward() {
+        return new StartEndCommand(() -> wristMotor.set(-0.6), () -> stopWristMotor(), this);
+    }
+
+    public StartEndCommand runArmForward() {
+        return new StartEndCommand(() -> armMotor.set(0.1), () -> armMotor.set(0), this);
+    }
+
+    public StartEndCommand runArmBackward() {
+        return new StartEndCommand(() -> armMotor.set(-0.1), () -> armMotor.set(0), this);
+    }
+
+    public InstantCommand printEncoderValues() {
+        return new InstantCommand(() -> {System.out.println("W: " + wristMotor.getPositionRotations() + "\nA: " + armMotor.getPositionRotations());}, this);
     }
 
     @Override

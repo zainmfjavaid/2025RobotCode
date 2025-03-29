@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.DeviceIds;
@@ -78,11 +80,19 @@ public class ElevatorSubsystem extends SubsystemBase {
 		isOverride = newOverrideValue;
 	}
 
+	public StartEndCommand runElevatorTest() {
+		return new StartEndCommand(() -> setSpeed(0.2), () -> setSpeed(0), this);
+	}
+
+	public StartEndCommand reverseElevatorTest() {
+		return new StartEndCommand(() -> setSpeed(-0.6), () -> setSpeed(0), this);
+	}
+
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
 		if (currentGoal != null && !isOverride) {
-			setPosition(currentGoal);
+			// setPosition(currentGoal);
 		}
 	}
 }

@@ -80,11 +80,22 @@ public class RobotContainer {
     
     private void configureBindings() { 
         // Driver Controls
-        driverController.getButton(DriverController.Button.LB).whileTrue(intakeCommand);
-        driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
+        // driverController.getButton(DriverController.Button.LB).whileTrue(intakeCommand);
+        // driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
         driverController.getButton(DriverController.Button.X).whileTrue(intakeSubsystem.outtakeCommand());
 
-        driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
+        // driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
+
+
+        // some testing cmds
+        driverController.getButton(DriverController.Button.RB).whileTrue(intakeSubsystem.runArmForward());
+        driverController.getButton(DriverController.Button.LB).whileTrue(intakeSubsystem.runArmBackward());
+
+        driverController.getButton(DriverController.Button.Y).whileTrue(intakeSubsystem.runWristForward());
+        driverController.getButton(DriverController.Button.A).whileTrue(intakeSubsystem.runWristBackward());
+
+        driverController.getButton(DriverController.Button.B).onTrue(intakeSubsystem.printEncoderValues());
+
 
         driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(swerveSubsystem::resetGyro));
 
