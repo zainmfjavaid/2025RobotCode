@@ -82,7 +82,7 @@ public class RobotContainer {
     private void configureBindings() { 
         // Driver Controls
         driverController.getButton(DriverController.Button.LB).whileTrue(intakeCommand);
-        // driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
+        driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
         driverController.getButton(DriverController.Button.X).whileTrue(intakeSubsystem.outtakeCommand());
 
         driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);

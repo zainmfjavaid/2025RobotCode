@@ -27,7 +27,6 @@ public class ElevatorMove extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        intakeSubsystem.setGoal(intakeState);
         elevatorSubsystem.setGoal(intakeState);
         elevatorSubsystem.setOverride(false);
     }

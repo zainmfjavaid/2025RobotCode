@@ -13,12 +13,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.DeviceIds;
 import frc.robot.hardware.SparkMaxMotor;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class ElevatorSubsystem extends SubsystemBase {
 	private final SparkMaxMotor leftElevatorMotor = new SparkMaxMotor(DeviceIds.kLeftElevatorMotor, false, true, true);
 	private final SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, true, true);
 
 	PIDController elevatorPIDController = new PIDController(0.0003, 0, 0);
+	PIDController elevatorDownPIDController = new PIDController(0.00006, 0.0001, 0);
 
     Encoder elevatorEncoder = new Encoder(0, 1);
 	DigitalInput limitSwitch = new DigitalInput(9);
@@ -41,20 +43,36 @@ public class ElevatorSubsystem extends SubsystemBase {
 	}
 
 	public void goDown() {
-		setSpeed(0.2);
+		setSpeed(0.4);
 	}
 
 	public void setPosition(IntakeState intakeState) {
 		double pidOutput;
-		if (isDown) {
-			if (limitSwitch.get()) {
-				goDown();
-			} else {
-				stop();
-			}
-		} else {
-			pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
+		double downPidOutput;
+		// if (intakeState.getElevatorValue() == 0) {
+		// 	if (limitSwitch.get()) {
+		// 		goDown();
+		// 	} else {
+		// 		stop();
+		// 	}
+		// } else {
+			// pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
+			// setSpeed(pidOutput);
+		// }
+		pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
+		downPidOutput = elevatorDownPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
+
+		if (intakeState.getElevatorValue() != 0) {
+			//System.out.println("going up @ " + pidOutput);
 			setSpeed(pidOutput);
+		} else {
+			if (!limitSwitch.get() || (Math.abs(elevatorEncoder.getDistance()) < 30)) {
+				stop();
+				// System.out.println("not moving elevator");
+			} else {
+				// System.out.println("going down @ " + pidOutput + " where im at " + Math.abs(elevatorEncoder.getDistance()));
+				setSpeed(downPidOutput);
+			}
 		}
 	}
 
@@ -65,10 +83,19 @@ public class ElevatorSubsystem extends SubsystemBase {
 			isDown = false;
 		}
 		currentGoal = intakeState;
+		System.out.println(currentGoal);
+		if (currentGoal == IntakeState.L4 || currentGoal == IntakeState.L3 || currentGoal == IntakeState.L2) {
+			SwerveSubsystem.driveSpeedConstant = 0.2;
+			SwerveSubsystem.angleSpeedConstant = 0.4;
+			SwerveSubsystem.isFieldRelative = false;
+		} else {
+			SwerveSubsystem.driveSpeedConstant = 1;
+			SwerveSubsystem.angleSpeedConstant = 1;
+			SwerveSubsystem.isFieldRelative = true;
+		}
 	}
 
 	public boolean atSetpoint() {
-		System.out.println(elevatorEncoder.getDistance());
 		if (Math.abs(currentGoal.getElevatorValue() - elevatorEncoder.getDistance()) < 300) {
 			return true;
 		}

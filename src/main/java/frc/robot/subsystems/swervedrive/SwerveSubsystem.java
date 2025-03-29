@@ -73,6 +73,8 @@ public class SwerveSubsystem extends SubsystemBase
   private Pigeon2 gyro = new Pigeon2(20, "CANivore2158");
 
   public static boolean isFieldRelative = true;
+  public static double driveSpeedConstant = 1;
+  public static double angleSpeedConstant = 1;
 
 
   /**

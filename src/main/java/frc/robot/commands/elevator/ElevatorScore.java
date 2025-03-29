@@ -46,15 +46,15 @@ public class ElevatorScore extends Command {
     public void execute() {
         cycles++;
 
-        if (cycles > 10 && cycles < 30) {
+        if (cycles > 20 && cycles < 30) {
             intakeSubsystem.runRollerMotors(SystemSpeeds.kScoreOuttakeRollerSpeed);
-        } else if (cycles > 30 && cycles < 60) {
+        } else if (cycles >= 30 && cycles < 60) {
             intakeSubsystem.runRollerMotors(0);
 
             intakeSubsystem.setGoal(IntakeState.SCORESTOW);
             
             elevatorSubsystem.stop();
-        } else if (cycles > 60) {
+        } else if (cycles >= 60) {
             elevatorSubsystem.setGoal(IntakeState.SCORESTOW);
             elevatorSubsystem.setOverride(false);
         }

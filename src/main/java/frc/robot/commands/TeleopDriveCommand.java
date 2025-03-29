@@ -143,8 +143,8 @@ public class TeleopDriveCommand extends Command {
             double driveOutput = moduleStates[i].speedMetersPerSecond / SystemSpeeds.kMaxDriveSpeedMetersPerSecond;
             
             // Send commands to motors
-            angleMotors[i].setVoltage(angleOutput * Constants.kMaxAngleVoltage / 4);
-            driveMotors[i].setVoltage(driveOutput * Constants.kMaxDriveVoltage / 4);
+            angleMotors[i].setVoltage(angleOutput * Constants.kMaxAngleVoltage * SwerveSubsystem.angleSpeedConstant);
+            driveMotors[i].setVoltage(driveOutput * Constants.kMaxDriveVoltage * SwerveSubsystem.driveSpeedConstant);
             
             // Test prints
 
