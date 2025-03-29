@@ -14,8 +14,8 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class IntakeCommand extends Command {
     /** Creates a new IntakeCommand. */
-    IntakeSubsystem intakeSubsystem;
-    ElevatorSubsystem elevatorSubsystem;
+    private final IntakeSubsystem intakeSubsystem;
+    private final ElevatorSubsystem elevatorSubsystem;
 
     public IntakeCommand(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
         // Use addRequirements() here to declare subsystem dependencies.

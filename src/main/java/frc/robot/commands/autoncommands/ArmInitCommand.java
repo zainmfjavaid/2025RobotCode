@@ -11,7 +11,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ArmInitCommand extends Command {
 	/** Creates a new ArmInitCommand. */
-	IntakeSubsystem intakeSubsystem;
+	private final IntakeSubsystem intakeSubsystem;
 
 	public ArmInitCommand(IntakeSubsystem intakeSubsystem) {
 		this.intakeSubsystem = intakeSubsystem;

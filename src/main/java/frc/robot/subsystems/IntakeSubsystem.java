@@ -16,12 +16,12 @@ import frc.robot.Constants.SystemSpeeds;
 
 public class IntakeSubsystem extends SubsystemBase {
     /** Creates a new IntakeSubsystem. */
-    SparkMaxMotor armMotor = new SparkMaxMotor(DeviceIds.kArmMotor, true);
-    SparkMaxMotor wristMotor = new SparkMaxMotor(DeviceIds.kWristMotor, true);
+    SparkMaxMotor armMotor = new SparkMaxMotor(DeviceIds.kArmMotor, true, true, true);
+    SparkMaxMotor wristMotor = new SparkMaxMotor(DeviceIds.kWristMotor, true, true, true);
     SparkMaxMotor rollerMotor = new SparkMaxMotor(DeviceIds.kRollerMotor);
     
-    PIDController armPIDController = new PIDController(0.035, 0, 0);
-    PIDController wristPIDController = new PIDController(0.02, 0, 0);
+    PIDController armPIDController = new PIDController(0.04, 0, 0);
+    PIDController wristPIDController = new PIDController(0.04, 0, 0);
 
     IntakeState currentGoal = null;
     LaserCan lc = new LaserCan(22);
@@ -41,7 +41,7 @@ public class IntakeSubsystem extends SubsystemBase {
         } else {
             wristMotor.set(0);
         }
-
+        
         armMotor.set(armPIDOutput);
 	}
 
@@ -77,11 +77,11 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public StartEndCommand runWristForward() {
-        return new StartEndCommand(() -> wristMotor.set(0.6), () -> stopWristMotor(), this);
+        return new StartEndCommand(() -> wristMotor.set(0.1), () -> stopWristMotor(), this);
     }
 
     public StartEndCommand runWristBackward() {
-        return new StartEndCommand(() -> wristMotor.set(-0.6), () -> stopWristMotor(), this);
+        return new StartEndCommand(() -> wristMotor.set(-0.1), () -> stopWristMotor(), this);
     }
 
     public StartEndCommand runArmForward() {

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.commands.SourceIntakeCommand;
 import frc.robot.commands.autoncommands.ArmInitCommand;
 import frc.robot.commands.autoncommands.TorchIntakeCommand;
@@ -80,24 +81,16 @@ public class RobotContainer {
     
     private void configureBindings() { 
         // Driver Controls
-        // driverController.getButton(DriverController.Button.LB).whileTrue(intakeCommand);
+        driverController.getButton(DriverController.Button.LB).whileTrue(intakeCommand);
         // driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
         driverController.getButton(DriverController.Button.X).whileTrue(intakeSubsystem.outtakeCommand());
 
         // driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
-
+        driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(swerveSubsystem::resetGyro));
 
         // some testing cmds
-        driverController.getButton(DriverController.Button.RB).whileTrue(intakeSubsystem.runArmForward());
-        driverController.getButton(DriverController.Button.LB).whileTrue(intakeSubsystem.runArmBackward());
-
-        driverController.getButton(DriverController.Button.Y).whileTrue(intakeSubsystem.runWristForward());
-        driverController.getButton(DriverController.Button.A).whileTrue(intakeSubsystem.runWristBackward());
-
-        driverController.getButton(DriverController.Button.B).onTrue(intakeSubsystem.printEncoderValues());
-
-
-        driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(swerveSubsystem::resetGyro));
+        operatorController.getButton(OperatorController.Button.RT).whileTrue(elevatorSubsystem.runElevatorTest());
+        operatorController.getButton(OperatorController.Button.LT).whileTrue(elevatorSubsystem.reverseElevatorTest());
 
         // Operator Controls
         operatorController.getButton(OperatorController.Button.A).onTrue(levelOneCommand);

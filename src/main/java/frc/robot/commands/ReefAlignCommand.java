@@ -11,11 +11,11 @@ import frc.robot.subsystems.PhotonVision;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class ReefAlignCommand extends Command {
-    private SwerveSubsystem swerveSubsystem;
-    private PhotonVision photonVision;
+    private final SwerveSubsystem swerveSubsystem;
+    private final PhotonVision photonVision;
 
-    private double maxDriveSpeedFeetPerSecond = Units.metersToFeet(4);
-    private double maxRotationalSpeedDegreesPerSecond = Units.radiansToDegrees(4);
+    private final double maxDriveSpeedFeetPerSecond = Units.metersToFeet(4);
+    private final double maxRotationalSpeedDegreesPerSecond = Units.radiansToDegrees(4);
     private int targetID;
 
 

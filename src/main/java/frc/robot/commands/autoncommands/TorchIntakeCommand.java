@@ -12,8 +12,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TorchIntakeCommand extends Command {
 	/** Creates a new ArmInitCommand. */
-	IntakeSubsystem intakeSubsystem;
-    int cycles = 0;
+	private final IntakeSubsystem intakeSubsystem;
+    private int cycles = 0;
 
 	public TorchIntakeCommand(IntakeSubsystem intakeSubsystem) {
 		this.intakeSubsystem = intakeSubsystem;

@@ -13,11 +13,11 @@ import frc.robot.subsystems.IntakeSubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ElevatorScore extends Command {
     /** Creates a new ElevatorScore. */
-    IntakeSubsystem intakeSubsystem;
-    ElevatorSubsystem elevatorSubsystem;
-    IntakeState intakeState;
+    private final IntakeSubsystem intakeSubsystem;
+    private final ElevatorSubsystem elevatorSubsystem;
+    private final IntakeState intakeState;
 
-    int cycles = 0;
+    private int cycles = 0;
 
     public ElevatorScore(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem, IntakeState intakeState) {
         // Use addRequirements() here to declare subsystem dependencies.
@@ -25,8 +25,7 @@ public class ElevatorScore extends Command {
         this.elevatorSubsystem = elevatorSubsystem;
         this.intakeState = intakeState;
 
-        addRequirements(intakeSubsystem);
-        addRequirements(elevatorSubsystem);
+        addRequirements(intakeSubsystem, elevatorSubsystem);
     }
 
     // Called when the command is initially scheduled.

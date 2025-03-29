@@ -41,7 +41,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 	}
 
 	public void goDown() {
-		setSpeed(-0.4);
+		setSpeed(0.4);
 	}
 
 	public void setPosition(IntakeState intakeState) {
@@ -54,7 +54,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 			}
 		} else {
 			pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
-			setSpeed(-pidOutput);
+			setSpeed(pidOutput);
 		}
 	}
 
@@ -92,7 +92,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 	public void periodic() {
 		// This method will be called once per scheduler run
 		if (currentGoal != null && !isOverride) {
-			// setPosition(currentGoal);
+			setPosition(currentGoal);
 		}
 	}
 }

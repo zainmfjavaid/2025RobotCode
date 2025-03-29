@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ElevatorMove extends Command {
     /** Creates a new ElevatorMove. */
-    IntakeSubsystem intakeSubsystem;
-    ElevatorSubsystem elevatorSubsystem;
-    IntakeState intakeState;
+    private final IntakeSubsystem intakeSubsystem;
+    private final ElevatorSubsystem elevatorSubsystem;
+    private final IntakeState intakeState;
 
     public ElevatorMove(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem, IntakeState intakeState) {
         this.intakeSubsystem = intakeSubsystem;

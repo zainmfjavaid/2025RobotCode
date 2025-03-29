@@ -24,16 +24,20 @@ public final class Constants {
     public static final double kDriveCurrentLimit = 70;
     public static final double kAngleCurrentLimit = 50;
 
+    // Voltage
+    public static final double kMaxDriveVoltage = 6;
+    public static final double kMaxAngleVoltage = 6;
+
     public static class SystemSpeeds {
         public static final double kElevatorDownSpeed = 0.4;
 
-        public static final double kIntakeRollerSpeed = 0.8;
-        public static final double kOuttakeRollerSpeed = -0.6;
-        public static final double kScoreOuttakeRollerSpeed = -0.5;
+        public static final double kIntakeRollerSpeed = 0.7;
+        public static final double kOuttakeRollerSpeed = -0.2;
+        public static final double kScoreOuttakeRollerSpeed = -0.2;
 
         public static final double kClimbSpeed = 1.0;
 
-        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(18);
+        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(4);
         public static final double kMaxRotationSpeedRadiansPerSecond = 4.0;
     }
 
@@ -63,14 +67,14 @@ public final class Constants {
 
     public static class IntakeConstants {
         public enum IntakeState {
-            STOW(1.1, 15.9, 0),
-            INTAKE(20.6, 15.9, 0),
-            SOURCE(2.2, 15.9, -6200),
-            TROUGH(6, 16.1, 0),
-            L2(12.8, 0, -6900),
-            L3(12.8, 0, -14837),
-            L4(12.8, 0, -31109),
-            TORCH(17, 0, 0);
+            STOW(2.9, 7.7, 0),
+            INTAKE(19.4, 7.7, 0),   
+            SOURCE(2.9, 7.7, -6200),
+            TROUGH(6, 7.7, 0),
+            L2(6.4, 0, -6900),
+            L3(6.4, 0, -14837),
+            L4(6.4, 0, -31109), // todo: change wrist position to 0
+            TORCH(12, 0, 0);
 
             private final double armValue;
             private final double wristValue;

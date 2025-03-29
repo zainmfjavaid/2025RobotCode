@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-
-import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -145,12 +143,12 @@ public class TeleopDriveCommand extends Command {
             double driveOutput = moduleStates[i].speedMetersPerSecond / SystemSpeeds.kMaxDriveSpeedMetersPerSecond;
             
             // Send commands to motors
-            angleMotors[i].set(angleOutput);
-            driveMotors[i].set(driveOutput);
+            angleMotors[i].setVoltage(angleOutput * Constants.kMaxAngleVoltage / 4);
+            driveMotors[i].setVoltage(driveOutput * Constants.kMaxDriveVoltage / 4);
             
             // Test prints
 
-            double velocity = driveMotors[i].getRotorVelocity().getValueAsDouble();
+            // double velocity = driveMotors[i].getRotorVelocity().getValueAsDouble();
             // System.out.println((i + 1) + ": " + velocity);
         }
     }
