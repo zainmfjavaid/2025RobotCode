@@ -64,8 +64,8 @@ public class RobotContainer {
     //private final SendableChooser<Command> autonChooser;
     //private final DriverController driverController = new DriverController();
     //private final OperatorController operatorController = new OperatorController();
-    private final XboxController driverController = new XboxController(0);
-    private final XboxController operatorController = new XboxController(1);
+    private final DriverController driverController = new DriverController();
+    private final OperatorController operatorController = new OperatorController();
     
     
     // private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
@@ -135,51 +135,51 @@ public class RobotContainer {
 
     private void configureBindings() { 
         // Driver controls
-        //driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
-        JoystickButton rbButtonDriver = new JoystickButton(driverController, XboxController.Button.kRightBumper.value);
-        rbButtonDriver.onTrue(elevatorScoreCommand);
+        driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
+        // JoystickButton rbButtonDriver = new JoystickButton(driverController, XboxController.Button.kRightBumper.value);
+        // rbButtonDriver.onTrue(elevatorScoreCommand);
 
-        //driverController.getButton(DriverController.Button.LB).whileTrue(intakeCommand);
-        JoystickButton lbButtonDriver = new JoystickButton(driverController, XboxController.Button.kLeftBumper.value);
-        lbButtonDriver.whileTrue(intakeCommand);
+        driverController.getButton(DriverController.Button.LB).whileTrue(intakeCommand);
+        // JoystickButton lbButtonDriver = new JoystickButton(driverController, XboxController.Button.kLeftBumper.value);
+        // lbButtonDriver.whileTrue(intakeCommand);
         
 
-        //driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
-        JoystickButton yButtonDriver = new JoystickButton(driverController, XboxController.Button.kY.value);
-        yButtonDriver.whileTrue(sourceIntakeCommand);
+        driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
+        // JoystickButton yButtonDriver = new JoystickButton(driverController, XboxController.Button.kY.value);
+        // yButtonDriver.whileTrue(sourceIntakeCommand);
 
         driverController.getButton(DriverController.Button.X).whileTrue(new StartEndCommand(() -> intakeSubsystem.runRollerMotors(-0.6), () -> intakeSubsystem.runRollerMotors(0), intakeSubsystem));
         // driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(() -> swerveSubsystem.resetGyroAndOdometer()));
 
         // Operator Controls
-        //operatorController.getButton(OperatorController.Button.A).onTrue(levelOneCommand);
-        JoystickButton aButton = new JoystickButton(operatorController, XboxController.Button.kA.value);
-        aButton.onTrue(levelOneCommand);
-        //operatorController.getButton(OperatorController.Button.B).onTrue(levelTwoCommand);
-        JoystickButton bButton = new JoystickButton(operatorController, XboxController.Button.kB.value);
-        bButton.onTrue(levelTwoCommand);
-        //operatorController.getButton(OperatorController.Button.Y).onTrue(levelThreeCommand);
-        JoystickButton yButton = new JoystickButton(operatorController, XboxController.Button.kY.value);
-        yButton.onTrue(levelThreeCommand);
-        // operatorController.getButton(OperatorController.Button.X).onTrue(new SequentialCommandGroup(scoreMoveBack, levelFourCommand));
+        operatorController.getButton(OperatorController.Button.A).onTrue(levelOneCommand);
+        // JoystickButton aButton = new JoystickButton(operatorController, XboxController.Button.kA.value);
+        // aButton.onTrue(levelOneCommand);
+        operatorController.getButton(OperatorController.Button.B).onTrue(levelTwoCommand);
+        // JoystickButton bButton = new JoystickButton(operatorController, XboxController.Button.kB.value);
+        // bButton.onTrue(levelTwoCommand);
+        operatorController.getButton(OperatorController.Button.Y).onTrue(levelThreeCommand);
+        // JoystickButton yButton = new JoystickButton(operatorController, XboxController.Button.kY.value);
+        // yButton.onTrue(levelThreeCommand);
+        operatorController.getButton(OperatorController.Button.X).onTrue(new SequentialCommandGroup(scoreMoveBack, levelFourCommand));
 
-        //operatorController.getButton(OperatorController.Button.RB).whileTrue(climbSubsystem.climbCommandTest());
-        JoystickButton rbButton = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
-        rbButton.whileTrue(climbSubsystem.climbCommandTest());
+        operatorController.getButton(OperatorController.Button.RB).whileTrue(climbSubsystem.climbCommandTest());
+        // JoystickButton rbButton = new JoystickButton(operatorController, XboxController.Button.kRightBumper.value);
+        // rbButton.whileTrue(climbSubsystem.climbCommandTest());
         //
-        //operatorController.getButton(OperatorController.Button.LB).whileTrue(climbSubsystem.reverseClimbCommandTest());
-        JoystickButton lbButton = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value);
-        lbButton.whileTrue(climbSubsystem.reverseClimbCommandTest());
+        operatorController.getButton(OperatorController.Button.LB).whileTrue(climbSubsystem.reverseClimbCommandTest());
+        // JoystickButton lbButton = new JoystickButton(operatorController, XboxController.Button.kLeftBumper.value);
+        // lbButton.whileTrue(climbSubsystem.reverseClimbCommandTest());
 
 
-       // operatorController.getButton(OperatorController.Button.LT).onTrue(elevatorScoreCommand);
+        operatorController.getButton(OperatorController.Button.LT).onTrue(elevatorScoreCommand);
        
 
-        //operatorController.getButton(OperatorController.Button.RT).whileTrue(intakeCommand);
+        operatorController.getButton(OperatorController.Button.RT).whileTrue(intakeCommand);
         
-        // operatorController.getButton(OperatorController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
+        operatorController.getButton(OperatorController.Button.Y).onTrue(new InstantCommand(swerveSubsystem::toggleSpeedConstant, swerveSubsystem));
     
-        // driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(() -> swerveSubsystem.printEncoderValues()));
+        driverController.getButton(DriverController.Button.A).onTrue(new InstantCommand(() -> swerveSubsystem.printEncoderValues()));
     }
 
     public Command getAutonomousCommand() {
