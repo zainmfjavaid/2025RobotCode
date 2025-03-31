@@ -16,11 +16,11 @@
     },
     {
       "anchor": {
-        "x": 2.972950819672131,
+        "x": 5.41844262295082,
         "y": 7.0
       },
       "prevControl": {
-        "x": 2.722950819672131,
+        "x": 5.16844262295082,
         "y": 7.0
       },
       "nextControl": null,
@@ -31,19 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "TorchIntake",
-      "waypointRelativePos": 0.09723160027009693,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "TorchIntake"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 0.5,
     "maxAcceleration": 0.5,

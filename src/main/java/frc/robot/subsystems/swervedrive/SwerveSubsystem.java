@@ -276,7 +276,7 @@ public class SwerveSubsystem extends SubsystemBase
 
     SwerveModulePosition[] positions = new SwerveModulePosition[4];
 
-    double wheelRadiusMeters = Units.inchesToMeters(3.5) / 2; // don't know if this is right
+    double wheelRadiusMeters = Units.inchesToMeters(2);
     // should be gear ratios
 
     double driveGearRatio = 1.0 / 5.0;

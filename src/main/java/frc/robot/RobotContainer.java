@@ -5,6 +5,8 @@
 package frc.robot;
 
 import java.io.File;
+import java.util.logging.Level;
+
 import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.hardware.Controller.DriverController;
 import frc.robot.hardware.Controller.OperatorController;
@@ -20,6 +22,8 @@ import frc.robot.commands.SourceIntakeCommand;
 import frc.robot.commands.autoncommands.ArmInitCommand;
 import frc.robot.commands.autoncommands.TorchIntakeCommand;
 import frc.robot.commands.autoncommands.AutonTroughScoreCommand;
+import frc.robot.commands.autoncommands.LevelFourUp;
+import frc.robot.commands.autoncommands.LevelFourUpAndDown;
 import frc.robot.commands.elevator.ArmHook;
 import frc.robot.commands.elevator.ElevatorMove;
 import frc.robot.commands.elevator.ElevatorScore;
@@ -66,12 +70,15 @@ public class RobotContainer {
     private final ArmInitCommand armInitCommand = new ArmInitCommand(intakeSubsystem);
     private final TorchIntakeCommand torchIntakeCommand = new TorchIntakeCommand(intakeSubsystem);
     private final AutonTroughScoreCommand troughScoreCommand = new AutonTroughScoreCommand(intakeSubsystem);
+    private final LevelFourUpAndDown levelFourUpAndDown = new LevelFourUpAndDown(elevatorSubsystem, intakeSubsystem);
+    private final LevelFourUp levelFourUp = new LevelFourUp(elevatorSubsystem, intakeSubsystem);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         NamedCommands.registerCommand("InitializeArm", armInitCommand);
         NamedCommands.registerCommand("TorchIntake", torchIntakeCommand);
         NamedCommands.registerCommand("TroughScore", troughScoreCommand);
+        NamedCommands.registerCommand("FullLevelFour", levelFourUpAndDown);
 
         swerveSubsystem.setDefaultCommand(swerveSubsystem.getCustomDriveCommand(driverController::getLeftStickY, driverController::getLeftStickX, driverController::getRightStickX));
 
@@ -109,7 +116,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return AutoBuilder.buildAuto("Middle_Preload");    
+        return AutoBuilder.buildAuto("2coral");    
     }
 }
 
