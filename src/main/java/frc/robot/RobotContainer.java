@@ -20,6 +20,7 @@ import frc.robot.commands.SourceIntakeCommand;
 import frc.robot.commands.autoncommands.ArmInitCommand;
 import frc.robot.commands.autoncommands.TorchIntakeCommand;
 import frc.robot.commands.autoncommands.AutonTroughScoreCommand;
+import frc.robot.commands.elevator.ArmHook;
 import frc.robot.commands.elevator.ElevatorMove;
 import frc.robot.commands.elevator.ElevatorScore;
 import frc.robot.commands.IntakeCommand;
@@ -55,6 +56,7 @@ public class RobotContainer {
     private final ElevatorMove levelFourCommand = new ElevatorMove(intakeSubsystem, elevatorSubsystem, IntakeState.L4);
 
     private final ElevatorScore elevatorScoreCommand = new ElevatorScore(intakeSubsystem, elevatorSubsystem, IntakeState.L4); // create new cmd AT the trigger
+    private final ArmHook armHookCommand = new ArmHook(intakeSubsystem, elevatorSubsystem, IntakeState.L4);
 
     // Intake Commands
     private final IntakeCommand intakeCommand = new IntakeCommand(intakeSubsystem, elevatorSubsystem);
@@ -85,7 +87,8 @@ public class RobotContainer {
         driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
         driverController.getButton(DriverController.Button.X).whileTrue(intakeSubsystem.outtakeCommand());
 
-        driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
+        // driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
+        driverController.getButton(DriverController.Button.RB).onTrue(armHookCommand);
         driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(swerveSubsystem::resetGyro));
 
         // some testing cmds
@@ -106,7 +109,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autonChooser.getSelected();        
+        return AutoBuilder.buildAuto("Middle_Preload");    
     }
 }
 

@@ -6,7 +6,10 @@ package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -24,6 +27,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -33,6 +39,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
+import frc.robot.Constants;
+import frc.robot.Constants.DeviceIds;
+import frc.robot.Constants.SystemSpeeds;
 import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
@@ -47,12 +56,13 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
+import swervelib.SwerveModule;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
-import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity; 
 
 public class SwerveSubsystem extends SubsystemBase
 {
@@ -76,6 +86,12 @@ public class SwerveSubsystem extends SubsystemBase
   public static double driveSpeedConstant = 1;
   public static double angleSpeedConstant = 1;
 
+  private final SwerveDriveOdometry odometer;
+
+
+  private TalonFX[] angleMotors;
+  private TalonFX[] driveMotors;
+  private CANcoder[] encoders;
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -110,6 +126,8 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setModuleEncoderAutoSynchronize(false,
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
+    
+    
     if (visionDriveTest)
     {
       setupPhotonVision();
@@ -118,6 +136,62 @@ public class SwerveSubsystem extends SubsystemBase
     }
     setupPathPlanner();
     RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
+  
+  
+    // Initialize motors
+        angleMotors = new TalonFX[4];
+        driveMotors = new TalonFX[4];
+        encoders = new CANcoder[4]; // unused
+
+        // MotorOutputConfigs clockwise = new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
+        // MotorOutputConfigs counterclockwise new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
+        
+        // Front Left
+        angleMotors[0] = new TalonFX(DeviceIds.kFrontLeftAngleMotor, "CANivore2158");
+        driveMotors[0] = new TalonFX(DeviceIds.kFrontLeftDriveMotor, "CANivore2158");
+        angleMotors[0].setInverted(true);
+        driveMotors[0].setInverted(true);
+        // encoders[0] = new CANcoder(1, "rio");
+
+        // angleMotors[0].getConfigurator().apply(clockwise);
+        // angleMotors[0].getConfigurator().apply(clockwise);
+
+        // Front Right
+        angleMotors[1] = new TalonFX(DeviceIds.kFrontRightAngleMotor, "CANivore2158");
+        driveMotors[1] = new TalonFX(DeviceIds.kFrontRightDriveMotor, "CANivore2158");
+        angleMotors[1].setInverted(true);
+        driveMotors[1].setInverted(false);
+        // encoders[1] = new CANcoder(1, "rio");
+
+        // angleMotors[1].getConfigurator().apply(clockwise);
+        // driveMotors[1].getConfigurator().apply(counterclockwise);
+
+        // Back Left
+        angleMotors[2] = new TalonFX(DeviceIds.kBackLeftAngleMotor, "CANivore2158");
+        driveMotors[2] = new TalonFX(DeviceIds.kBackLeftDriveMotor, "CANivore2158");
+        angleMotors[2].setInverted(true);
+        driveMotors[2].setInverted(true);
+        // encoders[2] = new CANcoder(1, "rio");
+
+        // angleMotors[2].getConfigurator().apply(clockwise);
+        // driveMotors[2].getConfigurator().apply(clockwise);
+
+        // Back Right
+        angleMotors[3] = new TalonFX(DeviceIds.kBackRightAngleMotor, "CANivore2158");
+        driveMotors[3] = new TalonFX(DeviceIds.kBackRightDriveMotor, "CANivore2158");
+        angleMotors[3].setInverted(true);
+        driveMotors[3].setInverted(false);
+        // encoders[3] = new CANcoder(1, "rio");
+
+        // angleMotors[3].getConfigurator().apply(clockwise);
+        // driveMotors[3].getConfigurator().apply(counterclockwise);
+
+        for (int i = 0; i < 4; i++) {
+            driveMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kDriveCurrentLimit));
+            angleMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kAngleCurrentLimit));
+        }
+
+        odometer = new SwerveDriveOdometry(getKinematics(), new Rotation2d(0), getModulePositions());
   }
 
   /**
@@ -133,6 +207,56 @@ public class SwerveSubsystem extends SubsystemBase
                                   100,
                                   new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
                                              Rotation2d.fromDegrees(0)));
+
+        // Initialize motors
+        angleMotors = new TalonFX[4];
+        driveMotors = new TalonFX[4];
+
+        // MotorOutputConfigs clockwise = new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
+        // MotorOutputConfigs counterclockwise new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
+        
+        // Front Left
+        angleMotors[0] = new TalonFX(DeviceIds.kFrontLeftAngleMotor, "CANivore2158");
+        driveMotors[0] = new TalonFX(DeviceIds.kFrontLeftDriveMotor, "CANivore2158");
+        angleMotors[0].setInverted(true);
+        driveMotors[0].setInverted(true);
+
+        // angleMotors[0].getConfigurator().apply(clockwise);
+        // angleMotors[0].getConfigurator().apply(clockwise);
+
+        // Front Right
+        angleMotors[1] = new TalonFX(DeviceIds.kFrontRightAngleMotor, "CANivore2158");
+        driveMotors[1] = new TalonFX(DeviceIds.kFrontRightDriveMotor, "CANivore2158");
+        angleMotors[1].setInverted(true);
+        driveMotors[1].setInverted(false);
+
+        // angleMotors[1].getConfigurator().apply(clockwise);
+        // driveMotors[1].getConfigurator().apply(counterclockwise);
+
+        // Back Left
+        angleMotors[2] = new TalonFX(DeviceIds.kBackLeftAngleMotor, "CANivore2158");
+        driveMotors[2] = new TalonFX(DeviceIds.kBackLeftDriveMotor, "CANivore2158");
+        angleMotors[2].setInverted(true);
+        driveMotors[2].setInverted(true);
+
+        // angleMotors[2].getConfigurator().apply(clockwise);
+        // driveMotors[2].getConfigurator().apply(clockwise);
+
+        // Back Right
+        angleMotors[3] = new TalonFX(DeviceIds.kBackRightAngleMotor, "CANivore2158");
+        driveMotors[3] = new TalonFX(DeviceIds.kBackRightDriveMotor, "CANivore2158");
+        angleMotors[3].setInverted(true);
+        driveMotors[3].setInverted(false);
+
+        // angleMotors[3].getConfigurator().apply(clockwise);
+        // driveMotors[3].getConfigurator().apply(counterclockwise);
+
+        for (int i = 0; i < 4; i++) {
+            driveMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kDriveCurrentLimit));
+            angleMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kAngleCurrentLimit));
+        }
+
+    odometer = new SwerveDriveOdometry(getKinematics(), new Rotation2d(0), getModulePositions());
   }
 
   /**
@@ -141,6 +265,41 @@ public class SwerveSubsystem extends SubsystemBase
   public void setupPhotonVision()
   {
     vision = new Vision(swerveDrive::getPose, swerveDrive.field);
+  }
+
+  public void updateOdometer() {
+    odometer.update(getGyroAngle(), getModulePositions());
+  }
+
+  public SwerveModulePosition[] getModulePositions() {
+    SwerveModule[] modules = swerveDrive.getModules();
+
+    SwerveModulePosition[] positions = new SwerveModulePosition[4];
+
+    double wheelRadiusMeters = Units.inchesToMeters(3.5) / 2; // don't know if this is right
+    // should be gear ratios
+
+    double driveGearRatio = 1.0 / 5.0;
+
+    for (int i = 0; i < 4; i++) {
+      double driveRotations = driveMotors[i].getRotorPosition().getValueAsDouble() * driveGearRatio;
+      double distanceMeters = Units.rotationsToRadians(driveRotations) * wheelRadiusMeters;
+      
+      Rotation2d angle = Rotation2d.fromDegrees(modules[i].getAbsolutePosition());
+
+      positions[i] = new SwerveModulePosition(distanceMeters, angle);
+    }
+    
+    return positions;
+  }
+
+  public void resetOdometer(Pose2d pose) {
+    odometer.resetPosition(getGyroAngle(), getModulePositions(), pose);
+  
+  }
+
+  public Pose2d getPose() {
+    return odometer.getPoseMeters();
   }
 
   @Override
@@ -152,6 +311,10 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
     }
+
+    updateOdometer();
+    // System.out.println(getPose().getX());
+    // System.out.println(getRobotVelocity().vxMetersPerSecond + " " + getRobotVelocity().vyMetersPerSecond);
   }
 
   @Override
@@ -171,12 +334,12 @@ public class SwerveSubsystem extends SubsystemBase
     {
       config = RobotConfig.fromGUISettings();
 
-      final boolean enableFeedforward = true;
+      final boolean enableFeedforward = false;
       // Configure AutoBuilder last
       AutoBuilder.configure(
           this::getPose,
           // Robot pose supplier
-          this::resetOdometry,
+          this::resetOdometer,
           // Method to reset odometry (will be called if your auto has a starting pose)
           this::getRobotVelocity,
           // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
@@ -190,15 +353,16 @@ public class SwerveSubsystem extends SubsystemBase
                                );
             } else
             {
-              swerveDrive.setChassisSpeeds(speedsRobotRelative);
+              // swerveDrive.setChassisSpeeds(speedsRobotRelative);
+              setSpeeds(speedsRobotRelative);
             }
           },
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(5.0, 0.0, 0.0),
+              new PIDConstants(5, 0.0, 0.0),
               // Translation PID constants
-              new PIDConstants(5.0, 0.0, 0.0)
+              new PIDConstants(5, 0.0, 0.0)
               // Rotation PID constants
           ),
           config,
@@ -228,6 +392,52 @@ public class SwerveSubsystem extends SubsystemBase
     //Preload PathPlanner Path finding
     // IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
     PathfindingCommand.warmupCommand().schedule();
+  }
+  
+  private final double kP = 0.01;
+  private final double maxOutput = 0.5;
+
+  public void setSpeeds(ChassisSpeeds speeds) {
+    // Get module states using YAGSL's kinematics
+        SwerveModuleState[] moduleStates = getKinematics().toSwerveModuleStates(speeds);
+        
+        // Optional: Desaturate module states to respect max speed
+        SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, SystemSpeeds.kMaxDriveSpeedMetersPerSecond);
+        
+        // Control each module
+        SwerveModule[] modules = getSwerveDrive().getModules();
+        for (int i = 0; i < moduleStates.length; i++) {
+            // Get current angle
+            double currentAngle = modules[i].getState().angle.getDegrees();
+            
+            // Optimize state to avoid unnecessary rotation
+            moduleStates[i] = SwerveModuleState.optimize(moduleStates[i], Rotation2d.fromDegrees(currentAngle));
+            
+            // Angle control with continuous wrapping
+            double targetAngle = moduleStates[i].angle.getDegrees();
+            double angleError = targetAngle - currentAngle;
+            
+            // Wrap error to -180 to 180
+            angleError = angleError % 360;
+            if (angleError > 180) angleError -= 360;
+            if (angleError < -180) angleError += 360;
+            
+            // Apply simple P control for angle with limiting
+            double angleOutput = angleError * kP;
+            angleOutput = Math.max(-maxOutput, Math.min(maxOutput, angleOutput));
+            
+            // Calculate drive output normalized to [-1, 1]
+            double driveOutput = moduleStates[i].speedMetersPerSecond / SystemSpeeds.kMaxDriveSpeedMetersPerSecond;
+            
+            // Send commands to motors
+            angleMotors[i].setVoltage(angleOutput * Constants.kMaxAngleVoltage * SwerveSubsystem.angleSpeedConstant);
+            driveMotors[i].setVoltage(driveOutput * Constants.kMaxDriveVoltage * SwerveSubsystem.driveSpeedConstant);
+            
+            // Test prints
+
+            // double velocity = driveMotors[i].getRotorVelocity().getValueAsDouble();
+            // System.out.println((i + 1) + ": " + velocity);
+        }
   }
 
   /**
@@ -562,10 +772,10 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @return The robot's pose
    */
-  public Pose2d getPose()
-  {
-    return swerveDrive.getPose();
-  }
+  // public Pose2d getPose()
+  // {
+  //   return swerveDrive.getPose();
+  // }
 
   /**
    * Set chassis speeds with closed-loop velocity control.

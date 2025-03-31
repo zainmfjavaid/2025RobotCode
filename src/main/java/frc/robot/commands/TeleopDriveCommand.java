@@ -151,6 +151,8 @@ public class TeleopDriveCommand extends Command {
             // double velocity = driveMotors[i].getRotorVelocity().getValueAsDouble();
             // System.out.println((i + 1) + ": " + velocity);
         }
+
+        System.out.println(swerve.getPose());
     }
     
     @Override

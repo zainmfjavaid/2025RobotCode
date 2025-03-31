@@ -69,11 +69,13 @@ public final class Constants {
         public enum IntakeState {
             STOW(2.1, 8, 0),
             SCORESTOW(2.1, 0, 0),
+            AUTONINIT(3.5, 8, 0),
+            ARMHOOK(17, 0, 0),
             INTAKE(19.4, 8, 0),   
             SOURCE(2.9, 8, -7900),
             TROUGH(15, 8, -7500),
-            L2(5.4, 0, -6900),
-            L3(5.4, 0, -16837),
+            L2(2.1, 0, -6000),
+            L3(2.1, 0, -16000),
             L4(6.4, 0, -31109), // todo: change wrist position to 0
             TORCH(14, 0, 0);
 
