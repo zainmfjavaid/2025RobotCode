@@ -63,7 +63,7 @@ public class RightReefAlignCommand extends Command {
         System.out.println("my curr angle is " + currentAngleDegrees + " but im fr tryna get to " + Constants.apriltagAngles[targetID]);
         SwerveSubsystem.setSpeeds(-1 * xSpeed, ySpeed, rotationalSpeed);
 
-        if (Math.abs(xSpeed) + Math.abs(ySpeed) + Math.abs(rotationalSpeed) < 0.5){
+        if (photonVision.alignedToTarget()){
             driverController.activateRumble();
         } else {
             driverController.deactivateRumble();
