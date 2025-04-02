@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularMomentum;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.hardware.Controller.DriverController;
@@ -29,6 +30,15 @@ public class FunkyJunkyRightReefAlignCommand extends Command {
         photonVision = new PhotonVision();
     }
 
+    public double normalizeAngle(double Angle){
+        if(Angle < -180){
+            return 360 + Angle; 
+        } else if (Angle > 180){
+            return Angle - 360;
+        } else {
+            return Angle;
+        }
+    }
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
@@ -59,7 +69,7 @@ public class FunkyJunkyRightReefAlignCommand extends Command {
         // swerveSubsystem.spin((skewAngleDegrees) * (Constants.DriveConstants.kMaxRotationSpeedRadiansPerSecond * 0.05));
         double xSpeed = (Constants.leftReefPitch - distance) * (maxDriveSpeedFeetPerSecond * .0017);
         double ySpeed = (Constants.leftReefYaw - xOffset) * (maxDriveSpeedFeetPerSecond * .0019);
-        double rotationalSpeed = (Constants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0003);
+        double rotationalSpeed = normalizeAngle(Constants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0003);
         System.out.println("my curr angle is " + currentAngleDegrees + " but im fr tryna get to " + Constants.apriltagAngles[targetID]);
         SwerveSubsystem.setSpeeds(-1 * xSpeed, ySpeed, rotationalSpeed);
 }
