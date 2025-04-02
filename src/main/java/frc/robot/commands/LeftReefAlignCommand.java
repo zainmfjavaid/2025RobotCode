@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.hardware.Controller.DriverController;
 import frc.robot.subsystems.PhotonVision;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
@@ -15,6 +16,7 @@ public class LeftReefAlignCommand extends Command {
 
     private final double maxDriveSpeedFeetPerSecond = Units.metersToFeet(4);
     private final double maxRotationalSpeedDegreesPerSecond = Units.radiansToDegrees(4);
+    private final DriverController driverController = new DriverController();
     private int targetID;
 
     
@@ -59,12 +61,19 @@ public class LeftReefAlignCommand extends Command {
         double rotationalSpeed = (Constants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0003);
         System.out.println("my curr angle is " + currentAngleDegrees + " but im fr tryna get to " + Constants.apriltagAngles[targetID]);
         SwerveSubsystem.setSpeeds(-1 * xSpeed, ySpeed, rotationalSpeed);
-}
+
+        if (Math.abs(xSpeed) + Math.abs(ySpeed) + Math.abs(rotationalSpeed) < 0.5){
+            driverController.activateRumble();
+        } else {
+            driverController.deactivateRumble();
+        }
+    }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         SwerveSubsystem.setSpeeds(0, 0, 0);
+        driverController.deactivateRumble();
     }
 
     // Returns true when the command should end.
