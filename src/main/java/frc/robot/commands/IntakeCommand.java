@@ -55,7 +55,6 @@ public class IntakeCommand extends Command {
             driverController.activateRumble();
         } else {
             intakeSubsystem.setGoal(IntakeState.STOW);
-            driverController.deactivateRumble();
         }
     }
 
