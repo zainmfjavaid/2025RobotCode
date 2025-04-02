@@ -1,6 +1,8 @@
 package frc.robot.hardware;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import frc.robot.Constants;
@@ -8,7 +10,7 @@ import frc.robot.Constants;
 public class Controller {
 
     public static class DriverController {
-        private final Joystick joystick = new Joystick(Constants.kDriverControllerPort);
+        private final XboxController joystick = new XboxController(Constants.kDriverControllerPort);
 
         public enum Button
         {
@@ -35,17 +37,39 @@ public class Controller {
             }
         }
 
+        public enum Axis {
+            /** Left X axis. */
+            kLeftX(0),
+            /** Right X axis. */
+            kRightX(4),
+            /** Left Y axis. */
+            kLeftY(1),
+            /** Right Y axis. */
+            kRightY(5),
+            /** Left trigger. */
+            kLeftTrigger(2),
+            /** Right trigger. */
+            kRightTrigger(3);
+            public final int value;
+            Axis(int value){
+                this.value = value;
+            }
+        }
+
         public JoystickButton getButton(Button button) {
             return new JoystickButton(joystick, button.getPort());
         }
 
-        public Boolean getLeftTrigger() {
-            return joystick.getTrigger();
-        }
-        public Boolean getRightTrigger() {
-            return joystick.getTrigger();
+        public double getAxis(Axis axis) {
+            return joystick.getRawAxis(axis.value);
         }
 
+        public Boolean getLeftTrigger() {
+            return !(joystick.getLeftTriggerAxis() == 0);
+        }
+        public Boolean getRightTrigger() {
+            return !(joystick.getRightTriggerAxis() == 0);
+        }
 
         // Left is positive
         public double getLeftStickX() {
@@ -62,6 +86,13 @@ public class Controller {
         // Up is positive
         public double getRightStickY() {
             return -joystick.getRawAxis(5);
+        }
+
+        public void activateRumble(){
+            joystick.setRumble(RumbleType.kBothRumble, 0.5);
+        }
+        public void deactivateRumble(){
+            joystick.setRumble(RumbleType.kBothRumble, 0);
         }
     }
 

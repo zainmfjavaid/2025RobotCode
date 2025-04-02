@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SystemSpeeds;
 import frc.robot.Constants.IntakeConstants.IntakeState;
+import frc.robot.hardware.Controller.DriverController;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -16,6 +17,7 @@ public class IntakeCommand extends Command {
     /** Creates a new IntakeCommand. */
     private final IntakeSubsystem intakeSubsystem;
     private final ElevatorSubsystem elevatorSubsystem;
+    private final DriverController driverController = new DriverController();
 
     public IntakeCommand(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
         // Use addRequirements() here to declare subsystem dependencies.
@@ -50,8 +52,10 @@ public class IntakeCommand extends Command {
         if (intakeSubsystem.intakeHasCoral()) {
             elevatorSubsystem.setGoal(IntakeState.PASSIVERAISE);
             intakeSubsystem.setGoal(IntakeState.PASSIVERAISE);
+            driverController.activateRumble();
         } else {
             intakeSubsystem.setGoal(IntakeState.STOW);
+            driverController.deactivateRumble();
         }
     }
 
