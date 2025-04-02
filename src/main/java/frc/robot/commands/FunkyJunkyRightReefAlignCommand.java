@@ -72,13 +72,7 @@ public class FunkyJunkyRightReefAlignCommand extends Command {
         double rotationalSpeed = (Constants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0003);
         System.out.println("my curr angle is " + currentAngleDegrees + " but im fr tryna get to " + Constants.apriltagAngles[targetID]);
         SwerveSubsystem.setSpeeds(-1 * xSpeed, ySpeed, rotationalSpeed);
-
-        if (Math.abs(xSpeed) + Math.abs(ySpeed) + Math.abs(rotationalSpeed) < 0.5){
-            driverController.activateRumble();
-        } else {
-            driverController.deactivateRumble();
-        }
-    }
+}
 
     // Called once the command ends or is interrupted.
     @Override

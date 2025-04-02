@@ -42,7 +42,6 @@ public class ClimbSubsystem extends SubsystemBase {
     
     @Override
     public void periodic() {
-        System.out.println("CLIMBER IS AT: " + climbMotor.getPositionRotations());
         // This method will be called once per scheduler run
     }
 }
