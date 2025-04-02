@@ -39,12 +39,13 @@ public class Controller {
             return new JoystickButton(joystick, button.getPort());
         }
 
-        public double getLeftTrigger() {
-            return joystick.getRawAxis(2);
+        public Boolean getLeftTrigger() {
+            return joystick.getTrigger();
         }
-        public double getRightTrigger() {
-            return joystick.getRawAxis(3);
+        public Boolean getRightTrigger() {
+            return joystick.getTrigger();
         }
+
 
         // Left is positive
         public double getLeftStickX() {
