@@ -87,15 +87,11 @@ public class Controller {
         public double getRightStickY() {
             return -joystick.getRawAxis(5);
         }
-
         public void activateRumble(){
-            joystick.setRumble(RumbleType.kBothRumble, 0.5);
-        }
-        public void deactivateRumble(){
-            int count = 0;
-            while (count < 50){
+            int cycle = 0;
+            while (cycle < 20){
                 joystick.setRumble(RumbleType.kBothRumble, 0);
-                count++;
+                cycle++;
             }
             joystick.setRumble(RumbleType.kBothRumble, 0);
         }
