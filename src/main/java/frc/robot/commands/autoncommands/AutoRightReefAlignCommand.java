@@ -23,13 +23,11 @@ public class AutoRightReefAlignCommand extends Command {
     }
 
     public double normalizeAngle(double Angle){
-        if(Angle < -180){
-            return 360 + Angle; 
-        } else if (Angle > 180){
-            return Angle - 360;
-        } else {
-            return Angle;
+        double normalized = (Angle % 360);
+        if (normalized > 180){
+          normalized -= 360;
         }
+        return normalized;
     }
 
     // Called when the command is initially scheduled.
