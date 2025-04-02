@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.commands.SourceIntakeCommand;
 import frc.robot.commands.autoncommands.ArmInitCommand;
+import frc.robot.commands.autoncommands.AutoLeftReefAlignCommand;
+import frc.robot.commands.autoncommands.AutoRightReefAlignCommand;
 import frc.robot.commands.autoncommands.TorchIntakeCommand;
 import frc.robot.commands.autoncommands.AutonTroughScoreCommand;
 import frc.robot.commands.autoncommands.LevelFourUp;
@@ -73,8 +75,8 @@ public class RobotContainer {
     private final SourceIntakeCommand sourceIntakeCommand = new SourceIntakeCommand(intakeSubsystem, elevatorSubsystem);
 
     // Auton Named Commands
-    private final ArmInitCommand armInitCommand = new ArmInitCommand(intakeSubsystem);
-    private final TorchIntakeCommand torchIntakeCommand = new TorchIntakeCommand(intakeSubsystem);
+    private final ArmInitCommand armInitCommand = new ArmInitCommand(intakeSubsystem, elevatorSubsystem);
+    private final TorchIntakeCommand torchIntakeCommand = new TorchIntakeCommand(intakeSubsystem, elevatorSubsystem);
     private final AutonTroughScoreCommand troughScoreCommand = new AutonTroughScoreCommand(intakeSubsystem);
     private final LevelFourUpAndDown levelFourUpAndDown = new LevelFourUpAndDown(elevatorSubsystem, intakeSubsystem);
     private final LevelFourUp levelFourUp = new LevelFourUp(elevatorSubsystem, intakeSubsystem);
@@ -85,8 +87,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("TorchIntake", torchIntakeCommand);
         NamedCommands.registerCommand("TroughScore", troughScoreCommand);
         NamedCommands.registerCommand("FullLevelFour", levelFourUpAndDown);
-        NamedCommands.registerCommand("LeftAlign", leftReefAlignCommand);
-        NamedCommands.registerCommand("RightAlign", rightReefAlignCommand);
+        NamedCommands.registerCommand("LeftAlign", new AutoLeftReefAlignCommand());
+        NamedCommands.registerCommand("RightAlign", new AutoRightReefAlignCommand());
 
         swerveSubsystem.setDefaultCommand(swerveSubsystem.getCustomDriveCommand(driverController::getLeftStickY, driverController::getLeftStickX, driverController::getRightStickX));
 
@@ -124,7 +126,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return AutoBuilder.buildAuto("New New Auto"); 
+        return AutoBuilder.buildAuto("2coral"); 
     }
 }
 

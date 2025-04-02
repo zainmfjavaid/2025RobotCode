@@ -7,16 +7,19 @@ package frc.robot.commands.autoncommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.SystemSpeeds;
 import frc.robot.Constants.IntakeConstants.IntakeState;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TorchIntakeCommand extends Command {
 	/** Creates a new ArmInitCommand. */
 	private final IntakeSubsystem intakeSubsystem;
+	private final ElevatorSubsystem elevatorSubsystem;
     private int cycles = 0;
 
-	public TorchIntakeCommand(IntakeSubsystem intakeSubsystem) {
+	public TorchIntakeCommand(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
 		this.intakeSubsystem = intakeSubsystem;
+		this.elevatorSubsystem = elevatorSubsystem;
 
 		addRequirements(intakeSubsystem);
 	}
@@ -26,7 +29,6 @@ public class TorchIntakeCommand extends Command {
 	public void initialize() {
         cycles = 0;
 		intakeSubsystem.setGoal(IntakeState.TORCH);
-		System.out.println("herehereherehere");
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
@@ -46,7 +48,9 @@ public class TorchIntakeCommand extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		intakeSubsystem.setGoal(IntakeState.STOW);
+		intakeSubsystem.setGoal(IntakeState.PASSIVERAISE);
+		elevatorSubsystem.setGoal(IntakeState.PASSIVERAISE);
+		
 		intakeSubsystem.runRollerMotors(0);
 	}
 

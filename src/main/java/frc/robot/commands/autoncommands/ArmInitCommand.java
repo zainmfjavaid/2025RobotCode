@@ -6,15 +6,18 @@ package frc.robot.commands.autoncommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants.IntakeState;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ArmInitCommand extends Command {
 	/** Creates a new ArmInitCommand. */
 	private final IntakeSubsystem intakeSubsystem;
+	private final ElevatorSubsystem elevatorSubsystem;
 
-	public ArmInitCommand(IntakeSubsystem intakeSubsystem) {
+	public ArmInitCommand(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem) {
 		this.intakeSubsystem = intakeSubsystem;
+		this.elevatorSubsystem = elevatorSubsystem;
 
 		addRequirements(intakeSubsystem);
 	}
@@ -29,7 +32,8 @@ public class ArmInitCommand extends Command {
 	@Override
 	public void execute() {
 		if (intakeSubsystem.atSetpoint(IntakeState.AUTONINIT)) {
-			intakeSubsystem.setGoal(IntakeState.STOW);
+			intakeSubsystem.setGoal(IntakeState.PASSIVERAISE);
+			elevatorSubsystem.setGoal(IntakeState.PASSIVERAISE);
 		}
 	}
 
