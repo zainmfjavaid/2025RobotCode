@@ -44,9 +44,15 @@ public class IntakeCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        intakeSubsystem.setGoal(IntakeState.STOW);
         intakeSubsystem.runRollerMotors(0);
         SwerveSubsystem.isFieldRelative = true;
+
+        if (intakeSubsystem.intakeHasCoral()) {
+            elevatorSubsystem.setGoal(IntakeState.PASSIVERAISE);
+            intakeSubsystem.setGoal(IntakeState.PASSIVERAISE);
+        } else {
+            intakeSubsystem.setGoal(IntakeState.STOW);
+        }
     }
 
     // Returns true when the command should end.

@@ -26,29 +26,33 @@ public class TorchIntakeCommand extends Command {
 	public void initialize() {
         cycles = 0;
 		intakeSubsystem.setGoal(IntakeState.TORCH);
+		System.out.println("herehereherehere");
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
 		cycles++;
-        System.out.println(cycles);
 
-        if (cycles > 5 && cycles < 50) {
+        if (cycles > 5 && cycles < 75) {
             intakeSubsystem.runRollerMotors(SystemSpeeds.kIntakeRollerSpeed);
-        } else if (cycles >= 100) {
-            intakeSubsystem.runRollerMotors(0);
+        } else if (cycles >= 75 && cycles < 100) {
             intakeSubsystem.setGoal(IntakeState.STOW);
-        }
+        } else if (cycles >= 100) {
+			intakeSubsystem.runRollerMotors(0);
+		}
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
-	public void end(boolean interrupted) {}
+	public void end(boolean interrupted) {
+		intakeSubsystem.setGoal(IntakeState.STOW);
+		intakeSubsystem.runRollerMotors(0);
+	}
 
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return cycles >= 50 && intakeSubsystem.atSetpoint(IntakeState.STOW);
+		return cycles >= 101 && intakeSubsystem.atSetpoint(IntakeState.STOW);
 	}
 }

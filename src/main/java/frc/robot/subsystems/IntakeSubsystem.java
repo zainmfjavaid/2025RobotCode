@@ -32,6 +32,10 @@ public class IntakeSubsystem extends SubsystemBase {
         return lc.getMeasurement().distance_mm;
     }
 
+    public boolean getHasMeasurement() {
+        return lc.getMeasurement().status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT;
+    }
+
     public void setPosition(IntakeState intakeState) {
         double armPIDOutput = armPIDController.calculate(armMotor.getPositionRotations(), intakeState.getArmPosition());
         double wristPIDOutput = wristPIDController.calculate(wristMotor.getPositionRotations(), intakeState.getWristValue());
@@ -96,8 +100,13 @@ public class IntakeSubsystem extends SubsystemBase {
         return new InstantCommand(() -> {System.out.println("W: " + wristMotor.getPositionRotations() + "\nA: " + armMotor.getPositionRotations());}, this);
     }
 
+    public boolean intakeHasCoral() {
+        return getDistance() == 0.0 && getHasMeasurement();
+    }
+
     @Override
     public void periodic() {
+        System.out.println(getDistance());
         if (currentGoal != null) {
             setPosition(currentGoal);
         }

@@ -14,7 +14,7 @@ public final class Constants {
 
     // Vision Constants
     public static final double aprilTagHeightInches = 12.125;
-    public static final double cameraHeightInches = 12.5;
+    public static final double cameraHeightInches = 17.5;
 
     // Controller Constants
     public static final int kDriverControllerPort = 0;
@@ -32,12 +32,12 @@ public final class Constants {
         public static final double kElevatorDownSpeed = 0.4;
 
         public static final double kIntakeRollerSpeed = 0.7;
-        public static final double kOuttakeRollerSpeed = -0.2;
+        public static final double kOuttakeRollerSpeed = -0.6;
         public static final double kScoreOuttakeRollerSpeed = -0.2;
 
         public static final double kClimbSpeed = 1.0;
 
-        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(4);
+        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(5.5);
         public static final double kMaxRotationSpeedRadiansPerSecond = 4.0;
     }
 
@@ -69,6 +69,7 @@ public final class Constants {
         public enum IntakeState {
             STOW(2.1, 8, 0),
             SCORESTOW(2.1, 0, 0),
+            PASSIVERAISE(2.1, 8, -6000),
             AUTONINIT(3.5, 8, 0),
             ARMHOOK(17, 0, 0),
             INTAKE(19.4, 8, 0),   
@@ -76,8 +77,8 @@ public final class Constants {
             TROUGH(15, 8, -7500),
             L2(2.1, 0, -6000),
             L3(2.1, 0, -16000),
-            L4(6.4, 0, -31109), // todo: change wrist position to 0
-            TORCH(14, 0, 0);
+            L4(6.4, 0, -31109),
+            TORCH(16, 0, 0);
 
             private final double armValue;
             private final double wristValue;
@@ -110,22 +111,28 @@ public final class Constants {
         0, // 3
         0, // 4
         0, // 5
-        60, // 6
+        -60, // 6
         0, // 7
-        -60, // 8
-        -120, // 9
-        180, // 10
-        120, // 11
+        60, // 8
+        120, // 9
+        179.9, // 10
+        -120, // 11
         0, // 12
         0, // 13
         0, // 14
         0, // 15
         0, // 16
-        60, // 17
+        -60, // 17
         0, // 18
-        -60, // 19
-        -120, // 20
-        180, // 21
-        120 // 22
+        60, // 19
+        120, // 20
+        179.9, // 21
+        -120 // 22
     };
+
+    public static double leftReefYaw = 10.3;
+    public static double leftReefPitch = -13.4;
+
+    public static double rightReefYaw = -36.5;
+    public static double rightReefPitch = -2.4;
 }

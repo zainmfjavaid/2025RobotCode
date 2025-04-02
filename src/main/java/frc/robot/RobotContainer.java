@@ -28,6 +28,8 @@ import frc.robot.commands.elevator.ArmHook;
 import frc.robot.commands.elevator.ElevatorMove;
 import frc.robot.commands.elevator.ElevatorScore;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.LeftReefAlignCommand;
+import frc.robot.commands.RightReefAlignCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -62,6 +64,9 @@ public class RobotContainer {
     private final ElevatorScore elevatorScoreCommand = new ElevatorScore(intakeSubsystem, elevatorSubsystem, IntakeState.L4); // create new cmd AT the trigger
     private final ArmHook armHookCommand = new ArmHook(intakeSubsystem, elevatorSubsystem, IntakeState.L4);
 
+    private final LeftReefAlignCommand leftReefAlignCommand = new LeftReefAlignCommand();
+    private final RightReefAlignCommand rightReefAlignCommand = new RightReefAlignCommand();
+
     // Intake Commands
     private final IntakeCommand intakeCommand = new IntakeCommand(intakeSubsystem, elevatorSubsystem);
     private final SourceIntakeCommand sourceIntakeCommand = new SourceIntakeCommand(intakeSubsystem, elevatorSubsystem);
@@ -79,6 +84,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("TorchIntake", torchIntakeCommand);
         NamedCommands.registerCommand("TroughScore", troughScoreCommand);
         NamedCommands.registerCommand("FullLevelFour", levelFourUpAndDown);
+        NamedCommands.registerCommand("LeftAlign", leftReefAlignCommand);
+        NamedCommands.registerCommand("RightAlign", rightReefAlignCommand);
 
         swerveSubsystem.setDefaultCommand(swerveSubsystem.getCustomDriveCommand(driverController::getLeftStickY, driverController::getLeftStickX, driverController::getRightStickX));
 
@@ -94,13 +101,13 @@ public class RobotContainer {
         driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
         driverController.getButton(DriverController.Button.X).whileTrue(intakeSubsystem.outtakeCommand());
 
-        // driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
-        driverController.getButton(DriverController.Button.RB).onTrue(armHookCommand);
+        driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
+        // driverController.getButton(DriverController.Button.RB).onTrue(armHookCommand);
         driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(swerveSubsystem::resetGyro));
 
         // some testing cmds
-        operatorController.getButton(OperatorController.Button.RT).whileTrue(elevatorSubsystem.runElevatorTest());
-        operatorController.getButton(OperatorController.Button.LT).whileTrue(elevatorSubsystem.reverseElevatorTest());
+        operatorController.getButton(OperatorController.Button.RT).whileTrue(rightReefAlignCommand);
+        operatorController.getButton(OperatorController.Button.LT).whileTrue(leftReefAlignCommand);
 
         // Operator Controls
         operatorController.getButton(OperatorController.Button.A).onTrue(levelOneCommand);
@@ -116,7 +123,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return AutoBuilder.buildAuto("2coral");    
+        return AutoBuilder.buildAuto("New New Auto"); 
     }
 }
 

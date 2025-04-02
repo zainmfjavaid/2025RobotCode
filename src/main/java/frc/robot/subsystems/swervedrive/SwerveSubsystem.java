@@ -32,7 +32,10 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -70,7 +73,7 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Swerve drive object.
    */
-  private final SwerveDrive swerveDrive;
+  private static final SwerveDrive swerveDrive;
   /**
    * Enable vision odometry updates while driving.
    */
@@ -89,17 +92,10 @@ public class SwerveSubsystem extends SubsystemBase
   private final SwerveDriveOdometry odometer;
 
 
-  private TalonFX[] angleMotors;
-  private TalonFX[] driveMotors;
-  private CANcoder[] encoders;
+  private static TalonFX[] angleMotors;
+  private static TalonFX[] driveMotors;
 
-  /**
-   * Initialize {@link SwerveDrive} with the directory provided.
-   *
-   * @param directory Directory of swerve drive config files.
-   */
-  public SwerveSubsystem(File directory)
-  {
+  static {
     boolean blueAlliance = false;
     Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
                                                                       Meter.of(4)),
@@ -107,8 +103,9 @@ public class SwerveSubsystem extends SubsystemBase
                                        : new Pose2d(new Translation2d(Meter.of(16),
                                                                       Meter.of(4)),
                                                     Rotation2d.fromDegrees(180));
-    // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+
+    File directory = new File(Filesystem.getDeployDirectory(), "swerve");
+
     try
     {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(20, startingPose);
@@ -125,9 +122,65 @@ public class SwerveSubsystem extends SubsystemBase
                                                0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
     swerveDrive.setModuleEncoderAutoSynchronize(false,
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
-    // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
+
+    angleMotors = new TalonFX[4];
+    driveMotors = new TalonFX[4];
+
+    // MotorOutputConfigs clockwise = new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
+    // MotorOutputConfigs counterclockwise new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
     
-    
+    // Front Left
+    angleMotors[0] = new TalonFX(DeviceIds.kFrontLeftAngleMotor, "CANivore2158");
+    driveMotors[0] = new TalonFX(DeviceIds.kFrontLeftDriveMotor, "CANivore2158");
+    angleMotors[0].setInverted(true);
+    driveMotors[0].setInverted(true);
+    // encoders[0] = new CANcoder(1, "rio");
+
+    // angleMotors[0].getConfigurator().apply(clockwise);
+    // angleMotors[0].getConfigurator().apply(clockwise);
+
+    // Front Right
+    angleMotors[1] = new TalonFX(DeviceIds.kFrontRightAngleMotor, "CANivore2158");
+    driveMotors[1] = new TalonFX(DeviceIds.kFrontRightDriveMotor, "CANivore2158");
+    angleMotors[1].setInverted(true);
+    driveMotors[1].setInverted(false);
+    // encoders[1] = new CANcoder(1, "rio");
+
+    // angleMotors[1].getConfigurator().apply(clockwise);
+    // driveMotors[1].getConfigurator().apply(counterclockwise);
+
+    // Back Left
+    angleMotors[2] = new TalonFX(DeviceIds.kBackLeftAngleMotor, "CANivore2158");
+    driveMotors[2] = new TalonFX(DeviceIds.kBackLeftDriveMotor, "CANivore2158");
+    angleMotors[2].setInverted(true);
+    driveMotors[2].setInverted(true);
+    // encoders[2] = new CANcoder(1, "rio");
+
+    // angleMotors[2].getConfigurator().apply(clockwise);
+    // driveMotors[2].getConfigurator().apply(clockwise);
+
+    // Back Right
+    angleMotors[3] = new TalonFX(DeviceIds.kBackRightAngleMotor, "CANivore2158");
+    driveMotors[3] = new TalonFX(DeviceIds.kBackRightDriveMotor, "CANivore2158");
+    angleMotors[3].setInverted(true);
+    driveMotors[3].setInverted(false);
+
+    for (int i = 0; i < 4; i++) {
+      driveMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kDriveCurrentLimit));
+      angleMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kAngleCurrentLimit));
+    }
+  }
+
+  StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
+    .getStructTopic("MyPose", Pose2d.struct).publish();
+
+  /**
+   * Initialize {@link SwerveDrive} with the directory provided.
+   *
+   * @param directory Directory of swerve drive config files.
+   */
+  public SwerveSubsystem(File directory)
+  {
     if (visionDriveTest)
     {
       setupPhotonVision();
@@ -137,61 +190,7 @@ public class SwerveSubsystem extends SubsystemBase
     setupPathPlanner();
     RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyroWithAlliance));
   
-  
-    // Initialize motors
-        angleMotors = new TalonFX[4];
-        driveMotors = new TalonFX[4];
-        encoders = new CANcoder[4]; // unused
-
-        // MotorOutputConfigs clockwise = new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
-        // MotorOutputConfigs counterclockwise new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
-        
-        // Front Left
-        angleMotors[0] = new TalonFX(DeviceIds.kFrontLeftAngleMotor, "CANivore2158");
-        driveMotors[0] = new TalonFX(DeviceIds.kFrontLeftDriveMotor, "CANivore2158");
-        angleMotors[0].setInverted(true);
-        driveMotors[0].setInverted(true);
-        // encoders[0] = new CANcoder(1, "rio");
-
-        // angleMotors[0].getConfigurator().apply(clockwise);
-        // angleMotors[0].getConfigurator().apply(clockwise);
-
-        // Front Right
-        angleMotors[1] = new TalonFX(DeviceIds.kFrontRightAngleMotor, "CANivore2158");
-        driveMotors[1] = new TalonFX(DeviceIds.kFrontRightDriveMotor, "CANivore2158");
-        angleMotors[1].setInverted(true);
-        driveMotors[1].setInverted(false);
-        // encoders[1] = new CANcoder(1, "rio");
-
-        // angleMotors[1].getConfigurator().apply(clockwise);
-        // driveMotors[1].getConfigurator().apply(counterclockwise);
-
-        // Back Left
-        angleMotors[2] = new TalonFX(DeviceIds.kBackLeftAngleMotor, "CANivore2158");
-        driveMotors[2] = new TalonFX(DeviceIds.kBackLeftDriveMotor, "CANivore2158");
-        angleMotors[2].setInverted(true);
-        driveMotors[2].setInverted(true);
-        // encoders[2] = new CANcoder(1, "rio");
-
-        // angleMotors[2].getConfigurator().apply(clockwise);
-        // driveMotors[2].getConfigurator().apply(clockwise);
-
-        // Back Right
-        angleMotors[3] = new TalonFX(DeviceIds.kBackRightAngleMotor, "CANivore2158");
-        driveMotors[3] = new TalonFX(DeviceIds.kBackRightDriveMotor, "CANivore2158");
-        angleMotors[3].setInverted(true);
-        driveMotors[3].setInverted(false);
-        // encoders[3] = new CANcoder(1, "rio");
-
-        // angleMotors[3].getConfigurator().apply(clockwise);
-        // driveMotors[3].getConfigurator().apply(counterclockwise);
-
-        for (int i = 0; i < 4; i++) {
-            driveMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kDriveCurrentLimit));
-            angleMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kAngleCurrentLimit));
-        }
-
-        odometer = new SwerveDriveOdometry(getKinematics(), new Rotation2d(0), getModulePositions());
+    odometer = new SwerveDriveOdometry(getKinematics(), new Rotation2d(0), getModulePositions());
   }
 
   /**
@@ -202,59 +201,11 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
   {
-    swerveDrive = new SwerveDrive(driveCfg,
-                                  controllerCfg,
-                                  100,
-                                  new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
-                                             Rotation2d.fromDegrees(0)));
-
-        // Initialize motors
-        angleMotors = new TalonFX[4];
-        driveMotors = new TalonFX[4];
-
-        // MotorOutputConfigs clockwise = new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
-        // MotorOutputConfigs counterclockwise new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
-        
-        // Front Left
-        angleMotors[0] = new TalonFX(DeviceIds.kFrontLeftAngleMotor, "CANivore2158");
-        driveMotors[0] = new TalonFX(DeviceIds.kFrontLeftDriveMotor, "CANivore2158");
-        angleMotors[0].setInverted(true);
-        driveMotors[0].setInverted(true);
-
-        // angleMotors[0].getConfigurator().apply(clockwise);
-        // angleMotors[0].getConfigurator().apply(clockwise);
-
-        // Front Right
-        angleMotors[1] = new TalonFX(DeviceIds.kFrontRightAngleMotor, "CANivore2158");
-        driveMotors[1] = new TalonFX(DeviceIds.kFrontRightDriveMotor, "CANivore2158");
-        angleMotors[1].setInverted(true);
-        driveMotors[1].setInverted(false);
-
-        // angleMotors[1].getConfigurator().apply(clockwise);
-        // driveMotors[1].getConfigurator().apply(counterclockwise);
-
-        // Back Left
-        angleMotors[2] = new TalonFX(DeviceIds.kBackLeftAngleMotor, "CANivore2158");
-        driveMotors[2] = new TalonFX(DeviceIds.kBackLeftDriveMotor, "CANivore2158");
-        angleMotors[2].setInverted(true);
-        driveMotors[2].setInverted(true);
-
-        // angleMotors[2].getConfigurator().apply(clockwise);
-        // driveMotors[2].getConfigurator().apply(clockwise);
-
-        // Back Right
-        angleMotors[3] = new TalonFX(DeviceIds.kBackRightAngleMotor, "CANivore2158");
-        driveMotors[3] = new TalonFX(DeviceIds.kBackRightDriveMotor, "CANivore2158");
-        angleMotors[3].setInverted(true);
-        driveMotors[3].setInverted(false);
-
-        // angleMotors[3].getConfigurator().apply(clockwise);
-        // driveMotors[3].getConfigurator().apply(counterclockwise);
-
-        for (int i = 0; i < 4; i++) {
-            driveMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kDriveCurrentLimit));
-            angleMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kAngleCurrentLimit));
-        }
+    // swerveDrive = new SwerveDrive(driveCfg,
+    //                               controllerCfg,
+    //                               100,
+    //                               new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
+    //                                          Rotation2d.fromDegrees(0)));
 
     odometer = new SwerveDriveOdometry(getKinematics(), new Rotation2d(0), getModulePositions());
   }
@@ -276,9 +227,8 @@ public class SwerveSubsystem extends SubsystemBase
 
     SwerveModulePosition[] positions = new SwerveModulePosition[4];
 
-    double wheelRadiusMeters = Units.inchesToMeters(2);
-    // should be gear ratios
-
+    double wheelRadiusMeters = Units.inchesToMeters(1.75); // 1.75
+ 
     double driveGearRatio = 1.0 / 5.0;
 
     for (int i = 0; i < 4; i++) {
@@ -313,6 +263,8 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
     updateOdometer();
+    
+    publisher.set(getPose());
     // System.out.println(getPose().getX());
     // System.out.println(getRobotVelocity().vxMetersPerSecond + " " + getRobotVelocity().vyMetersPerSecond);
   }
@@ -360,7 +312,7 @@ public class SwerveSubsystem extends SubsystemBase
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(5, 0.0, 0.0),
+              new PIDConstants(2, 0.0, 0.0),
               // Translation PID constants
               new PIDConstants(5, 0.0, 0.0)
               // Rotation PID constants
@@ -394,50 +346,67 @@ public class SwerveSubsystem extends SubsystemBase
     PathfindingCommand.warmupCommand().schedule();
   }
   
-  private final double kP = 0.01;
-  private final double maxOutput = 0.5;
+  private static final double kP = 0.01;
+  private static final double maxOutput = 0.5;
 
-  public void setSpeeds(ChassisSpeeds speeds) {
+  public static void setSpeeds(ChassisSpeeds speeds) {
     // Get module states using YAGSL's kinematics
-        SwerveModuleState[] moduleStates = getKinematics().toSwerveModuleStates(speeds);
-        
-        // Optional: Desaturate module states to respect max speed
-        SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, SystemSpeeds.kMaxDriveSpeedMetersPerSecond);
-        
-        // Control each module
-        SwerveModule[] modules = getSwerveDrive().getModules();
-        for (int i = 0; i < moduleStates.length; i++) {
-            // Get current angle
-            double currentAngle = modules[i].getState().angle.getDegrees();
-            
-            // Optimize state to avoid unnecessary rotation
-            moduleStates[i] = SwerveModuleState.optimize(moduleStates[i], Rotation2d.fromDegrees(currentAngle));
-            
-            // Angle control with continuous wrapping
-            double targetAngle = moduleStates[i].angle.getDegrees();
-            double angleError = targetAngle - currentAngle;
-            
-            // Wrap error to -180 to 180
-            angleError = angleError % 360;
-            if (angleError > 180) angleError -= 360;
-            if (angleError < -180) angleError += 360;
-            
-            // Apply simple P control for angle with limiting
-            double angleOutput = angleError * kP;
-            angleOutput = Math.max(-maxOutput, Math.min(maxOutput, angleOutput));
-            
-            // Calculate drive output normalized to [-1, 1]
-            double driveOutput = moduleStates[i].speedMetersPerSecond / SystemSpeeds.kMaxDriveSpeedMetersPerSecond;
-            
-            // Send commands to motors
-            angleMotors[i].setVoltage(angleOutput * Constants.kMaxAngleVoltage * SwerveSubsystem.angleSpeedConstant);
-            driveMotors[i].setVoltage(driveOutput * Constants.kMaxDriveVoltage * SwerveSubsystem.driveSpeedConstant);
-            
-            // Test prints
+    SwerveModuleState[] moduleStates = swerveDrive.kinematics.toSwerveModuleStates(speeds);
+    
+    // Optional: Desaturate module states to respect max speed
+    SwerveDriveKinematics.desaturateWheelSpeeds(moduleStates, SystemSpeeds.kMaxDriveSpeedMetersPerSecond);
+    
+    // Control each module
+    SwerveModule[] modules = swerveDrive.getModules();
 
-            // double velocity = driveMotors[i].getRotorVelocity().getValueAsDouble();
-            // System.out.println((i + 1) + ": " + velocity);
-        }
+    for (int i = 0; i < moduleStates.length; i++) {
+      // Get current angle
+      double currentAngle = modules[i].getState().angle.getDegrees();
+      
+      // Optimize state to avoid unnecessary rotation
+      moduleStates[i] = SwerveModuleState.optimize(moduleStates[i], Rotation2d.fromDegrees(currentAngle));
+      
+      // Angle control with continuous wrapping
+      double targetAngle = moduleStates[i].angle.getDegrees();
+      double angleError = targetAngle - currentAngle;
+      
+      // Wrap error to -180 to 180
+      angleError = angleError % 360;
+      if (angleError > 180) angleError -= 360;
+      if (angleError < -180) angleError += 360;
+      
+      // Apply simple P control for angle with limiting
+      double angleOutput = angleError * kP;
+      angleOutput = Math.max(-maxOutput, Math.min(maxOutput, angleOutput));
+      
+      // Calculate drive output normalized to [-1, 1]
+      double driveOutput = moduleStates[i].speedMetersPerSecond / SystemSpeeds.kMaxDriveSpeedMetersPerSecond;
+      
+      // Send commands to motors
+      angleMotors[i].setVoltage(angleOutput * Constants.kMaxAngleVoltage);
+      driveMotors[i].setVoltage(driveOutput * Constants.kMaxDriveVoltage);
+      
+      // Test prints
+
+      // double velocity = driveMotors[i].getRotorVelocity().getValueAsDouble();
+      // System.out.println((i + 1) + ": " + velocity);
+    }
+  }
+
+  public static void setSpeeds(double x, double y, double omega) {
+    setSpeeds(new ChassisSpeeds(x, y, omega));
+  }
+
+  public static void driveForward(double speed) {
+    setSpeeds(speed, 0, 0);
+  }
+
+  public static void driveLaterally(double speed) {
+    setSpeeds(0, speed, 0);
+  }
+
+  public static void rotate(double speed) {
+    setSpeeds(0, 0, speed);
   }
 
   /**
@@ -719,8 +688,8 @@ public class SwerveSubsystem extends SubsystemBase
   public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity)
   {
     return run(() -> {
-      System.out.println(velocity.get());
-      System.out.println("driving");
+      // System.out.println(velocity.get());
+      // System.out.println("driving");
       swerveDrive.driveFieldOriented(velocity.get());
     });
   }

@@ -60,7 +60,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 			// setSpeed(pidOutput);
 		// }
 		pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
-		downPidOutput = elevatorDownPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
+		downPidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
 
 		if (intakeState.getElevatorValue() != 0) {
 			//System.out.println("going up @ " + pidOutput);
@@ -83,20 +83,20 @@ public class ElevatorSubsystem extends SubsystemBase {
 			isDown = false;
 		}
 		currentGoal = intakeState;
-		System.out.println(currentGoal);
-		if (currentGoal == IntakeState.L4 || currentGoal == IntakeState.L3 || currentGoal == IntakeState.L2) {
-			SwerveSubsystem.driveSpeedConstant = 0.2;
-			SwerveSubsystem.angleSpeedConstant = 0.4;
-			SwerveSubsystem.isFieldRelative = false;
-		} else {
-			SwerveSubsystem.driveSpeedConstant = 1;
-			SwerveSubsystem.angleSpeedConstant = 1;
-			SwerveSubsystem.isFieldRelative = true;
-		}
+		// System.out.println(currentGoal);
+		// if (currentGoal == IntakeState.L4 || currentGoal == IntakeState.L3 || currentGoal == IntakeState.L2) {
+		// 	SwerveSubsystem.driveSpeedConstant = 0.2;
+		// 	SwerveSubsystem.angleSpeedConstant = 0.4;
+		// 	// SwerveSubsystem.isFieldRelative = false;
+		// } else {
+		// 	SwerveSubsystem.driveSpeedConstant = 1;
+		// 	SwerveSubsystem.angleSpeedConstant = 1;
+		// 	// SwerveSubsystem.isFieldRelative = true;
+		// }
 	}
 
 	public boolean atSetpoint() {
-		if (Math.abs(currentGoal.getElevatorValue() - elevatorEncoder.getDistance()) < 300) {
+		if (Math.abs(currentGoal.getElevatorValue() - elevatorEncoder.getDistance()) < 500) {
 			return true;
 		}
 

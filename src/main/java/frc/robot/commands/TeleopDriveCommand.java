@@ -143,8 +143,11 @@ public class TeleopDriveCommand extends Command {
             double driveOutput = moduleStates[i].speedMetersPerSecond / SystemSpeeds.kMaxDriveSpeedMetersPerSecond;
             
             // Send commands to motors
-            angleMotors[i].setVoltage(angleOutput * Constants.kMaxAngleVoltage * SwerveSubsystem.angleSpeedConstant);
-            driveMotors[i].setVoltage(driveOutput * Constants.kMaxDriveVoltage * SwerveSubsystem.driveSpeedConstant);
+            angleMotors[i].set(angleOutput);
+            driveMotors[i].set(driveOutput);
+
+            // angleMotors[i].setVoltage(angleOutput * Constants.kMaxAngleVoltage * SwerveSubsystem.angleSpeedConstant);
+            // driveMotors[i].setVoltage(driveOutput * Constants.kMaxDriveVoltage * SwerveSubsystem.driveSpeedConstant);
             
             // Test prints
 
@@ -152,7 +155,7 @@ public class TeleopDriveCommand extends Command {
             // System.out.println((i + 1) + ": " + velocity);
         }
 
-        System.out.println(swerve.getPose());
+        // System.out.println(swerve.getPose());
     }
     
     @Override

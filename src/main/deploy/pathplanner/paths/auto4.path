@@ -3,38 +3,50 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.819819078947368,
-        "y": 5.256578947368421
+        "x": 3.9799180327868857,
+        "y": 5.3196721311475414
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.098190789473684,
-        "y": 5.814638157894737
+        "x": 2.57735655737705,
+        "y": 5.127868852459017
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "auto3End"
     },
     {
       "anchor": {
-        "x": 1.9820723684210526,
-        "y": 4.025
+        "x": 1.5584016393442621,
+        "y": 3.929098360655738
       },
       "prevControl": {
-        "x": 2.087911184210526,
-        "y": 4.852467105263158
+        "x": 2.7691598360655743,
+        "y": 4.2647540983606556
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "auto4End"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "TorchIntake",
+      "waypointRelativePos": 0.6,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "TorchIntake"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 0.5,
-    "maxAcceleration": 0.5,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -179.559271927239
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -61.82140989004088
+    "rotation": -58.62699485989148
   },
   "useDefaultConstraints": true
 }

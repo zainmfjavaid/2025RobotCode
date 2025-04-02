@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "InitializeArm"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "auto1"
@@ -13,19 +19,13 @@
         {
           "type": "named",
           "data": {
-            "name": "scoreLevelFour"
+            "name": "FullLevelFour"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "auto2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intakeCoral"
           }
         },
         {
@@ -37,7 +37,7 @@
         {
           "type": "named",
           "data": {
-            "name": "scoreLevelFour"
+            "name": "FullLevelFour"
           }
         },
         {
@@ -47,21 +47,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "intakeCoral"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "auto5"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "scoreLevelFour"
           }
         }
       ]

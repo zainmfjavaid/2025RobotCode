@@ -13,19 +13,19 @@
         {
           "type": "named",
           "data": {
-            "name": "scoreLevelFour"
+            "name": "RightAlign"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FullLevelFour"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "auto2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intakeCoral"
           }
         },
         {
@@ -37,7 +37,13 @@
         {
           "type": "named",
           "data": {
-            "name": "scoreLevelFour"
+            "name": "FullLevelFour"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "LeftAlign"
           }
         }
       ]

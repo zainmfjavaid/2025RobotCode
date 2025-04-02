@@ -5,15 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "InitializeArm"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "Leave"
+            "pathName": "auto1"
           }
         }
       ]
