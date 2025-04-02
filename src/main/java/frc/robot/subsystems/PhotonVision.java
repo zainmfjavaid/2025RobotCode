@@ -78,11 +78,11 @@ public class PhotonVision {
     }
 
     public boolean alignedToTarget() {
-        boolean rightReefYawGood = Constants.rightReefYaw - 2 < yaw && Constants.rightReefYaw + 2 > yaw;
-        boolean rightReefPitchGood = Constants.rightReefPitch - 1.5 < pitch && Constants.rightReefPitch + 1.5 > pitch;
+        boolean rightReefYawGood = Constants.rightReefYaw - 3 < yaw && Constants.rightReefYaw + 3 > yaw;
+        boolean rightReefPitchGood = Constants.rightReefPitch - 3 < pitch && Constants.rightReefPitch + 3 > pitch;
 
-        boolean leftReefYawGood = Constants.leftReefYaw - 2 < yaw && Constants.leftReefYaw + 2 > yaw;
-        boolean leftReefPitchGood = Constants.leftReefPitch - 1.5 < pitch && Constants.leftReefPitch + 1.5 > pitch;
+        boolean leftReefYawGood = Constants.leftReefYaw - 7 < yaw && Constants.leftReefYaw + 7 > yaw;
+        boolean leftReefPitchGood = Constants.leftReefPitch - 7 < pitch && Constants.leftReefPitch + 7 > pitch;
 
         return (rightReefPitchGood && rightReefYawGood) || (leftReefPitchGood && leftReefYawGood);
     }

@@ -106,7 +106,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        System.out.println(getDistance());
+        // System.out.println(getDistance());
         if (currentGoal != null) {
             setPosition(currentGoal);
         }

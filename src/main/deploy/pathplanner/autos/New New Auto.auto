@@ -5,9 +5,27 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "InitializeArm"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "auto1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "LeftAlign"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FullLevelFour"
           }
         }
       ]
