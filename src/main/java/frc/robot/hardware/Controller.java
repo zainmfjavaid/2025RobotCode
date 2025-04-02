@@ -3,8 +3,10 @@ package frc.robot.hardware;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 
 public class Controller {
@@ -64,11 +66,12 @@ public class Controller {
             return joystick.getRawAxis(axis.value);
         }
 
-        public Boolean getLeftTrigger() {
-            return !(joystick.getLeftTriggerAxis() == 0);
+        public Trigger getLeftTrigger() {
+            return new Trigger(() -> joystick.getLeftTriggerAxis() > 0.05);
         }
-        public Boolean getRightTrigger() {
-            return !(joystick.getRightTriggerAxis() == 0);
+
+        public Trigger getRightTrigger() {
+            return new Trigger(() -> joystick.getRightTriggerAxis() > 0.05);
         }
 
         // Left is positive
@@ -88,12 +91,10 @@ public class Controller {
             return -joystick.getRawAxis(5);
         }
         public void activateRumble(){
-            int cycle = 0;
-            while (cycle < 20){
-                joystick.setRumble(RumbleType.kBothRumble, 0);
-                cycle++;
-            }
-            joystick.setRumble(RumbleType.kBothRumble, 0);
+            joystick.setRumble(RumbleType.kBothRumble, 0.5);
+        }
+        public void deactivateRumble(){
+            joystick.setRumble(RumbleType.kBothRumble, 0);  
         }
     }
 

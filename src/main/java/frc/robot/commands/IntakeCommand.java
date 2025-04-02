@@ -41,6 +41,11 @@ public class IntakeCommand extends Command {
         if (intakeSubsystem.atSetpoint(IntakeState.INTAKE)) {
             intakeSubsystem.runRollerMotors(SystemSpeeds.kIntakeRollerSpeed);
         }
+        if (intakeSubsystem.intakeHasCoral()) {
+            driverController.activateRumble();
+        } else {
+            driverController.deactivateRumble();
+        }
     }
 
     // Called once the command ends or is interrupted.
@@ -48,15 +53,13 @@ public class IntakeCommand extends Command {
     public void end(boolean interrupted) {
         intakeSubsystem.runRollerMotors(0);
         SwerveSubsystem.isFieldRelative = true;
-
         if (intakeSubsystem.intakeHasCoral()) {
             elevatorSubsystem.setGoal(IntakeState.PASSIVERAISE);
             intakeSubsystem.setGoal(IntakeState.PASSIVERAISE);
-            driverController.activateRumble();
         } else {
             intakeSubsystem.setGoal(IntakeState.STOW);
-            driverController.deactivateRumble();
         }
+        driverController.deactivateRumble();
     }
 
     // Returns true when the command should end.

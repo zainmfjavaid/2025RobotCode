@@ -10,7 +10,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.PhotonVision;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
-public class RightReefAlignCommand extends Command {
+public class FunkyJunkyRightReefAlignCommand extends Command {
     private final PhotonVision photonVision;
 
     private final double maxDriveSpeedFeetPerSecond = Units.metersToFeet(4);
@@ -22,7 +22,7 @@ public class RightReefAlignCommand extends Command {
     private double xOffset;
     private double currentAngleDegrees;
 
-    public RightReefAlignCommand() {
+    public FunkyJunkyRightReefAlignCommand() {
         photonVision = new PhotonVision();
     }
 
@@ -54,8 +54,8 @@ public class RightReefAlignCommand extends Command {
 
         // P only pid control loops to minimize skew (become parallel w apriltag)
         // swerveSubsystem.spin((skewAngleDegrees) * (Constants.DriveConstants.kMaxRotationSpeedRadiansPerSecond * 0.05));
-        double xSpeed = (Constants.rightReefPitch - distance) * (maxDriveSpeedFeetPerSecond * .0017);
-        double ySpeed = (Constants.rightReefYaw - xOffset) * (maxDriveSpeedFeetPerSecond * .0019);
+        double xSpeed = (Constants.leftReefPitch - distance) * (maxDriveSpeedFeetPerSecond * .0017);
+        double ySpeed = (Constants.leftReefYaw - xOffset) * (maxDriveSpeedFeetPerSecond * .0019);
         double rotationalSpeed = (Constants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0003);
         System.out.println("my curr angle is " + currentAngleDegrees + " but im fr tryna get to " + Constants.apriltagAngles[targetID]);
         SwerveSubsystem.setSpeeds(-1 * xSpeed, ySpeed, rotationalSpeed);
@@ -64,12 +64,12 @@ public class RightReefAlignCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        SwerveSubsystem.setSpeeds(0, 0, 0);
+    
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return photonVision.alignedToTargetWithHellaTolerance();
     }
 }

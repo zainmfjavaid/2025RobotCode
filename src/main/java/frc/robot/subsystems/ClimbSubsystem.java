@@ -20,7 +20,7 @@ public class ClimbSubsystem extends SubsystemBase {
     public ClimbSubsystem() {}
 
     public void setClimbDown() {
-        climbMotor.set(climbPIDController.calculate(climbMotor.getPositionRotations(), -206.0));
+        climbMotor.set(climbPIDController.calculate(climbMotor.getPositionRotations(), 195.0));
     }
 
     public void setClimbUp() {
@@ -42,7 +42,7 @@ public class ClimbSubsystem extends SubsystemBase {
     
     @Override
     public void periodic() {
-        // System.out.println("CLIMBER IS AT: " + climbMotor.getPositionRotations());
+        System.out.println("CLIMBER IS AT: " + climbMotor.getPositionRotations());
         // This method will be called once per scheduler run
     }
 }

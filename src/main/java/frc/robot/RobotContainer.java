@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.commands.SourceIntakeCommand;
 import frc.robot.commands.autoncommands.ArmInitCommand;
@@ -30,6 +31,7 @@ import frc.robot.commands.autoncommands.LevelFourUpAndDown;
 import frc.robot.commands.elevator.ArmHook;
 import frc.robot.commands.elevator.ElevatorMove;
 import frc.robot.commands.elevator.ElevatorScore;
+import frc.robot.commands.FunkyJunkyRightReefAlignCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LeftReefAlignCommand;
 import frc.robot.commands.RightReefAlignCommand;
@@ -69,6 +71,7 @@ public class RobotContainer {
 
     private final LeftReefAlignCommand leftReefAlignCommand = new LeftReefAlignCommand();
     private final RightReefAlignCommand rightReefAlignCommand = new RightReefAlignCommand();
+    private final FunkyJunkyRightReefAlignCommand funkyJunkyRightReefAlignCommand = new FunkyJunkyRightReefAlignCommand();
 
     // Intake Commands
     private final IntakeCommand intakeCommand = new IntakeCommand(intakeSubsystem, elevatorSubsystem);
@@ -100,17 +103,15 @@ public class RobotContainer {
     
     private void configureBindings() { 
         // Driver Controls
-        driverController.getButton(DriverController.Button.LB).whileTrue(intakeCommand);
+        driverController.getLeftTrigger().whileTrue(intakeCommand);
+        driverController.getRightTrigger().onTrue(elevatorScoreCommand);
         driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
         driverController.getButton(DriverController.Button.X).whileTrue(intakeSubsystem.outtakeCommand());
 
-        driverController.getButton(DriverController.Button.RB).onTrue(elevatorScoreCommand);
-        // driverController.getButton(DriverController.Button.RB).onTrue(armHookCommand);
         driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(swerveSubsystem::resetGyro));
 
-        // some testing cmds
-        operatorController.getButton(OperatorController.Button.RT).whileTrue(rightReefAlignCommand);
-        operatorController.getButton(OperatorController.Button.LT).whileTrue(leftReefAlignCommand);
+        driverController.getButton(DriverController.Button.RB).whileTrue(new SequentialCommandGroup(funkyJunkyRightReefAlignCommand, rightReefAlignCommand));
+        driverController.getButton(DriverController.Button.LB).whileTrue(leftReefAlignCommand);
 
         // Operator Controls
         operatorController.getButton(OperatorController.Button.A).onTrue(levelOneCommand);

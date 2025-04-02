@@ -87,4 +87,13 @@ public class PhotonVision {
         return (rightReefPitchGood && rightReefYawGood) || (leftReefPitchGood && leftReefYawGood);
     }
 
+    public boolean alignedToTargetWithHellaTolerance() {
+        boolean rightReefYawGood = Constants.rightReefYaw - 3 < yaw && Constants.rightReefYaw + 3 > yaw;
+        boolean rightReefPitchGood = Constants.rightReefPitch - 3 < pitch && Constants.rightReefPitch + 3 > pitch;
+
+        boolean leftReefYawGood = Constants.leftReefYaw - 10 < yaw && Constants.leftReefYaw + 10 > yaw;
+        boolean leftReefPitchGood = Constants.leftReefPitch - 10 < pitch && Constants.leftReefPitch + 10 > pitch;
+
+        return (rightReefPitchGood && rightReefYawGood) || (leftReefPitchGood && leftReefYawGood);
+    }
 }
