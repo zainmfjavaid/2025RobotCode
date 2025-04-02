@@ -44,7 +44,7 @@ public class LeftReefAlignCommand extends Command {
 
         photonVision.updateCameraResults();
 
-        double currentTargetID = photonVision.getTargetID();
+        int currentTargetID = photonVision.getTargetID();
 
         if (currentTargetID == targetID) {
             distance = photonVision.getPitch();
