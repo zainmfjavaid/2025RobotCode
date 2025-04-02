@@ -92,6 +92,11 @@ public class Controller {
             joystick.setRumble(RumbleType.kBothRumble, 0.5);
         }
         public void deactivateRumble(){
+            int count = 0;
+            while (count < 50){
+                joystick.setRumble(RumbleType.kBothRumble, 0);
+                count++;
+            }
             joystick.setRumble(RumbleType.kBothRumble, 0);
         }
     }
