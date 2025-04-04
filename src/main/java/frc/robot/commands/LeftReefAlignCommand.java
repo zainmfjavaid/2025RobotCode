@@ -71,7 +71,7 @@ public class LeftReefAlignCommand extends Command {
         double rotationalSpeed = normalizeAngle(Constants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0003);
         // System.out.println("my curr angle is " + currentAngleDegrees + " but im fr tryna get to " + Constants.apriltagAngles[targetID]);
         System.out.println("YAW: " + photonVision.getTargetYaw() + " PITCH: " + photonVision.getPitch());
-        SwerveSubsystem.setSpeeds(-1 * xSpeed, ySpeed, 0);
+        SwerveSubsystem.setSpeeds(-1 * xSpeed, ySpeed, rotationalSpeed);
 
         if (photonVision.alignedToTarget()){
             driverController.activateRumble();

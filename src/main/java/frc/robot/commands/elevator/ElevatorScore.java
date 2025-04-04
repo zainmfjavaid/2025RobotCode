@@ -18,10 +18,8 @@ public class ElevatorScore extends Command {
     private final IntakeState intakeState;
 
     private int cycles = 0;
-    private int level;
 
-    public ElevatorScore(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem,
-            IntakeState intakeState) {
+    public ElevatorScore(IntakeSubsystem intakeSubsystem, ElevatorSubsystem elevatorSubsystem, IntakeState intakeState) {
         // Use addRequirements() here to declare subsystem dependencies.
         this.intakeSubsystem = intakeSubsystem;
         this.elevatorSubsystem = elevatorSubsystem;
@@ -35,17 +33,11 @@ public class ElevatorScore extends Command {
     public void initialize() {
         cycles = 0;
         // TODO: NEED TO CHECK THIS STATE
-        if (elevatorSubsystem.atAnySpecificGeneralSetpointFeaturingKennysonLe(IntakeState.L4)) {
-            level = 4;
-
+        if (intakeSubsystem.atSetpoint(IntakeState.TROUGH)) {
+            intakeSubsystem.runRollerMotors(SystemSpeeds.kScoreOuttakeRollerSpeed);
+        } else {
             elevatorSubsystem.setOverride(true);
             elevatorSubsystem.goDown();
-        } else if (elevatorSubsystem.atAnySpecificGeneralSetpointFeaturingKennysonLe(IntakeState.L3)) {
-            intakeSubsystem.setGoal(IntakeState.ARMHOOK);
-        } else {
-            level = 1;
-
-            intakeSubsystem.runRollerMotors(SystemSpeeds.kScoreOuttakeRollerSpeed);
         }
     }
 
@@ -54,34 +46,21 @@ public class ElevatorScore extends Command {
     public void execute() {
         cycles++;
 
-        if (level == 4 || level == 1) {
-            if (cycles > 20 && cycles < 30) {
-                intakeSubsystem.runRollerMotors(SystemSpeeds.kScoreOuttakeRollerSpeed);
-            } else if (cycles >= 30 && cycles < 60) {
-                intakeSubsystem.runRollerMotors(0);
-                intakeSubsystem.setGoal(IntakeState.SCORESTOW);
-                elevatorSubsystem.stop();
-            } else if (cycles >= 60) {
-                elevatorSubsystem.setGoal(IntakeState.SCORESTOW);
-                elevatorSubsystem.setOverride(false);
-            }
-        } else if (level == 3) {
-            if (cycles > 10 && cycles < 40) {
-                intakeSubsystem.runRollerMotors(SystemSpeeds.kArmHookScoreOuttakeRollerSpeed);
-            } else if (cycles >= 40) {
-                intakeSubsystem.runRollerMotors(0);
-
-                intakeSubsystem.setGoal(IntakeState.SCORESTOW);
-                elevatorSubsystem.setGoal(IntakeState.SCORESTOW);
-                elevatorSubsystem.setOverride(false);
-            }
+        if (cycles > 20 && cycles < 30) {
+            intakeSubsystem.runRollerMotors(SystemSpeeds.kScoreOuttakeRollerSpeed);
+        } else if (cycles >= 30 && cycles < 60) {
+            intakeSubsystem.runRollerMotors(0);
+            intakeSubsystem.setGoal(IntakeState.SCORESTOW);     
+            elevatorSubsystem.stop();
+        } else if (cycles >= 60) {
+            elevatorSubsystem.setGoal(IntakeState.SCORESTOW);
+            elevatorSubsystem.setOverride(false);
         }
     }
 
     // Called once the command ends or is interrupted.
     @Override
-    public void end(boolean interrupted) {
-    }
+    public void end(boolean interrupted) {}
 
     // Returns true when the command should end.
     @Override

@@ -104,7 +104,7 @@ public class RobotContainer {
     private void configureBindings() { 
         // Driver Controls
         driverController.getLeftTrigger().whileTrue(intakeCommand);
-        driverController.getRightTrigger().onTrue(armHookCommand);
+        driverController.getRightTrigger().onTrue(elevatorScoreCommand);
         driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
         driverController.getButton(DriverController.Button.X).whileTrue(intakeSubsystem.outtakeCommand());
 
@@ -127,7 +127,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return AutoBuilder.buildAuto("L1_Preload"); 
+        return AutoBuilder.buildAuto("Leave"); 
     }
 }
 
