@@ -79,7 +79,7 @@ public class PhotonVision {
 
     public boolean alignedToTarget() {
         boolean rightReefYawGood = Constants.rightReefYaw - 7 < yaw && Constants.rightReefYaw + 7 > yaw;
-        boolean rightReefPitchGood = Constants.rightReefPitch - 7 < pitch && Constants.rightReefPitch + 7 > pitch;
+        boolean rightReefPitchGood = Constants.rightReefPitch - 3 < pitch && Constants.rightReefPitch + 3 > pitch;
 
         boolean leftReefYawGood = Constants.leftReefYaw - 7 < yaw && Constants.leftReefYaw + 7 > yaw;
         boolean leftReefPitchGood = Constants.leftReefPitch - 7 < pitch && Constants.leftReefPitch + 7 > pitch;

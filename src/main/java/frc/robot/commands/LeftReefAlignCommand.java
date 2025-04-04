@@ -39,6 +39,16 @@ public class LeftReefAlignCommand extends Command {
         currentAngleDegrees = photonVision.getGyroAngle();
     }
 
+    public double normalizeAngle(double Angle){
+        double normalized = (Angle % 360);
+        if (normalized > 180){
+          normalized -= 360;
+        } else if (normalized < -180){
+            normalized += 360;
+        }
+        return normalized;
+    }
+
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
@@ -58,9 +68,10 @@ public class LeftReefAlignCommand extends Command {
         // swerveSubsystem.spin((skewAngleDegrees) * (Constants.DriveConstants.kMaxRotationSpeedRadiansPerSecond * 0.05));
         double xSpeed = (Constants.leftReefPitch - distance) * (maxDriveSpeedFeetPerSecond * .0017);
         double ySpeed = (Constants.leftReefYaw - xOffset) * (maxDriveSpeedFeetPerSecond * .0019);
-        double rotationalSpeed = (Constants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0003);
-        System.out.println("my curr angle is " + currentAngleDegrees + " but im fr tryna get to " + Constants.apriltagAngles[targetID]);
-        SwerveSubsystem.setSpeeds(-1 * xSpeed, ySpeed, rotationalSpeed);
+        double rotationalSpeed = normalizeAngle(Constants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0003);
+        // System.out.println("my curr angle is " + currentAngleDegrees + " but im fr tryna get to " + Constants.apriltagAngles[targetID]);
+        System.out.println("YAW: " + photonVision.getTargetYaw() + " PITCH: " + photonVision.getPitch());
+        SwerveSubsystem.setSpeeds(-1 * xSpeed, ySpeed, 0);
 
         if (photonVision.alignedToTarget()){
             driverController.activateRumble();

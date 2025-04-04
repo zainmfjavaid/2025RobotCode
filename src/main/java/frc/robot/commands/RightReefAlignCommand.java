@@ -40,6 +40,16 @@ public class RightReefAlignCommand extends Command {
         currentAngleDegrees = photonVision.getGyroAngle();
     }
 
+    public double normalizeAngle(double Angle){
+        double normalized = (Angle % 360);
+        if (normalized > 180){
+          normalized -= 360;
+        } else if (normalized < -180){
+            normalized += 360;
+        }
+        return normalized;
+    }
+
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
@@ -59,8 +69,9 @@ public class RightReefAlignCommand extends Command {
         // swerveSubsystem.spin((skewAngleDegrees) * (Constants.DriveConstants.kMaxRotationSpeedRadiansPerSecond * 0.05));
         double xSpeed = (Constants.rightReefPitch - distance) * (maxDriveSpeedFeetPerSecond * .0017);
         double ySpeed = (Constants.rightReefYaw - xOffset) * (maxDriveSpeedFeetPerSecond * .0019);
-        double rotationalSpeed = (Constants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0003);
+        double rotationalSpeed = normalizeAngle(Constants.apriltagAngles[targetID] - currentAngleDegrees) * (maxRotationalSpeedDegreesPerSecond * 0.0003);
         System.out.println("my curr angle is " + currentAngleDegrees + " but im fr tryna get to " + Constants.apriltagAngles[targetID]);
+        System.out.println("GOING RIGHT");
         SwerveSubsystem.setSpeeds(-1 * xSpeed, ySpeed, rotationalSpeed);
 
         if (photonVision.alignedToTarget()){

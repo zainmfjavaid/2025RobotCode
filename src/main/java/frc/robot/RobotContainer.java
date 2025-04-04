@@ -80,7 +80,7 @@ public class RobotContainer {
     // Auton Named Commands
     private final ArmInitCommand armInitCommand = new ArmInitCommand(intakeSubsystem, elevatorSubsystem);
     private final TorchIntakeCommand torchIntakeCommand = new TorchIntakeCommand(intakeSubsystem, elevatorSubsystem);
-    private final AutonTroughScoreCommand troughScoreCommand = new AutonTroughScoreCommand(intakeSubsystem);
+    private final AutonTroughScoreCommand troughScoreCommand = new AutonTroughScoreCommand(intakeSubsystem, elevatorSubsystem);
     private final LevelFourUpAndDown levelFourUpAndDown = new LevelFourUpAndDown(elevatorSubsystem, intakeSubsystem);
     private final LevelFourUp levelFourUp = new LevelFourUp(elevatorSubsystem, intakeSubsystem);
 
@@ -104,7 +104,7 @@ public class RobotContainer {
     private void configureBindings() { 
         // Driver Controls
         driverController.getLeftTrigger().whileTrue(intakeCommand);
-        driverController.getRightTrigger().onTrue(elevatorScoreCommand);
+        driverController.getRightTrigger().onTrue(armHookCommand);
         driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
         driverController.getButton(DriverController.Button.X).whileTrue(intakeSubsystem.outtakeCommand());
 
@@ -127,7 +127,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return AutoBuilder.buildAuto("2coral"); 
+        return AutoBuilder.buildAuto("L1_Preload"); 
     }
 }
 

@@ -5,21 +5,45 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "InitializeArm"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "Middle_Coral"
+            "pathName": "auto1_Right"
           }
         },
         {
           "type": "wait",
           "data": {
             "waitTime": 0.25
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "LeftAlign"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FullLevelFour"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "auto2_Right"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TorchIntake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "auto3_Right"
           }
         },
         {

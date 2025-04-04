@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface.Measurement;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -29,11 +30,21 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem() {}
 
     public double getDistance() {
-        return lc.getMeasurement().distance_mm;
+        Measurement measurement = lc.getMeasurement();
+        if (measurement != null) {
+            return measurement.distance_mm;
+        } else {
+            return 999.9;
+        }
     }
 
     public boolean getHasMeasurement() {
-        return lc.getMeasurement().status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT;
+        Measurement measurement = lc.getMeasurement();
+        if (measurement != null) {
+            return measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT;
+        } else {
+            return false;
+        }
     }
 
     public void setPosition(IntakeState intakeState) {
@@ -106,7 +117,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // System.out.println(getDistance());
+        //System.out.println("Lasercan reading:  " + getDistance());
         if (currentGoal != null) {
             setPosition(currentGoal);
         }

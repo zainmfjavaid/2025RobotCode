@@ -20,7 +20,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 	private final SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, true, true);
 
 	PIDController elevatorPIDController = new PIDController(0.0003, 0, 0);
-	PIDController elevatorDownPIDController = new PIDController(0.00006, 0.0001, 0);
+	PIDController elevatorDownPIDController = new PIDController(0.0004, 0.0002, 0);
 
     Encoder elevatorEncoder = new Encoder(0, 1);
 	DigitalInput limitSwitch = new DigitalInput(9);
@@ -60,19 +60,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 			// setSpeed(pidOutput);
 		// }
 		pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
-		downPidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
+		downPidOutput = elevatorDownPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
 
-		if (intakeState.getElevatorValue() != 0) {
-			//System.out.println("going up @ " + pidOutput);
-			setSpeed(pidOutput);
+		if ((!limitSwitch.get() || (Math.abs(elevatorEncoder.getDistance()) < 30)) && pidOutput > 0) {
+			stop();
+		} else if (pidOutput > 0){
+			setSpeed(downPidOutput);
 		} else {
-			if (!limitSwitch.get() || (Math.abs(elevatorEncoder.getDistance()) < 30)) {
-				stop();
-				// System.out.println("not moving elevator");
-			} else {
-				// System.out.println("going down @ " + pidOutput + " where im at " + Math.abs(elevatorEncoder.getDistance()));
-				setSpeed(downPidOutput);
-			}
+			setSpeed(pidOutput);
 		}
 	}
 
@@ -97,6 +92,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 	public boolean atSetpoint() {
 		if (Math.abs(currentGoal.getElevatorValue() - elevatorEncoder.getDistance()) < 500) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean atAnySpecificGeneralSetpointFeaturingKennysonLe(IntakeState intakeState) {
+		if (Math.abs(intakeState.getElevatorValue() - elevatorEncoder.getDistance()) < 500) {
 			return true;
 		}
 

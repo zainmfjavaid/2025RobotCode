@@ -91,7 +91,7 @@ public class Controller {
             return -joystick.getRawAxis(5);
         }
         public void activateRumble(){
-            joystick.setRumble(RumbleType.kBothRumble, 0.5);
+            joystick.setRumble(RumbleType.kBothRumble, 0.85);
         }
         public void deactivateRumble(){
             joystick.setRumble(RumbleType.kBothRumble, 0);  

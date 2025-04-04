@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "InitializeArm"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Move_Forward_L1"

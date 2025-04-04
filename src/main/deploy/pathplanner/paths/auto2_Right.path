@@ -3,38 +3,55 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.6133196721311474,
-        "y": 4.156864754098361
+        "x": 3.6202868852459016,
+        "y": 2.86219262295082
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.2107581967213115,
-        "y": 3.9650614754098363
+        "x": 2.6492827868852395,
+        "y": 3.3896516393442635
       },
       "isLocked": false,
-      "linkedName": "auto3End"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.5584016393442621,
-        "y": 3.929098360655738
+        "x": 1.0908811475409836,
+        "y": 2.05
       },
       "prevControl": {
-        "x": 2.7691598360655743,
-        "y": 4.2647540983606556
+        "x": 2.0019467213114757,
+        "y": 2.097950819672133
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "auto4End"
+      "linkedName": "auto2_RightEnd"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.0,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 0,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 0,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 0,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "TorchIntake",
-      "waypointRelativePos": 0.6,
+      "waypointRelativePos": 0.45,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -54,13 +71,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 178.7269699799433
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 60.48899999999999
   },
   "useDefaultConstraints": true
 }

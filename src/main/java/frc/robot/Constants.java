@@ -34,6 +34,7 @@ public final class Constants {
         public static final double kIntakeRollerSpeed = 0.7;
         public static final double kOuttakeRollerSpeed = -0.6;
         public static final double kScoreOuttakeRollerSpeed = -0.2;
+        public static final double kArmHookScoreOuttakeRollerSpeed = -0.7;
 
         public static final double kClimbSpeed = 1.0;
 
@@ -76,7 +77,7 @@ public final class Constants {
             SOURCE(2.9, 8, -7900),
             TROUGH(15, 8, -7500),
             L2(2.1, 0, -6000),
-            L3(2.1, 0, -16000),
+            L3(2.1, 0, -17000),
             L4(6.4, 0, -31109),
             TORCH(16, 0, 0);
 
@@ -114,7 +115,7 @@ public final class Constants {
         -60, // 6
         0, // 7
         60, // 8
-        120, // 9
+        -120, // 9
         179.9, // 10
         -120, // 11
         0, // 12
@@ -122,17 +123,17 @@ public final class Constants {
         0, // 14
         0, // 15
         0, // 16
-        -60, // 17
+        60, // 17
         0, // 18
-        60, // 19
+        -60, // 19
         120, // 20
         179.9, // 21
-        -120 // 22
+        120 // 22
     };
 
-    public static double leftReefYaw = 10.3;
-    public static double leftReefPitch = -13.4;
+    public static double leftReefYaw = 12.9;
+    public static double leftReefPitch = -16.2;
 
-    public static double rightReefYaw = -36.5;
-    public static double rightReefPitch = -2.4;
+    public static double rightReefYaw = -39.5;
+    public static double rightReefPitch = -2.9;
 }

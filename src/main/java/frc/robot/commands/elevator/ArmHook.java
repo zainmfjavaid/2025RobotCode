@@ -43,7 +43,7 @@ public class ArmHook extends Command {
         cycles++;
 
         if (cycles > 10 && cycles < 40) {
-            intakeSubsystem.runRollerMotors(SystemSpeeds.kScoreOuttakeRollerSpeed);
+            intakeSubsystem.runRollerMotors(SystemSpeeds.kArmHookScoreOuttakeRollerSpeed);
         } else if (cycles >= 40) {
             intakeSubsystem.runRollerMotors(0);
 
