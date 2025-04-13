@@ -20,7 +20,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 	private final SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, true, true);
 
 	PIDController elevatorPIDController = new PIDController(0.0003, 0, 0);
-	PIDController elevatorDownPIDController = new PIDController(0.0004, 0.0002, 0);
+	PIDController elevatorDownPIDController = new PIDController(0.0004, 0.0003, 0);
 
     Encoder elevatorEncoder = new Encoder(0, 1);
 	DigitalInput limitSwitch = new DigitalInput(9);

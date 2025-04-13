@@ -127,7 +127,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return AutoBuilder.buildAuto("Leave"); 
+        return AutoBuilder.buildAuto("2coral"); 
     }
 }
 

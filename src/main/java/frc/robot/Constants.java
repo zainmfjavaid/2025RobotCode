@@ -21,8 +21,8 @@ public final class Constants {
     public static final int kOperatorControllerPort = 1;
 
     // Current Limits
-    public static final double kDriveCurrentLimit = 70;
-    public static final double kAngleCurrentLimit = 50;
+    public static final double kDriveCurrentLimit = 60;
+    public static final double kAngleCurrentLimit = 40;
 
     // Voltage
     public static final double kMaxDriveVoltage = 6;
@@ -77,7 +77,7 @@ public final class Constants {
             SOURCE(2.9, 8, -7900),
             TROUGH(15, 8, -7500),
             L2(2.1, 0, -6000),
-            L3(2.1, 0, -17000),
+            L3(2.1, 0, -16700),
             L4(6.4, 0, -31109),
             TORCH(16, 0, 0);
 
@@ -116,8 +116,8 @@ public final class Constants {
         0, // 7
         60, // 8
         -120, // 9
-        179.9, // 10
-        -120, // 11
+        180, // 10
+        120, // 11
         0, // 12
         0, // 13
         0, // 14
@@ -126,8 +126,8 @@ public final class Constants {
         60, // 17
         0, // 18
         -60, // 19
-        120, // 20
-        179.9, // 21
+        -120, // 20
+        180, // 21
         120 // 22
     };
 
