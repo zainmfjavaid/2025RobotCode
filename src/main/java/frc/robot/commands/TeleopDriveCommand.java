@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -22,6 +23,9 @@ import swervelib.SwerveModule;
 
 public class TeleopDriveCommand extends Command {
     private final SwerveSubsystem swerve;
+    private SlewRateLimiter xLimiter = new SlewRateLimiter(3);
+	private SlewRateLimiter yLimiter = new SlewRateLimiter(3);
+	private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3);
     private final DoubleSupplier translationX, translationY, rotation;
     
     private TalonFX[] angleMotors;
@@ -102,6 +106,10 @@ public class TeleopDriveCommand extends Command {
         double xSpeed = xInput * SystemSpeeds.kMaxDriveSpeedMetersPerSecond;
         double ySpeed = yInput * SystemSpeeds.kMaxDriveSpeedMetersPerSecond;
         double rot = rotInput * SystemSpeeds.kMaxRotationSpeedRadiansPerSecond;
+        if (Constants.isDemo) {
+            xSpeed = xInput/4;
+            ySpeed = yInput/4;
+        }
         
         // Create chassis speeds (field or robot relative)
         ChassisSpeeds speeds;

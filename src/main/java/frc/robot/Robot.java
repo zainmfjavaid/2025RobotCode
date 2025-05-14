@@ -67,6 +67,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    if (Constants.isDemo) System.out.println("Running DEMO mode");
     // This makes sure that the autonomous stops running when teleop starts running.
     if (autonomousCommand != null) {
       autonomousCommand.cancel();

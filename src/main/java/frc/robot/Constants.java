@@ -7,6 +7,15 @@ package frc.robot;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
+    // Running Mode
+    // COMP: Competition Mode
+    // DEMO: Demonstation Mode (NOTR, DEMO, BANQUET)
+    public static final Mode currentMode = Mode.COMP;
+    public static enum Mode {
+        COMP,
+        DEMO
+    }
+    public static boolean isDemo = (currentMode == Mode.DEMO) ? true : false;
     // Swerve Constants
     public static final double kTau = Math.PI * 2;
     public static final double kDriveMotorGearRatio = 1.0 / 5.0;
@@ -38,7 +47,8 @@ public final class Constants {
 
         public static final double kClimbSpeed = 1.0;
 
-        public static final double kMaxDriveSpeedMetersPerSecond = Units.feetToMeters(5.5);
+        public static final double kMaxDriveSpeedMetersPerSecond =Units.feetToMeters(2.5);
+
         public static final double kMaxRotationSpeedRadiansPerSecond = 4.0;
     }
 
