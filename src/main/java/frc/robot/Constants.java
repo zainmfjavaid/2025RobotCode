@@ -10,7 +10,7 @@ public final class Constants {
     // Running Mode
     // COMP: Competition Mode
     // DEMO: Demonstation Mode (NOTR, DEMO, BANQUET)
-    public static final Mode currentMode = Mode.COMP;
+    public static final Mode currentMode = Mode.DEMO;
     public static enum Mode {
         COMP,
         DEMO
@@ -76,26 +76,39 @@ public final class Constants {
         public static final int kClimbMotor = 35;
     }
 
+
+    // L4, 12.5 inches away
+    // L1, 12 inches
+
+    // 5 is arm
+    // 6 is wrist
+
+
     public static class IntakeConstants {
-        public enum IntakeState {
-            STOW(2.1, 8, 0),
-            SCORESTOW(2.1, 0, 0),
-            PASSIVERAISE(2.1, 8, -6000),
-            AUTONINIT(3.5, 8, 0),
-            ARMHOOK(17, 0, 0),
-            INTAKE(19.4, 8, 0),   
-            SOURCE(2.9, 8, -7900),
-            TROUGH(15, 8, -7500),
-            L2(2.1, 0, -6000),
-            L3(2.1, 0, -16700),
-            L4(6.4, 0, -31109),
-            TORCH(16, 0, 0);
+        public static enum IntakeState {
+            STOW(0, 0, 0), // Hard Limits
+            SCORESTOW(0.075, 0.1, 0),
+            READY(0.043, -0.42, 0),
+
+            // PASSIVERAISE(0.1, 0.1, -6000),    // Change ME
+            AUTONINIT(3.5, 8, 0),    // Change ME
+            ARMHOOK(17, 0, 0),    // Change ME
+            
+            INTAKE(0.29, -0.44, 0), // Hard Limits
+            TRANSPORT(0.06543, -0.421875, 0),
+
+            SOURCE(2.9, 8, -7900),    // Change ME
+            TROUGH(0.161621, -0.424805, -7500),
+            L2(2.1, 0, -6000),    // Change ME
+            L3(2.1, 0, -16700),    // Change ME
+            L4(0.141357, -0.14209, -31109), 
+            TORCH(-15.5, -5, 0);    // Change ME
 
             private final double armValue;
             private final double wristValue;
             private final double elevatorValue;
 
-            IntakeState(double armValue, double wristValue, double elevatorValue) {
+            private IntakeState(double armValue, double wristValue, double elevatorValue) {
                 this.armValue = armValue;
                 this.wristValue = wristValue;
                 this.elevatorValue = elevatorValue;

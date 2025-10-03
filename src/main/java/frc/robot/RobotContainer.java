@@ -5,36 +5,35 @@
 package frc.robot;
 
 import java.io.File;
-import java.util.logging.Level;
 
-import frc.robot.Constants.IntakeConstants.IntakeState;
-import frc.robot.hardware.Controller.DriverController;
-import frc.robot.hardware.Controller.OperatorController;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import frc.robot.commands.SourceIntakeCommand;
-import frc.robot.commands.autoncommands.ArmInitCommand;
-import frc.robot.commands.autoncommands.AutoLeftReefAlignCommand;
-import frc.robot.commands.autoncommands.AutoRightReefAlignCommand;
-import frc.robot.commands.autoncommands.TorchIntakeCommand;
-import frc.robot.commands.autoncommands.AutonTroughScoreCommand;
-import frc.robot.commands.autoncommands.LevelFourUp;
-import frc.robot.commands.autoncommands.LevelFourUpAndDown;
-import frc.robot.commands.elevator.ArmHook;
-import frc.robot.commands.elevator.ElevatorMove;
-import frc.robot.commands.elevator.ElevatorScore;
+import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.commands.FunkyJunkyRightReefAlignCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LeftReefAlignCommand;
 import frc.robot.commands.RightReefAlignCommand;
+import frc.robot.commands.SourceIntakeCommand;
+import frc.robot.commands.autoncommands.ArmInitCommand;
+import frc.robot.commands.autoncommands.AutoLeftReefAlignCommand;
+import frc.robot.commands.autoncommands.AutoRightReefAlignCommand;
+import frc.robot.commands.autoncommands.AutonTroughScoreCommand;
+import frc.robot.commands.autoncommands.LevelFourUp;
+import frc.robot.commands.autoncommands.LevelFourUpAndDown;
+import frc.robot.commands.autoncommands.TorchIntakeCommand;
+import frc.robot.commands.elevator.ArmHook;
+import frc.robot.commands.elevator.ElevatorMove;
+import frc.robot.commands.elevator.ElevatorScore;
+import frc.robot.hardware.Controller.DriverController;
+import frc.robot.hardware.Controller.OperatorController;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -57,7 +56,7 @@ public class RobotContainer {
     // Subsystems
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
     private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
-    private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    public final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
     // Elevator Commands
@@ -67,6 +66,7 @@ public class RobotContainer {
     private final ElevatorMove levelFourCommand = new ElevatorMove(intakeSubsystem, elevatorSubsystem, IntakeState.L4);
 
     private final ElevatorScore elevatorScoreCommand = new ElevatorScore(intakeSubsystem, elevatorSubsystem, IntakeState.L4); // create new cmd AT the trigger
+    @SuppressWarnings("unused")
     private final ArmHook armHookCommand = new ArmHook(intakeSubsystem, elevatorSubsystem, IntakeState.L4);
 
     private final LeftReefAlignCommand leftReefAlignCommand = new LeftReefAlignCommand();
@@ -82,6 +82,7 @@ public class RobotContainer {
     private final TorchIntakeCommand torchIntakeCommand = new TorchIntakeCommand(intakeSubsystem, elevatorSubsystem);
     private final AutonTroughScoreCommand troughScoreCommand = new AutonTroughScoreCommand(intakeSubsystem, elevatorSubsystem);
     private final LevelFourUpAndDown levelFourUpAndDown = new LevelFourUpAndDown(elevatorSubsystem, intakeSubsystem);
+    @SuppressWarnings("unused")
     private final LevelFourUp levelFourUp = new LevelFourUp(elevatorSubsystem, intakeSubsystem);
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -93,7 +94,11 @@ public class RobotContainer {
         NamedCommands.registerCommand("LeftAlign", new AutoLeftReefAlignCommand());
         NamedCommands.registerCommand("RightAlign", new AutoRightReefAlignCommand());
 
-        swerveSubsystem.setDefaultCommand(swerveSubsystem.getCustomDriveCommand(driverController::getLeftStickY, driverController::getLeftStickX, driverController::getRightStickX));
+        swerveSubsystem.setDefaultCommand(swerveSubsystem.getCustomDriveCommand(
+            driverController::getLeftStickY, 
+            driverController::getLeftStickX, 
+            driverController::getRightStickX,
+            driverController::getRightStickY));
 
         configureBindings();
     
@@ -103,27 +108,43 @@ public class RobotContainer {
     
     private void configureBindings() { 
         // Driver Controls
-        driverController.getLeftTrigger().whileTrue(intakeCommand);
-        driverController.getRightTrigger().onTrue(elevatorScoreCommand);
-        driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
-        driverController.getButton(DriverController.Button.X).whileTrue(intakeSubsystem.outtakeCommand());
+
+        //intake
+        driverController.getLeftTrigger().whileTrue(new StartEndCommand(
+            () -> intakeSubsystem.runRollerMotors(0.13),
+            () -> intakeSubsystem.runRollerMotors(0),
+            intakeSubsystem));
+        
+        // outake
+        driverController.getRightTrigger().whileTrue(new StartEndCommand(
+            () -> intakeSubsystem.runRollerMotors(-0.13),
+            () -> intakeSubsystem.runRollerMotors(0),
+            intakeSubsystem));
+        
+        // driverController.getButton(DriverController.Button.Y).whileTrue(sourceIntakeCommand);
+        driverController.getButton(DriverController.Button.X).whileTrue(intakeCommand);
 
         driverController.getButton(DriverController.Button.Back).onTrue(new InstantCommand(swerveSubsystem::resetGyro));
 
-        driverController.getButton(DriverController.Button.RB).whileTrue(new SequentialCommandGroup(funkyJunkyRightReefAlignCommand, rightReefAlignCommand));
-        driverController.getButton(DriverController.Button.LB).whileTrue(leftReefAlignCommand);
+        driverController.getButton(DriverController.Button.Y).onTrue(elevatorSubsystem.printHeight());
 
+        // driverController.getButton(DriverController.Button.RB).whileTrue(new SequentialCommandGroup(funkyJunkyRightReefAlignCommand, rightReefAlignCommand));
+        // driverController.getButton(DriverController.Button.LB).whileTrue(leftReefAlignCommand);
+        
         // Operator Controls
-        operatorController.getButton(OperatorController.Button.A).onTrue(levelOneCommand);
-        operatorController.getButton(OperatorController.Button.B).onTrue(levelTwoCommand);
-        operatorController.getButton(OperatorController.Button.Y).onTrue(levelThreeCommand);
+        operatorController.getButton(OperatorController.Button.A).whileTrue(elevatorSubsystem.runElevatorTest());
+        operatorController.getButton(OperatorController.Button.B).whileTrue(elevatorSubsystem.reverseElevatorTest());
+        
+        operatorController.getButton(OperatorController.Button.Y).onTrue(new InstantCommand(() -> intakeSubsystem.setGoal(IntakeState.L4)));
         operatorController.getButton(OperatorController.Button.X).onTrue(levelFourCommand);
 
-        operatorController.getButton(OperatorController.Button.RB).whileTrue(climbSubsystem.climbCommandTest());
-        operatorController.getButton(OperatorController.Button.LB).whileTrue(climbSubsystem.reverseClimbCommandTest());
+        operatorController.getButton(OperatorController.Button.RB).whileTrue(intakeSubsystem.runWristBackward());
+        operatorController.getButton(OperatorController.Button.LB).whileTrue(intakeSubsystem.runWristForward());
+        operatorController.getButton(OperatorController.Button.Back).whileTrue(intakeSubsystem.runArmForward());
+        operatorController.getButton(OperatorController.Button.Start).whileTrue(intakeSubsystem.runArmBackward());
 
-        operatorController.getButton(OperatorController.Button.Back).onTrue(armInitCommand);
-        operatorController.getButton(OperatorController.Button.Start).onTrue(torchIntakeCommand);
+        // operatorController.getButton(OperatorController.Button.Back).onTrue(armInitCommand);
+        // operatorController.getButton(OperatorController.Button.Start).onTrue(torchIntakeCommand);
     }
 
     public Command getAutonomousCommand() {

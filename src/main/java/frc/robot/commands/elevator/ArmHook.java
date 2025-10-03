@@ -5,8 +5,8 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.SystemSpeeds;
 import frc.robot.Constants.IntakeConstants.IntakeState;
+import frc.robot.Constants.SystemSpeeds;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
@@ -15,6 +15,7 @@ public class ArmHook extends Command {
     /** Creates a new ElevatorScore. */
     private final IntakeSubsystem intakeSubsystem;
     private final ElevatorSubsystem elevatorSubsystem;
+    @SuppressWarnings("unused")
     private final IntakeState intakeState;
 
     private int cycles = 0;
@@ -32,7 +33,6 @@ public class ArmHook extends Command {
     @Override
     public void initialize() {
         cycles = 0;
-        // TODO: NEED TO CHECK THIS STATE
 
         intakeSubsystem.setGoal(IntakeState.ARMHOOK);
     }

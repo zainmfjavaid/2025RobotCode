@@ -42,9 +42,9 @@ public class AutonTroughScoreCommand extends Command {
             intakeSubsystem.setGoal(IntakeState.TROUGH);
         }
         
-        if (intakeSubsystem.atSetpoint(IntakeState.TROUGH) && cycles < 100) {
-            intakeSubsystem.runRollerMotors(SystemSpeeds.kScoreOuttakeRollerSpeed);
-        }
+        // if (intakeSubsystem.atSetpoint(IntakeState.TROUGH) && cycles < 100) {
+        //     intakeSubsystem.runRollerMotors(SystemSpeeds.kScoreOuttakeRollerSpeed);
+        // }
 
         if (cycles >= 100 && cycles < 125) {
             intakeSubsystem.runRollerMotors(0);
@@ -61,6 +61,7 @@ public class AutonTroughScoreCommand extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return cycles >= 125 && intakeSubsystem.atSetpoint(IntakeState.STOW);
+		return true;
+		// cycles >= 125 && intakeSubsystem.atSetpoint(IntakeState.STOW);
 	}
 }

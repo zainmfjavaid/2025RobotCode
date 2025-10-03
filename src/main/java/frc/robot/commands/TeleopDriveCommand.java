@@ -1,20 +1,22 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
-import java.util.function.DoubleSupplier;
-
 import frc.robot.Constants;
 import frc.robot.Constants.DeviceIds;
 import frc.robot.Constants.SystemSpeeds;
@@ -23,10 +25,13 @@ import swervelib.SwerveModule;
 
 public class TeleopDriveCommand extends Command {
     private final SwerveSubsystem swerve;
+    @SuppressWarnings("unused")
     private SlewRateLimiter xLimiter = new SlewRateLimiter(3);
-	private SlewRateLimiter yLimiter = new SlewRateLimiter(3);
-	private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3);
-    private final DoubleSupplier translationX, translationY, rotation;
+	@SuppressWarnings("unused")
+    private SlewRateLimiter yLimiter = new SlewRateLimiter(3);
+	@SuppressWarnings("unused")
+    private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3);
+    private final DoubleSupplier translationX, translationY, rotationX, rotationY;
     
     private TalonFX[] angleMotors;
     private TalonFX[] driveMotors;
@@ -34,14 +39,32 @@ public class TeleopDriveCommand extends Command {
     // PID constants for angle control
     private final double kP = 0.01;
     private final double maxOutput = 0.5;
+
+    boolean fieldCentricRotation = false;
+    double maxOmegaScale = 0.3;
+
+    PIDController omegaController = new PIDController(0.5, 0, 0);
     
-    public TeleopDriveCommand(SwerveSubsystem swerve, DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotation) {
+    public TeleopDriveCommand(SwerveSubsystem swerve, DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotationX, DoubleSupplier rotationY) {
         this.swerve = swerve;
         this.translationX = translationX;
         this.translationY = translationY;
-        this.rotation = rotation;
+        this.rotationX = rotationX;
+        this.rotationY = rotationY;
+
+        omegaController.enableContinuousInput(-Math.PI / 2, Math.PI / 2);
         
         addRequirements(swerve);
+    }
+    
+    private TalonFX talonFXinverted(TalonFX talon, Boolean isInverted) {
+        TalonFXConfiguration config = new TalonFXConfiguration();
+        MotorOutputConfigs motorOutput = new MotorOutputConfigs();
+        talon.setNeutralMode(NeutralModeValue.Brake);
+        motorOutput.Inverted = isInverted ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive;
+        config.MotorOutput = motorOutput;
+        talon.getConfigurator().apply(config);
+        return talon;
     }
     
     @Override
@@ -50,48 +73,37 @@ public class TeleopDriveCommand extends Command {
         angleMotors = new TalonFX[4];
         driveMotors = new TalonFX[4];
 
-        // MotorOutputConfigs clockwise = new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
-        // MotorOutputConfigs counterclockwise new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
-        
         // Front Left
         angleMotors[0] = new TalonFX(DeviceIds.kFrontLeftAngleMotor, "CANivore2158");
-        driveMotors[0] = new TalonFX(DeviceIds.kFrontLeftDriveMotor, "CANivore2158");
-        angleMotors[0].setInverted(true);
-        driveMotors[0].setInverted(true);
-
-        // angleMotors[0].getConfigurator().apply(clockwise);
-        // angleMotors[0].getConfigurator().apply(clockwise);
+        driveMotors[0] = new TalonFX(DeviceIds.kFrontLeftDriveMotor, "CANivore2158");        
+        angleMotors[0] = talonFXinverted(angleMotors[0], false);
+        driveMotors[0] = talonFXinverted(driveMotors[0], false);
 
         // Front Right
         angleMotors[1] = new TalonFX(DeviceIds.kFrontRightAngleMotor, "CANivore2158");
         driveMotors[1] = new TalonFX(DeviceIds.kFrontRightDriveMotor, "CANivore2158");
-        angleMotors[1].setInverted(true);
-        driveMotors[1].setInverted(false);
-
-        // angleMotors[1].getConfigurator().apply(clockwise);
-        // driveMotors[1].getConfigurator().apply(counterclockwise);
+        angleMotors[1] = talonFXinverted(angleMotors[1], false);
+        driveMotors[1] = talonFXinverted(driveMotors[1], true);
 
         // Back Left
         angleMotors[2] = new TalonFX(DeviceIds.kBackLeftAngleMotor, "CANivore2158");
         driveMotors[2] = new TalonFX(DeviceIds.kBackLeftDriveMotor, "CANivore2158");
-        angleMotors[2].setInverted(true);
-        driveMotors[2].setInverted(true);
-
-        // angleMotors[2].getConfigurator().apply(clockwise);
-        // driveMotors[2].getConfigurator().apply(clockwise);
+        angleMotors[2] = talonFXinverted(angleMotors[2], false);
+        driveMotors[2] = talonFXinverted(driveMotors[2], false);
 
         // Back Right
         angleMotors[3] = new TalonFX(DeviceIds.kBackRightAngleMotor, "CANivore2158");
         driveMotors[3] = new TalonFX(DeviceIds.kBackRightDriveMotor, "CANivore2158");
-        angleMotors[3].setInverted(true);
-        driveMotors[3].setInverted(false);
-
-        // angleMotors[3].getConfigurator().apply(clockwise);
-        // driveMotors[3].getConfigurator().apply(counterclockwise);
+        driveMotors[3] = talonFXinverted(driveMotors[3], true);
+        angleMotors[3] = talonFXinverted(angleMotors[3], false);
 
         for (int i = 0; i < 4; i++) {
-            driveMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kDriveCurrentLimit));
-            angleMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kAngleCurrentLimit));
+            driveMotors[i].getConfigurator().apply(
+                new CurrentLimitsConfigs()
+                    .withSupplyCurrentLimit(Constants.kDriveCurrentLimit));
+            angleMotors[i].getConfigurator().apply(
+                new CurrentLimitsConfigs()
+                    .withSupplyCurrentLimit(Constants.kAngleCurrentLimit));
         }
     }
     
@@ -100,12 +112,33 @@ public class TeleopDriveCommand extends Command {
         // Get joystick inputs with deadband
         double xInput = Math.pow(applyDeadband(translationX.getAsDouble()), 3);
         double yInput = Math.pow(applyDeadband(translationY.getAsDouble()), 3);
-        double rotInput = Math.pow(applyDeadband(rotation.getAsDouble()), 3);
         
+        double xOmegaInput = Math.pow(applyDeadband(rotationX.getAsDouble()), 3); 
+        double yOmegaInput = Math.pow(applyDeadband(rotationY.getAsDouble()), 3);
+        double desiredOmegaRad = Math.atan2(xOmegaInput, yOmegaInput);
+
         // Scale inputs to correct speeds
         double xSpeed = xInput * SystemSpeeds.kMaxDriveSpeedMetersPerSecond;
         double ySpeed = yInput * SystemSpeeds.kMaxDriveSpeedMetersPerSecond;
-        double rot = rotInput * SystemSpeeds.kMaxRotationSpeedRadiansPerSecond;
+
+        double omegaRadPerSec;
+
+        if (fieldCentricRotation) {
+            // This allows the robot to stay in the last rotation
+            if (Math.hypot(xOmegaInput, yOmegaInput) > 0.1) {
+
+                double omegaOutput = omegaController.calculate(
+                    swerve.getGyroAngle().getRadians(), desiredOmegaRad);
+
+                omegaRadPerSec = omegaOutput / (Math.PI * 2) * 
+                    SystemSpeeds.kMaxRotationSpeedRadiansPerSecond * maxOmegaScale;
+            } else {
+                omegaRadPerSec = 0;
+            }
+        } else {
+            omegaRadPerSec = xOmegaInput * SystemSpeeds.kMaxRotationSpeedRadiansPerSecond;
+        }
+
         if (Constants.isDemo) {
             xSpeed = xInput/4;
             ySpeed = yInput/4;
@@ -114,9 +147,9 @@ public class TeleopDriveCommand extends Command {
         // Create chassis speeds (field or robot relative)
         ChassisSpeeds speeds;
         if (SwerveSubsystem.isFieldRelative) {
-            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, swerve.getGyroAngle());
+            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, omegaRadPerSec, swerve.getGyroAngle());
         } else {
-            speeds = new ChassisSpeeds(xSpeed, ySpeed, rot);
+            speeds = new ChassisSpeeds(xSpeed, ySpeed, omegaRadPerSec);
         }
         
         // Get module states using YAGSL's kinematics
@@ -132,7 +165,11 @@ public class TeleopDriveCommand extends Command {
             double currentAngle = modules[i].getState().angle.getDegrees();
             
             // Optimize state to avoid unnecessary rotation
-            moduleStates[i] = SwerveModuleState.optimize(moduleStates[i], Rotation2d.fromDegrees(currentAngle));
+            // Create a new SwerveModuleState object and optimize it
+            SwerveModuleState optimizedState = moduleStates[i];
+            optimizedState.optimize(Rotation2d.fromDegrees(currentAngle));
+
+            //moduleStates[i] = SwerveModuleState.optimize(moduleStates[i], Rotation2d.fromDegrees(currentAngle));
             
             // Angle control with continuous wrapping
             double targetAngle = moduleStates[i].angle.getDegrees();
@@ -145,7 +182,8 @@ public class TeleopDriveCommand extends Command {
             
             // Apply simple P control for angle with limiting
             double angleOutput = angleError * kP;
-            angleOutput = Math.max(-maxOutput, Math.min(maxOutput, angleOutput));
+            // TODO: Dont divide by 4
+            angleOutput = Math.max(-maxOutput/4, Math.min(maxOutput, angleOutput));
             
             // Calculate drive output normalized to [-1, 1]
             double driveOutput = moduleStates[i].speedMetersPerSecond / SystemSpeeds.kMaxDriveSpeedMetersPerSecond;
@@ -153,17 +191,7 @@ public class TeleopDriveCommand extends Command {
             // Send commands to motors
             angleMotors[i].set(angleOutput);
             driveMotors[i].set(driveOutput);
-
-            // angleMotors[i].setVoltage(angleOutput * Constants.kMaxAngleVoltage * SwerveSubsystem.angleSpeedConstant);
-            // driveMotors[i].setVoltage(driveOutput * Constants.kMaxDriveVoltage * SwerveSubsystem.driveSpeedConstant);
-            
-            // Test prints
-
-            // double velocity = driveMotors[i].getRotorVelocity().getValueAsDouble();
-            // System.out.println((i + 1) + ": " + velocity);
         }
-
-        // System.out.println(swerve.getPose());
     }
     
     @Override

@@ -4,11 +4,8 @@
 
 package frc.robot.commands.autoncommands;
 
-import org.ironmaple.simulation.IntakeSimulation.IntakeSide;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.IntakeConstants.IntakeState;
-import frc.robot.commands.elevator.ElevatorScore;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
@@ -47,6 +44,7 @@ public class LevelFourUp extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return elevatorSubsystem.atSetpoint() && intakeSubsystem.atSetpoint(IntakeState.L4);
+    return true;
+    // elevatorSubsystem.atSetpoint() && intakeSubsystem.atSetpoint(IntakeState.L4);
   }
 }

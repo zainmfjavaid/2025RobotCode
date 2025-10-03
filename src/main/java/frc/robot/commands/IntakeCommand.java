@@ -5,8 +5,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.SystemSpeeds;
 import frc.robot.Constants.IntakeConstants.IntakeState;
+import frc.robot.Constants.SystemSpeeds;
 import frc.robot.hardware.Controller.DriverController;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -29,18 +29,25 @@ public class IntakeCommand extends Command {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        intakeSubsystem.setGoal(IntakeState.INTAKE);
-        elevatorSubsystem.setGoal(IntakeState.INTAKE);
-        elevatorSubsystem.setOverride(false);
+        intakeSubsystem.setPosition(IntakeState.INTAKE);
+        // elevatorSubsystem.setGoal(IntakeState.INTAKE);
+        // elevatorSubsystem.setOverride(false);
         SwerveSubsystem.isFieldRelative = false;
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (intakeSubsystem.atSetpoint(IntakeState.INTAKE)) {
+        if (intakeSubsystem.atSetpoint()) {
             intakeSubsystem.runRollerMotors(SystemSpeeds.kIntakeRollerSpeed);
+            intakeSubsystem.printEncoderValues();
         }
+        
+        // if (intakeSubsystem.getGoal() != IntakeState.INTAKE) {
+        //     intakeSubsystem.setGoal(IntakeState.INTAKE);
+        // }
+
+
         if (intakeSubsystem.intakeHasCoral()) {
             driverController.activateRumble();
         } else {
@@ -52,12 +59,12 @@ public class IntakeCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         intakeSubsystem.runRollerMotors(0);
+        // intakeSubsystem.setGoal(IntakeState.STOW);
         SwerveSubsystem.isFieldRelative = true;
         if (intakeSubsystem.intakeHasCoral()) {
-            elevatorSubsystem.setGoal(IntakeState.PASSIVERAISE);
-            intakeSubsystem.setGoal(IntakeState.PASSIVERAISE);
+            intakeSubsystem.setPosition(IntakeState.SCORESTOW);
         } else {
-            intakeSubsystem.setGoal(IntakeState.STOW);
+            intakeSubsystem.setPosition(IntakeState.STOW);
         }
         driverController.deactivateRumble();
     }

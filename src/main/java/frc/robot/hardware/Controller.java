@@ -1,10 +1,8 @@
 package frc.robot.hardware;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
@@ -102,16 +100,16 @@ public class Controller {
         private final Joystick joystick = new Joystick(Constants.kOperatorControllerPort);
 
         public static enum Button {
-            X(1),
-            A(2),
-            B(3),
+            X(3),
+            A(1),
+            B(2),
             Y(4),
             LB(5), // Left Bumper
             RB(6), // Right Bumper
-            LT(7), // Left Trigger
-            RT(8), // Right Trigger
-            Back(9),
-            Start(10),
+            // LT(7), // Left Trigger
+            // RT(8), // Right Trigger
+            Back(7),
+            Start(8),
             LJ(11), // Left Joystick Button
             RJ(12),  // Right Joystick Button
             POVUP(0),

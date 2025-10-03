@@ -4,10 +4,22 @@
 
 package frc.robot;
 
+import java.lang.reflect.Field;
+
+import com.ctre.phoenix6.SignalLogger;
+
 import au.grapplerobotics.CanBridge;
+import edu.wpi.first.math.MathShared;
+import edu.wpi.first.math.MathSharedStore;
+import edu.wpi.first.math.MathUsageId;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.IterativeRobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.IntakeConstants.IntakeState;
+import frc.robot.subsystems.IntakeSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -18,7 +30,49 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
   private RobotContainer robotContainer;
   private Command autonomousCommand;
+  private  final double loopOverrunWarningTimeout = 0.2;
 
+  public Robot() {
+    // Disable automatic Hoot logging
+    SignalLogger.enableAutoLogging(false);
+
+    // Adjust loop overrun warning timeout
+    try {
+      Field watchdogField = IterativeRobotBase.class.getDeclaredField("m_watchdog");
+      watchdogField.setAccessible(true);
+      Watchdog watchdog = (Watchdog) watchdogField.get(this);
+      watchdog.setTimeout(loopOverrunWarningTimeout);
+    } catch (Exception e) {
+      DriverStation.reportWarning("Failed to disable loop overrun warnings.", false);
+    }
+    CommandScheduler.getInstance().setPeriod(loopOverrunWarningTimeout);
+
+    // Rely on our custom alerts for disconnected controllers
+    DriverStation.silenceJoystickConnectionWarning(true);
+
+    // Silence Rotation2d warnings
+    var mathShared = MathSharedStore.getMathShared();
+    MathSharedStore.setMathShared(
+        new MathShared() {
+          @Override
+          public void reportError(String error, StackTraceElement[] stackTrace) {
+            if (error.startsWith("x and y components of Rotation2d are zero")) {
+              return;
+            }
+            mathShared.reportError(error, stackTrace);
+          }
+
+          @Override
+          public void reportUsage(MathUsageId id, int count) {
+            mathShared.reportUsage(id, count);
+          }
+
+          @Override
+          public double getTimestamp() {
+            return mathShared.getTimestamp();
+          }
+        });
+  }
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -29,6 +83,15 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     CanBridge.runTCP();
     robotContainer = new RobotContainer();
+    // Output 2158 logo
+    String ausTINCANs =
+        "                _____ ___ _   _    ____    _    _   _\r\n"
+            + "  __ _ _   _ __|_   _|_ _| \\ | |  / ___|  / \\  | \\ | |___\r\n"
+            + " / _` | | | / __|| |  | ||  \\| | | |     / _ \\ |  \\| / __|\r\n"
+            + "| (_| | |_| \\__ \\| |  | || |\\  | | |___ / ___ \\| |\\  \\__ \\\r\n"
+            + " \\__,_|\\__,_|___/|_| |___|_| \\_|  \\____/_/   \\_\\_| \\_|___/\r\n";
+    System.out.println(ausTINCANs);
+    System.out.println("Welcome to the 2025 ausTIN CANs Robot Code!");
   }
 
   /**
@@ -67,6 +130,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    robotContainer.intakeSubsystem.setPosition(IntakeState.READY);
+
+
     if (Constants.isDemo) System.out.println("Running DEMO mode");
     // This makes sure that the autonomous stops running when teleop starts running.
     if (autonomousCommand != null) {

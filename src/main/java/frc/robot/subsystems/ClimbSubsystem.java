@@ -8,11 +8,14 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DeviceIds;
 import frc.robot.Constants.SystemSpeeds;
-import frc.robot.hardware.SparkMaxMotor;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 
 public class ClimbSubsystem extends SubsystemBase {
-    SparkMaxMotor climbMotor = new SparkMaxMotor(DeviceIds.kClimbMotor, true);
+    SparkFlex climbMotor = new SparkFlex(DeviceIds.kClimbMotor, MotorType.kBrushless);
+    RelativeEncoder encoder = climbMotor.getExternalEncoder();
     PIDController climbPIDController = new PIDController(0.1, 0, 0);
     boolean climbToggle = false;
     
@@ -20,11 +23,11 @@ public class ClimbSubsystem extends SubsystemBase {
     public ClimbSubsystem() {}
 
     public void setClimbDown() {
-        climbMotor.set(climbPIDController.calculate(climbMotor.getPositionRotations(), 195.0));
+        climbMotor.set(climbPIDController.calculate(encoder.getPosition(), 195.0));
     }
 
     public void setClimbUp() {
-        climbMotor.set(climbPIDController.calculate(climbMotor.getPositionRotations(), 1.0)); // TEMP POSITION
+        climbMotor.set(climbPIDController.calculate(encoder.getPosition(), 1.0)); // TEMP POSITION
     }
 
     public void setClimb() {

@@ -6,10 +6,23 @@ package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
+import org.json.simple.parser.ParseException;
+import org.photonvision.targeting.PhotonPipelineResult;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -21,6 +34,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -47,15 +61,6 @@ import frc.robot.Constants.DeviceIds;
 import frc.robot.Constants.SystemSpeeds;
 import frc.robot.commands.TeleopDriveCommand;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-import org.json.simple.parser.ParseException;
-import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -63,9 +68,7 @@ import swervelib.SwerveModule;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
-import swervelib.parser.SwerveParser;
-import swervelib.telemetry.SwerveDriveTelemetry;
-import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity; 
+import swervelib.parser.SwerveParser; 
 
 public class SwerveSubsystem extends SubsystemBase
 {
@@ -94,6 +97,15 @@ public class SwerveSubsystem extends SubsystemBase
 
   private static TalonFX[] angleMotors;
   private static TalonFX[] driveMotors;
+
+  private static TalonFX talonFXinverted(TalonFX talon, Boolean isInverted) {
+        TalonFXConfiguration config = new TalonFXConfiguration();
+        MotorOutputConfigs motorOutput = new MotorOutputConfigs();
+        motorOutput.Inverted = isInverted ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive; // or Clockwise
+        config.MotorOutput = motorOutput;
+        talon.getConfigurator().apply(config);
+        return talon;
+    }
 
   static {
     boolean blueAlliance = false;
@@ -132,8 +144,10 @@ public class SwerveSubsystem extends SubsystemBase
     // Front Left
     angleMotors[0] = new TalonFX(DeviceIds.kFrontLeftAngleMotor, "CANivore2158");
     driveMotors[0] = new TalonFX(DeviceIds.kFrontLeftDriveMotor, "CANivore2158");
-    angleMotors[0].setInverted(true);
-    driveMotors[0].setInverted(true);
+    angleMotors[0] = talonFXinverted(angleMotors[0], true);
+    //angleMotors[0].setInverted(true);
+    driveMotors[0] = talonFXinverted(driveMotors[0], true);
+    //driveMotors[0].setInverted(true);
     // encoders[0] = new CANcoder(1, "rio");
 
     // angleMotors[0].getConfigurator().apply(clockwise);
@@ -142,8 +156,10 @@ public class SwerveSubsystem extends SubsystemBase
     // Front Right
     angleMotors[1] = new TalonFX(DeviceIds.kFrontRightAngleMotor, "CANivore2158");
     driveMotors[1] = new TalonFX(DeviceIds.kFrontRightDriveMotor, "CANivore2158");
-    angleMotors[1].setInverted(true);
-    driveMotors[1].setInverted(false);
+    angleMotors[1] = talonFXinverted(angleMotors[1], true);
+    driveMotors[1] = talonFXinverted(driveMotors[1], false);
+    //angleMotors[1].setInverted(true);
+    //driveMotors[1].setInverted(false);
     // encoders[1] = new CANcoder(1, "rio");
 
     // angleMotors[1].getConfigurator().apply(clockwise);
@@ -152,8 +168,10 @@ public class SwerveSubsystem extends SubsystemBase
     // Back Left
     angleMotors[2] = new TalonFX(DeviceIds.kBackLeftAngleMotor, "CANivore2158");
     driveMotors[2] = new TalonFX(DeviceIds.kBackLeftDriveMotor, "CANivore2158");
-    angleMotors[2].setInverted(true);
-    driveMotors[2].setInverted(true);
+    angleMotors[2] = talonFXinverted(angleMotors[2], true);
+    driveMotors[2] = talonFXinverted(driveMotors[2], true);
+    //angleMotors[2].setInverted(true);
+    //driveMotors[2].setInverted(true);
     // encoders[2] = new CANcoder(1, "rio");
 
     // angleMotors[2].getConfigurator().apply(clockwise);
@@ -162,8 +180,10 @@ public class SwerveSubsystem extends SubsystemBase
     // Back Right
     angleMotors[3] = new TalonFX(DeviceIds.kBackRightAngleMotor, "CANivore2158");
     driveMotors[3] = new TalonFX(DeviceIds.kBackRightDriveMotor, "CANivore2158");
-    angleMotors[3].setInverted(true);
-    driveMotors[3].setInverted(false);
+    angleMotors[3] = talonFXinverted(angleMotors[3], true);
+    driveMotors[3] = talonFXinverted(angleMotors[3], false);
+    //angleMotors[3].setInverted(true);
+    //driveMotors[3].setInverted(false);
 
     for (int i = 0; i < 4; i++) {
       driveMotors[i].getConfigurator().apply(new CurrentLimitsConfigs().withSupplyCurrentLimit(Constants.kDriveCurrentLimit));
@@ -364,7 +384,11 @@ public class SwerveSubsystem extends SubsystemBase
       double currentAngle = modules[i].getState().angle.getDegrees();
       
       // Optimize state to avoid unnecessary rotation
-      moduleStates[i] = SwerveModuleState.optimize(moduleStates[i], Rotation2d.fromDegrees(currentAngle));
+      // Create a new SwerveModuleState object and optimize it
+      SwerveModuleState optimizedState = moduleStates[i];
+      optimizedState.optimize(Rotation2d.fromDegrees(currentAngle));
+
+      //moduleStates[i] = SwerveModuleState.optimize(moduleStates[i], Rotation2d.fromDegrees(currentAngle));
       
       // Angle control with continuous wrapping
       double targetAngle = moduleStates[i].angle.getDegrees();
@@ -676,8 +700,8 @@ public class SwerveSubsystem extends SubsystemBase
  * @param rotation Rotation input supplier (-1 to 1)
  * @return A command that drives the swerve modules directly
  */
-  public Command getCustomDriveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotation) {
-    return new TeleopDriveCommand(this, translationX, translationY, rotation);
+  public Command getCustomDriveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier rotationX, DoubleSupplier rotationY) {
+    return new TeleopDriveCommand(this, translationX, translationY, rotationX, rotationY);
   }
 
   /**

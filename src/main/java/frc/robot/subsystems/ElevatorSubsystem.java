@@ -7,22 +7,29 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.IntakeConstants.IntakeState;
 import frc.robot.Constants.DeviceIds;
-import frc.robot.hardware.SparkMaxMotor;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.Constants.IntakeConstants.IntakeState;
+
+import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkFlexConfig;
 
 public class ElevatorSubsystem extends SubsystemBase {
-	private final SparkMaxMotor leftElevatorMotor = new SparkMaxMotor(DeviceIds.kLeftElevatorMotor, false, true, true);
-	private final SparkMaxMotor rightElevatorMotor = new SparkMaxMotor(DeviceIds.kRightElevatorMotor, true, true, true);
+	private final SparkFlex leftElevatorMotor = new SparkFlex(DeviceIds.kLeftElevatorMotor, MotorType.kBrushless);
+	private final SparkFlex rightElevatorMotor = new SparkFlex(DeviceIds.kRightElevatorMotor, MotorType.kBrushless);
 
 	PIDController elevatorPIDController = new PIDController(0.0003, 0, 0);
 	PIDController elevatorDownPIDController = new PIDController(0.0004, 0.0003, 0);
 
+	// this is a relative encoder
+	// where you deploy it is zero
     Encoder elevatorEncoder = new Encoder(0, 1);
+	
 	DigitalInput limitSwitch = new DigitalInput(9);
 
 	double currentPosition = 0;
@@ -31,7 +38,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 	boolean isOverride = false;
 
 	/** Creates a new ElevatorSubsystem. */
-	public ElevatorSubsystem() {}
+	public ElevatorSubsystem() {
+		SparkFlexConfig config = new SparkFlexConfig();
+		config.inverted(true);
+		rightElevatorMotor.configure(config, 
+			SparkBase.ResetMode.kNoResetSafeParameters, 
+			SparkBase.PersistMode.kNoPersistParameters);
+	}
 
 	public void setSpeed(double speed) {
 		leftElevatorMotor.set(speed);
@@ -49,16 +62,16 @@ public class ElevatorSubsystem extends SubsystemBase {
 	public void setPosition(IntakeState intakeState) {
 		double pidOutput;
 		double downPidOutput;
-		// if (intakeState.getElevatorValue() == 0) {
-		// 	if (limitSwitch.get()) {
-		// 		goDown();
-		// 	} else {
-		// 		stop();
-		// 	}
-		// } else {
-			// pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
-			// setSpeed(pidOutput);
-		// }
+		if (intakeState.getElevatorValue() == 0) {
+			if (limitSwitch.get()) {
+				goDown();
+			} else {
+				stop();
+			}
+		} else {
+			pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
+			setSpeed(pidOutput);
+		}
 		pidOutput = elevatorPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
 		downPidOutput = elevatorDownPIDController.calculate(elevatorEncoder.getDistance(), intakeState.getElevatorValue());
 
@@ -124,5 +137,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 		if (currentGoal != null && !isOverride) {
 			setPosition(currentGoal);
 		}
+	}
+
+	public Command printHeight() {
+		return new InstantCommand(() -> System.out.println(elevatorEncoder.getDistance()));
 	}
 }

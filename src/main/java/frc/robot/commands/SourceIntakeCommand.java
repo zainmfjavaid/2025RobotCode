@@ -5,8 +5,8 @@
 package frc.robot.commands;
  
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.SystemSpeeds;
 import frc.robot.Constants.IntakeConstants.IntakeState;
+import frc.robot.Constants.SystemSpeeds;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
@@ -35,9 +35,9 @@ public class SourceIntakeCommand extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (intakeSubsystem.atSetpoint(IntakeState.SOURCE)) {
-            intakeSubsystem.runRollerMotors(SystemSpeeds.kIntakeRollerSpeed);
-        }
+        // if (intakeSubsystem.atSetpoint(IntakeState.SOURCE)) {
+        //     intakeSubsystem.runRollerMotors(SystemSpeeds.kIntakeRollerSpeed);
+        // }
     }
 
     // Called once the command ends or is interrupted.

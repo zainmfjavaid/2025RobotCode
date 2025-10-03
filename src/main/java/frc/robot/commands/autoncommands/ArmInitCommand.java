@@ -31,10 +31,10 @@ public class ArmInitCommand extends Command {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		if (intakeSubsystem.atSetpoint(IntakeState.AUTONINIT)) {
-			intakeSubsystem.setGoal(IntakeState.PASSIVERAISE);
-			elevatorSubsystem.setGoal(IntakeState.PASSIVERAISE);
-		}
+		// if (intakeSubsystem.atSetpoint(IntakeState.AUTONINIT)) {
+			// intakeSubsystem.setGoal(IntakeState.PASSIVERAISE);
+			// elevatorSubsystem.setGoal(IntakeState.PASSIVERAISE);
+		// }
 	}
 
 	
@@ -45,6 +45,7 @@ public class ArmInitCommand extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return intakeSubsystem.atSetpoint(IntakeState.STOW);
+		return true;
+		// intakeSubsystem.atSetpoint(IntakeState.STOW);
 	}
 }

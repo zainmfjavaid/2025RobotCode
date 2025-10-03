@@ -48,8 +48,8 @@ public class TorchIntakeCommand extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		intakeSubsystem.setGoal(IntakeState.PASSIVERAISE);
-		elevatorSubsystem.setGoal(IntakeState.PASSIVERAISE);
+		// intakeSubsystem.setGoal(IntakeState.PASSIVERAISE);
+		// elevatorSubsystem.setGoal(IntakeState.PASSIVERAISE);
 		
 		intakeSubsystem.runRollerMotors(0);
 	}
@@ -57,6 +57,7 @@ public class TorchIntakeCommand extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return cycles >= 101 && intakeSubsystem.atSetpoint(IntakeState.STOW);
+		return true;
+		// return cycles >= 101 && intakeSubsystem.atSetpoint(IntakeState.STOW);
 	}
 }
